@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CR Galeries &amp; Égouts — GTA Energies · Mission 1914_E</title>
+<title>CR Galeries & Égouts — GTA Energies · Mission 1914_E</title>
 <style>
   :root{
     --bitume:#21262B;
@@ -140,7 +140,7 @@
 <header>
   <div class="brand">
     <h1>GTA <span>Energies</span></h1>
-    <div class="mission">Mission 1914_E · Relevé des galeries &amp; égouts · Suivi terrain &amp; CR</div>
+    <div class="mission">Mission 1914_E · Relevé des galeries & égouts · Suivi terrain & CR</div>
   </div>
 </header>
 <div class="hazard"></div>
@@ -169,7 +169,7 @@
         <button class="btn btn-ligne" id="btnDupliquerSemaine">Dupliquer cette semaine</button>
         <button class="btn btn-danger btn-petit" id="btnSupprSemaine">Supprimer la semaine</button>
       </div>
-      <div class="chemin">N:\DOSSIERS 2026\1914_E\Travail\SAU - preparation terrain\ &nbsp;→ 1 dossier par semaine, 1 sous-dossier par journée de terrain</div>
+      <div class="chemin">N:\\DOSSIERS 2026\\1914_E\\Travail\\SAU - preparation terrain\ &nbsp;→ 1 dossier par semaine, 1 sous-dossier par journée de terrain</div>
     </div>
 
     <div id="conteneurSemaine"></div>
@@ -177,7 +177,7 @@
 
   <!-- ================= NOUVEAU CR ================= -->
   <section class="vue" id="vue-nouveau">
-    <h2>Nouveau compte-rendu</h2>
+    <h2 id="titreNouveauCR">Nouveau compte-rendu</h2>
     <p class="sous-titre">À rédiger après chaque intervention. Obligatoire dès qu'un incident est remarqué lors de la visite.</p>
 
     <div class="rappel">
@@ -213,7 +213,7 @@
     <div class="carte">
       <h3>Incidents remarqués</h3>
       <div class="liste-incidents" id="crIncidents"></div>
-      <label for="crIncidentDesc">Description / localisation des incidents</label>
+      <label for="crIncidentDesc">Description / localisation des incidents <span style="color:var(--alerte)">*</span></label>
       <textarea id="crIncidentDesc" placeholder="Précisez la nature, la localisation (n° de BR, tronçon) et l'ampleur…"></textarea>
       <label>Photos des incidents</label>
       <div class="zone-photos" id="zoneIncident">📷 Ajouter des photos des incidents — cliquez ou déposez</div>
@@ -222,7 +222,7 @@
     </div>
 
     <div class="carte">
-      <h3>Observations &amp; suites à donner</h3>
+      <h3>Observations & suites à donner</h3>
       <textarea id="crObs" placeholder="Remarques diverses, points de vigilance, matériel à prévoir…"></textarea>
     </div>
 
@@ -266,6 +266,7 @@
 
     <div class="actions" style="margin-top:0;margin-bottom:16px">
       <button class="btn btn-sombre btn-petit" id="btnExporterCSV">⬇ Exporter la liste (CSV)</button>
+      <button class="btn btn-ligne btn-petit" id="btnExporterPDF">⬇ Exporter PDF</button>
     </div>
 
     <div id="listeCR"></div>
@@ -277,7 +278,7 @@
     <p class="sous-titre">Cette liste alimente le planning et les comptes-rendus.</p>
 
     <div class="carte">
-      <h3>Sauvegarde &amp; restauration</h3>
+      <h3>Sauvegarde & restauration</h3>
       <p class="sous-titre" style="margin-bottom:10px">Exportez un fichier de secours régulièrement, notamment avant une intervention sans connexion.</p>
       <div class="actions" style="margin-top:0">
         <button class="btn btn-sombre" id="btnExporter">⬇ Exporter (JSON)</button>
@@ -307,11 +308,11 @@
 
 <div id="zoneImpression"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 /* ============================================================
    CR Galeries & Égouts — GTA Energies · Mission 1914_E
-   Données conservées via Supabase (fallback mémoire).
+   Persistance via localStorage (fiable, hors-ligne, pas de backend)
    ============================================================ */
 
 const TYPES_INCIDENTS = [
@@ -327,52 +328,32 @@ const CLE_ETAT = "gta1914e_etat";
 const DELAI_MS = 24*3600*1000;
 
 let etat = { equipe: [], semaines: [], crs: [] };
-let memoireSecours = {};
 let stockageOK = true;
 
-/* ---------- Stockage (Supabase, tolérant si le SDK ne charge pas) ---------- */
-let supabase = null;
-try{
-  if(window.supabase){
-    supabase = window.supabase.createClient(
-      "https://reymqvaglfsnqbtcffpn.supabase.co",
-      "sb_publishable_m_F9ZC0xcGZRp_c_OweIEg_4WPMUYLQ"
-    );
-  }
-}catch(e){ supabase = null; }
-
+/* ---------- Stockage localStorage (remplace Supabase) ---------- */
 async function lire(cle){
   try{
-    if(!supabase) throw new Error("SDK Supabase indisponible");
-    const { data, error } = await supabase
-      .from("gta1914e_kv")
-      .select("valeur")
-      .eq("cle", cle)
-      .maybeSingle();
-    if(error) throw error;
-    return data ? data.valeur : (memoireSecours[cle] ?? null);
+    const v = localStorage.getItem(cle);
+    return v ? JSON.parse(v) : null;
   }catch(e){
-    return memoireSecours[cle] ?? null;
+    stockageOK = false;
+    document.getElementById("bandeauMemoire").style.display = "block";
+    return null;
   }
 }
 async function ecrire(cle, val){
   try{
-    if(!supabase) throw new Error("SDK Supabase indisponible");
-    const { error } = await supabase
-      .from("gta1914e_kv")
-      .upsert({ cle, valeur: val, maj_le: new Date().toISOString() });
-    if(error) throw error;
+    localStorage.setItem(cle, JSON.stringify(val));
     stockageOK = true;
     document.getElementById("bandeauMemoire").style.display = "none";
   }catch(e){
     stockageOK = false;
-    memoireSecours[cle] = val;
     document.getElementById("bandeauMemoire").style.display = "block";
+    throw e;
   }
 }
 async function supprimerCle(cle){
-  try{ if(supabase) await supabase.from("gta1914e_kv").delete().eq("cle", cle); }catch(e){}
-  delete memoireSecours[cle];
+  try{ localStorage.removeItem(cle); }catch(e){}
 }
 async function sauver(){ await ecrire(CLE_ETAT, {equipe:etat.equipe, semaines:etat.semaines, crs:etat.crs}); }
 
@@ -489,8 +470,8 @@ function rendrePlanning(){
       <div class="jour-entete">
         <span class="num">Journée ${idx+1}</span>
         <input type="date" value="${j.date||""}" data-champ="date">
-        <input type="text" value="${echap(j.zone)}" placeholder="Secteur / galerie prévue" data-champ="zone" style="flex:1;min-width:180px">
-        <button class="btn btn-danger btn-petit" data-action="supprimer">✕</button>
+        <input type="text" value="${echap(j.zone)}" placeholder="Secteur / galerie prévue *" data-champ="zone" style="flex:1;min-width:180px">
+        <button class="btn btn-danger btn-petit" data-action="supprimer" aria-label="Supprimer cette journée">✕</button>
       </div>
       <label style="margin-top:10px">Exécutants affectés</label>
       <div class="puces" data-role="execs"></div>
@@ -575,7 +556,7 @@ async function chargerCRPourEdition(cr){
   photosIncident.length = 0; photosIncident.push(...photos.incidents);
   rendreVignettes("#vignAcces", photosAcces);
   rendreVignettes("#vignIncident", photosIncident);
-  $("#vue-nouveau h2").textContent = "Modifier le compte-rendu";
+  $("#titreNouveauCR").textContent = "Modifier le compte-rendu";
   document.querySelector('nav button[data-vue="nouveau"]').click();
 }
 
@@ -595,7 +576,7 @@ function rendreVignettes(idVign, tableau){
   tableau.forEach((src,i)=>{
     const d = document.createElement("div");
     d.className = "vignette";
-    d.innerHTML = `<img src="${src}" alt="photo ${i+1}"><button title="Retirer">✕</button>`;
+    d.innerHTML = `<img src="${src}" alt="photo ${i+1}"><button title="Retirer" aria-label="Retirer cette photo">✕</button>`;
     d.querySelector("button").addEventListener("click", ()=>{ tableau.splice(i,1); rendreVignettes(idVign,tableau); });
     v.appendChild(d);
   });
@@ -605,7 +586,7 @@ brancherPhotos("#zoneIncident","#fichIncident","#vignIncident",photosIncident);
 
 function viderFormulaire(){
   idCREnEdition = null;
-  $("#vue-nouveau h2").textContent = "Nouveau compte-rendu";
+  $("#titreNouveauCR").textContent = "Nouveau compte-rendu";
   $("#crDate").value = new Date().toISOString().slice(0,10);
   $("#crSecteur").value = ""; $("#crTravaux").value = "";
   $("#crIncidentDesc").value = ""; $("#crObs").value = "";
@@ -620,7 +601,9 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
   const incidents = [...document.querySelectorAll("#crIncidents input:checked")].map(i=>i.value);
   if(!$("#crSecteur").value.trim()){ alert("Indiquez le secteur / la galerie concernée."); return; }
   if(incidents.length && !$("#crIncidentDesc").value.trim()){
-    if(!confirm("Un incident est coché mais la description est vide. Enregistrer quand même ?")) return;
+    alert("Un incident est coché. Vous devez obligatoirement décrire la nature et la localisation de l'incident.");
+    $("#crIncidentDesc").focus();
+    return;
   }
 
   if(idCREnEdition){
@@ -759,7 +742,7 @@ function exporterCSV(){
       cr.incidents.length, cr.nbAcces + cr.nbIncident
     ]);
   });
-  const csv = lignes.map(l => l.map(v => `"${String(v).replace(/"/g,'""')}"`).join(";")).join("\r\n");
+  const csv = lignes.map(l => l.map(v => `"${String(v).replace(/"/g,'""')}"`).join(";")).join(String.fromCharCode(13,10));
   const blob = new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8;"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -767,6 +750,125 @@ function exporterCSV(){
   a.click(); URL.revokeObjectURL(url);
 }
 $("#btnExporterCSV").addEventListener("click", exporterCSV);
+
+/* ---------- Export PDF avec jsPDF ---------- */
+async function exporterPDF(cr){
+  const photos = await lire("gta1914e_photos_"+cr.id) || {acces:[],incidents:[]};
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // En-tête
+  doc.setFillColor(33,38,43);
+  doc.rect(0,0,210,25,"F");
+  doc.setTextColor(245,196,0);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("GTA ENERGIES", 14, 16);
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Mission 1914_E — Relevé des galeries & égouts", 14, 22);
+
+  // Titre
+  doc.setTextColor(33,38,43);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Compte-rendu d'intervention", 14, 35);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("CR du " + frDate(cr.date), 14, 41);
+
+  // Tableau info
+  let y = 50;
+  const infos = [
+    ["Mission", "1914_E — Relevé des galeries et égouts"],
+    ["Date", frDate(cr.date)],
+    ["Secteur / galerie", cr.secteur],
+    ["Exécutants", cr.execs.join(", ") || "—"],
+    ["Destinataire", "Mario DE JESUS (GTA GE) — m.dejesus@gtage.fr"],
+    ["Statut incidents", cr.incidents.length ? cr.incidents.length + " incident(s)" : "RAS"]
+  ];
+
+  infos.forEach(([label, val])=>{
+    doc.setFillColor(241,242,239);
+    doc.rect(14, y, 60, 8, "F");
+    doc.setTextColor(33,38,43);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text(label, 16, y+5.5);
+    doc.setFont("helvetica", "normal");
+    doc.text(String(val).substring(0, 80), 76, y+5.5);
+    y += 9;
+  });
+
+  // Travaux
+  y += 4;
+  doc.setFillColor(33,38,43);
+  doc.rect(14, y, 182, 7, "F");
+  doc.setTextColor(255,255,255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("2. TRAVAUX REALISES", 16, y+5);
+  y += 10;
+  doc.setTextColor(33,38,43);
+  doc.setFont("helvetica", "normal");
+  const travaux = doc.splitTextToSize(cr.travaux || "—", 170);
+  doc.text(travaux, 16, y);
+  y += travaux.length * 5 + 6;
+
+  // Incidents
+  doc.setFillColor(33,38,43);
+  doc.rect(14, y, 182, 7, "F");
+  doc.setTextColor(255,255,255);
+  doc.setFont("helvetica", "bold");
+  doc.text("3. INCIDENTS REMARQUES", 16, y+5);
+  y += 10;
+  doc.setTextColor(33,38,43);
+  doc.setFont("helvetica", "normal");
+  if(cr.incidents.length){
+    cr.incidents.forEach(inc=>{
+      doc.text("• " + inc, 16, y);
+      y += 5;
+    });
+    const desc = doc.splitTextToSize(cr.incidentDesc || "—", 170);
+    doc.text(desc, 16, y);
+    y += desc.length * 5 + 4;
+  } else {
+    doc.text("Rien à signaler.", 16, y);
+    y += 8;
+  }
+
+  // Observations
+  doc.setFillColor(33,38,43);
+  doc.rect(14, y, 182, 7, "F");
+  doc.setTextColor(255,255,255);
+  doc.setFont("helvetica", "bold");
+  doc.text("4. OBSERVATIONS & SUITES", 16, y+5);
+  y += 10;
+  doc.setTextColor(33,38,43);
+  const obs = doc.splitTextToSize(cr.obs || "—", 170);
+  doc.text(obs, 16, y);
+
+  // Pied de page
+  doc.setFontSize(8);
+  doc.setTextColor(150);
+  doc.text("Dossier : N:\\DOSSIERS 2026\\1914_E\\Travail\\SAU - preparation terrain", 14, 285);
+  doc.text("Généré le " + new Date().toLocaleDateString("fr-FR") + " à " + new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}), 14, 290);
+
+  doc.save("CR_"+cr.date+"_"+cr.secteur.replace(/\s+/g,"_").substring(0,30)+".pdf");
+}
+$("#btnExporterPDF").addEventListener("click", ()=>{
+  const liste = crsFiltres();
+  if(liste.length===0){ alert("Aucun CR à exporter."); return; }
+  if(liste.length===1){
+    exporterPDF(liste[0]);
+  } else {
+    const choix = liste.map((cr,i)=>`${i+1}. ${cr.date} — ${cr.secteur}`).join(String.fromCharCode(10));
+    const rep = prompt("Plusieurs CR correspondent. Entrez le numéro à exporter :" + String.fromCharCode(10) + choix);
+    const idx = parseInt(rep,10)-1;
+    if(idx>=0 && idx<liste.length) exporterPDF(liste[idx]);
+  }
+});
 
 function preparerEmail(cr){
   const sujet = `CR intervention ${cr.date} — ${cr.secteur} — Mission 1914_E`;
@@ -795,7 +897,7 @@ async function imprimerCR(cr){
   z.innerHTML = `
   <div class="page-cr">
     <h1>GTA Energies — Compte-rendu d'intervention</h1>
-    <div class="sous-entete">Mission 1914_E — Relevé des galeries &amp; égouts &nbsp;·&nbsp; CR du ${frDate(cr.date)}</div>
+    <div class="sous-entete">Mission 1914_E — Relevé des galeries & égouts &nbsp;·&nbsp; CR du ${frDate(cr.date)}</div>
     <div class="hazard"></div>
 
     <div class="section-titre">1. Informations de l'intervention</div>
@@ -811,7 +913,7 @@ async function imprimerCR(cr){
     </table>
 
     <div class="section-titre">2. Travaux réalisés</div>
-    <div class="contenu-section">${echap(cr.travaux||"—").replace(/\n/g,"<br>")}</div>
+    <div class="contenu-section">${echap(cr.travaux||"—").replace(/\\n/g,"<br>")}</div>
 
     <div class="section-titre">3. Photos BR accès (vue panoramique)</div>
     <div class="contenu-section">
@@ -822,13 +924,13 @@ async function imprimerCR(cr){
     <div class="contenu-section">
       ${cr.incidents.length
         ? `<ul style="margin-left:16px">${cr.incidents.map(i=>`<li>${echap(i)}</li>`).join("")}</ul>
-           <div style="margin-top:6px">${echap(cr.incidentDesc||"—").replace(/\n/g,"<br>")}</div>
+           <div style="margin-top:6px">${echap(cr.incidentDesc||"—").replace(/\\n/g,"<br>")}</div>
            ${photos.incidents.length ? `<div class="photos-print" style="margin-top:8px">${photos.incidents.map(s=>`<img src="${s}">`).join("")}</div>` : ""}`
         : "Rien à signaler."}
     </div>
 
-    <div class="section-titre">5. Observations &amp; suites à donner</div>
-    <div class="contenu-section">${echap(cr.obs||"—").replace(/\n/g,"<br>")}</div>
+    <div class="section-titre">5. Observations & suites à donner</div>
+    <div class="contenu-section">${echap(cr.obs||"—").replace(/\\n/g,"<br>")}</div>
 
     <p style="margin-top:16px;color:#555;font-size:11px">Dossier : N:\\DOSSIERS 2026\\1914_E\\Travail\\SAU - preparation terrain — CR généré le ${new Date().toLocaleDateString("fr-FR")} à ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}.</p>
   </div>`;
@@ -844,7 +946,7 @@ function rendreEquipe(){
   etat.equipe.forEach(nom=>{
     const p = document.createElement("span");
     p.className = "puce";
-    p.innerHTML = `${echap(nom)} <button style="border:none;background:none;cursor:pointer;color:var(--alerte);font-weight:700">✕</button>`;
+    p.innerHTML = `${echap(nom)} <button style="border:none;background:none;cursor:pointer;color:var(--alerte);font-weight:700" aria-label="Retirer ${echap(nom)}">✕</button>`;
     p.querySelector("button").addEventListener("click", async ()=>{
       if(!confirm("Retirer "+nom+" de l'équipe ?")) return;
       etat.equipe = etat.equipe.filter(n=>n!==nom);
