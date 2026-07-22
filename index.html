@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -331,14 +330,20 @@ let etat = { equipe: [], semaines: [], crs: [] };
 let memoireSecours = {};
 let stockageOK = true;
 
-/* ---------- Stockage (Supabase) ---------- */
-const supabase = window.supabase.createClient(
-  "https://reymqvaglfsnqbtcffpn.supabase.co",
-  "sb_publishable_m_F9ZC0xcGZRp_c_OweIEg_4WPMUYLQ"
-);
+/* ---------- Stockage (Supabase, tolérant si le SDK ne charge pas) ---------- */
+let supabase = null;
+try{
+  if(window.supabase){
+    supabase = window.supabase.createClient(
+      "https://reymqvaglfsnqbtcffpn.supabase.co",
+      "sb_publishable_m_F9ZC0xcGZRp_c_OweIEg_4WPMUYLQ"
+    );
+  }
+}catch(e){ supabase = null; }
 
 async function lire(cle){
   try{
+    if(!supabase) throw new Error("SDK Supabase indisponible");
     const { data, error } = await supabase
       .from("gta1914e_kv")
       .select("valeur")
@@ -352,6 +357,7 @@ async function lire(cle){
 }
 async function ecrire(cle, val){
   try{
+    if(!supabase) throw new Error("SDK Supabase indisponible");
     const { error } = await supabase
       .from("gta1914e_kv")
       .upsert({ cle, valeur: val, maj_le: new Date().toISOString() });
@@ -365,7 +371,7 @@ async function ecrire(cle, val){
   }
 }
 async function supprimerCle(cle){
-  try{ await supabase.from("gta1914e_kv").delete().eq("cle", cle); }catch(e){}
+  try{ if(supabase) await supabase.from("gta1914e_kv").delete().eq("cle", cle); }catch(e){}
   delete memoireSecours[cle];
 }
 async function sauver(){ await ecrire(CLE_ETAT, {equipe:etat.equipe, semaines:etat.semaines, crs:etat.crs}); }
