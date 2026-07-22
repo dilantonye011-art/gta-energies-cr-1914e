@@ -1,0 +1,925 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR Galeries &amp; Égouts — GTA Energies · Mission 1914_E</title>
+<style>
+  :root{
+    --bitume:#21262B;
+    --beton:#F1F2EF;
+    --carte:#FFFFFF;
+    --hv:#F5C400;
+    --hv-fonce:#C79E00;
+    --securite:#1E7A46;
+    --alerte:#C6432E;
+    --acier:#5B6570;
+    --ligne:#D8DBD6;
+    --radius:10px;
+    --display:'Barlow Condensed','Arial Narrow',Impact,sans-serif;
+    --body:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+    --mono:'Consolas','Courier New',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--beton);color:var(--bitume);font-family:var(--body);font-size:15px;line-height:1.5}
+
+  header{background:var(--bitume);color:#fff;padding:18px 22px 14px}
+  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .brand h1{font-family:var(--display);font-size:34px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+  .brand h1 span{color:var(--hv)}
+  .brand .mission{font-family:var(--mono);font-size:13px;color:#C9CED4}
+  .hazard{height:10px;background:repeating-linear-gradient(-45deg,var(--hv) 0 14px,var(--bitume) 14px 28px)}
+
+  nav{display:flex;gap:4px;background:var(--carte);border-bottom:1px solid var(--ligne);padding:0 14px;overflow-x:auto}
+  nav button{appearance:none;border:none;background:none;cursor:pointer;padding:13px 16px;font-family:var(--display);font-size:19px;letter-spacing:.03em;text-transform:uppercase;color:var(--acier);border-bottom:3px solid transparent;white-space:nowrap}
+  nav button:hover{color:var(--bitume)}
+  nav button.actif{color:var(--bitume);border-bottom-color:var(--hv)}
+  nav button:focus-visible{outline:2px solid var(--hv);outline-offset:-2px}
+  nav button .pastille{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--alerte);margin-left:5px;vertical-align:middle}
+
+  main{max-width:960px;margin:0 auto;padding:22px 16px 80px}
+  .vue{display:none}
+  .vue.active{display:block}
+
+  h2{font-family:var(--display);font-size:26px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+  .sous-titre{color:var(--acier);margin-bottom:18px;font-size:14px}
+
+  .carte{background:var(--carte);border:1px solid var(--ligne);border-radius:var(--radius);padding:18px;margin-bottom:16px}
+  .carte h3{font-family:var(--display);font-size:20px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:12px}
+
+  label{display:block;font-weight:600;font-size:13px;margin:12px 0 5px}
+  label:first-child{margin-top:0}
+  input[type=text],input[type=date],input[type=email],select,textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--ligne);border-radius:6px;font-family:var(--body);font-size:15px;background:#FBFBFA;color:var(--bitume)}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--hv);outline-offset:0;border-color:var(--hv-fonce)}
+  textarea{min-height:84px;resize:vertical}
+  .grille2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  @media(max-width:640px){.grille2{grid-template-columns:1fr}}
+
+  .btn{appearance:none;cursor:pointer;border:none;border-radius:7px;padding:10px 16px;font-weight:700;font-size:14px;font-family:var(--body)}
+  .btn:focus-visible{outline:2px solid var(--bitume);outline-offset:2px}
+  .btn-hv{background:var(--hv);color:var(--bitume)}
+  .btn-hv:hover{background:#FFD427}
+  .btn-sombre{background:var(--bitume);color:#fff}
+  .btn-sombre:hover{background:#343B42}
+  .btn-ligne{background:none;border:1px solid var(--ligne);color:var(--bitume)}
+  .btn-ligne:hover{border-color:var(--acier)}
+  .btn-danger{background:none;border:1px solid var(--alerte);color:var(--alerte)}
+  .btn-danger:hover{background:#FBEDEA}
+  .btn-petit{padding:6px 10px;font-size:13px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+  .puces{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .puce{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ligne);border-radius:999px;padding:6px 12px;cursor:pointer;user-select:none;font-size:14px;background:#FBFBFA}
+  .puce input{accent-color:var(--bitume)}
+  .puce.coche{background:var(--bitume);color:#fff;border-color:var(--bitume)}
+
+  .liste-incidents{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-top:4px}
+  @media(max-width:640px){.liste-incidents{grid-template-columns:1fr}}
+  .liste-incidents label{display:flex;align-items:center;gap:8px;font-weight:500;margin:0;padding:7px 10px;border:1px solid var(--ligne);border-radius:6px;cursor:pointer;background:#FBFBFA}
+  .liste-incidents input{accent-color:var(--alerte);width:16px;height:16px}
+  .liste-incidents label.coche{border-color:var(--alerte);background:#FBEDEA}
+
+  .zone-photos{border:2px dashed var(--ligne);border-radius:8px;padding:14px;text-align:center;color:var(--acier);cursor:pointer;background:#FBFBFA}
+  .zone-photos:hover{border-color:var(--hv-fonce)}
+  .vignettes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .vignette{position:relative;width:92px;height:92px;border-radius:6px;overflow:hidden;border:1px solid var(--ligne)}
+  .vignette img{width:100%;height:100%;object-fit:cover}
+  .vignette button{position:absolute;top:3px;right:3px;background:rgba(33,38,43,.85);color:#fff;border:none;border-radius:4px;width:22px;height:22px;cursor:pointer;font-size:13px;line-height:1}
+
+  .cr-item{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start}
+  .cr-item .infos{flex:1;min-width:220px}
+  .cr-item .titre{font-family:var(--display);font-size:21px;text-transform:uppercase;letter-spacing:.02em}
+  .cr-item .meta{color:var(--acier);font-size:13px;margin-top:2px}
+  .badge{display:inline-block;border-radius:5px;padding:3px 9px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .badge-delai{background:var(--hv);color:var(--bitume)}
+  .badge-urgent{background:var(--alerte);color:#fff}
+  .badge-ok{background:var(--securite);color:#fff}
+  .badge-incident{background:#FBEDEA;color:var(--alerte);border:1px solid var(--alerte)}
+  .badge-ras{background:#EAF4EE;color:var(--securite);border:1px solid var(--securite)}
+
+  .rappel{display:flex;gap:10px;align-items:flex-start;background:#FFF8DB;border:1px solid var(--hv-fonce);border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:14px}
+  .rappel b{white-space:nowrap}
+  .chemin{font-family:var(--mono);font-size:12.5px;background:var(--bitume);color:var(--hv);border-radius:6px;padding:8px 10px;margin-top:10px;overflow-x:auto;white-space:nowrap}
+
+  .vide{text-align:center;color:var(--acier);padding:30px 10px}
+  .bandeau-memoire{display:none;background:var(--alerte);color:#fff;padding:8px 14px;font-size:13px;text-align:center}
+
+  .jour{border:1px solid var(--ligne);border-radius:8px;padding:12px;margin-bottom:10px;background:#FBFBFA}
+  .jour-entete{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .jour-entete input[type=date]{width:auto}
+  .jour-entete .num{font-family:var(--display);font-size:18px;color:var(--acier);text-transform:uppercase}
+
+  .filtres{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+  .filtres > div{flex:1;min-width:150px}
+
+  #zoneImpression{display:none}
+  @media print{
+    body>*{display:none !important}
+    #zoneImpression{display:block !important;background:#fff}
+    #zoneImpression .hazard{height:8px;background:repeating-linear-gradient(-45deg,#F5C400 0 12px,#21262B 12px 24px)}
+    .page-cr{padding:6mm;font-size:12.5px}
+    .page-cr h1{font-family:var(--display);font-size:22px;text-transform:uppercase;text-align:center}
+    .page-cr .sous-entete{text-align:center;font-family:var(--mono);font-size:11.5px;color:#444;margin-top:2px;margin-bottom:8px}
+    .page-cr .section-titre{background:#21262B;color:#fff;text-align:center;font-family:var(--display);font-size:15px;text-transform:uppercase;letter-spacing:.04em;padding:6px 4px;margin:16px 0 0;border:1px solid #21262B}
+    .page-cr table{width:100%;border-collapse:collapse;margin-top:0}
+    .page-cr td,.page-cr th{border:1px solid #999;padding:5px 8px;text-align:left;vertical-align:top;font-size:12px}
+    .page-cr th{background:#F1F2EF;width:32%;font-weight:700}
+    .page-cr .contenu-section{border:1px solid #999;border-top:none;padding:8px 10px;font-size:12.5px}
+    .page-cr .photos-print{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .page-cr .photos-print img{width:46%;max-height:220px;object-fit:contain;border:1px solid #ccc}
+    .page-cr .badge-print{display:inline-block;border:1px solid #C6432E;color:#C6432E;background:#FBEDEA;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;text-transform:uppercase;margin-right:4px}
+    .page-cr .badge-print-ok{border-color:#1E7A46;color:#1E7A46;background:#EAF4EE}
+  }
+</style>
+</head>
+<body>
+
+<div class="bandeau-memoire" id="bandeauMemoire">⚠ Stockage indisponible : les données ne seront pas conservées à la fermeture de la page.</div>
+
+<header>
+  <div class="brand">
+    <h1>GTA <span>Energies</span></h1>
+    <div class="mission">Mission 1914_E · Relevé des galeries &amp; égouts · Suivi terrain &amp; CR</div>
+  </div>
+</header>
+<div class="hazard"></div>
+
+<nav>
+  <button data-vue="planning" class="actif">Planning</button>
+  <button data-vue="nouveau">Nouveau CR</button>
+  <button data-vue="historique">Historique CR <span id="compteurCR"></span><span id="pastilleUrgent" class="pastille" style="display:none" title="CR en retard"></span></button>
+  <button data-vue="equipe">Équipe</button>
+</nav>
+
+<main>
+
+  <!-- ================= PLANNING ================= -->
+  <section class="vue active" id="vue-planning">
+    <h2>Planning hebdomadaire</h2>
+    <p class="sous-titre">Le planning change chaque semaine : créez une nouvelle semaine, ajoutez les journées de terrain et affectez les exécutants.</p>
+
+    <div class="carte">
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px">
+          <label for="selSemaine">Semaine affichée</label>
+          <select id="selSemaine"></select>
+        </div>
+        <button class="btn btn-hv" id="btnNouvelleSemaine">+ Nouvelle semaine</button>
+        <button class="btn btn-ligne" id="btnDupliquerSemaine">Dupliquer cette semaine</button>
+        <button class="btn btn-danger btn-petit" id="btnSupprSemaine">Supprimer la semaine</button>
+      </div>
+      <div class="chemin">N:\DOSSIERS 2026\1914_E\Travail\SAU - preparation terrain\ &nbsp;→ 1 dossier par semaine, 1 sous-dossier par journée de terrain</div>
+    </div>
+
+    <div id="conteneurSemaine"></div>
+  </section>
+
+  <!-- ================= NOUVEAU CR ================= -->
+  <section class="vue" id="vue-nouveau">
+    <h2>Nouveau compte-rendu</h2>
+    <p class="sous-titre">À rédiger après chaque intervention. Obligatoire dès qu'un incident est remarqué lors de la visite.</p>
+
+    <div class="rappel">
+      <span>⏱</span>
+      <div><b>Délai contractuel : 24 h</b> pour envoyer le CR à Mario DE JESUS (GTA GE) — <span style="font-family:var(--mono)">m.dejesus@gtage.fr</span>. Le compte à rebours démarre à l'enregistrement du CR.</div>
+    </div>
+
+    <div class="carte">
+      <h3>Intervention</h3>
+      <div class="grille2">
+        <div>
+          <label for="crDate">Date de l'intervention</label>
+          <input type="date" id="crDate">
+        </div>
+        <div>
+          <label for="crSecteur">Secteur / galerie / ouvrage</label>
+          <input type="text" id="crSecteur" placeholder="Ex. : Galerie G12 — tronçon BR 45 à BR 52">
+        </div>
+      </div>
+      <label>Exécutants présents</label>
+      <div class="puces" id="crExecutants"></div>
+      <label for="crTravaux">Travaux réalisés</label>
+      <textarea id="crTravaux" placeholder="Ex. : aide à l'installation de la lumière, déplacement du matériel des géomètres (sphères), accompagnement du relevé…"></textarea>
+    </div>
+
+    <div class="carte">
+      <h3>Photos BR accès (vue panoramique)</h3>
+      <div class="zone-photos" id="zoneAcces">📷 Ajouter des photos des BR accès — cliquez ou déposez</div>
+      <input type="file" id="fichAcces" accept="image/*" multiple hidden>
+      <div class="vignettes" id="vignAcces"></div>
+    </div>
+
+    <div class="carte">
+      <h3>Incidents remarqués</h3>
+      <div class="liste-incidents" id="crIncidents"></div>
+      <label for="crIncidentDesc">Description / localisation des incidents</label>
+      <textarea id="crIncidentDesc" placeholder="Précisez la nature, la localisation (n° de BR, tronçon) et l'ampleur…"></textarea>
+      <label>Photos des incidents</label>
+      <div class="zone-photos" id="zoneIncident">📷 Ajouter des photos des incidents — cliquez ou déposez</div>
+      <input type="file" id="fichIncident" accept="image/*" multiple hidden>
+      <div class="vignettes" id="vignIncident"></div>
+    </div>
+
+    <div class="carte">
+      <h3>Observations &amp; suites à donner</h3>
+      <textarea id="crObs" placeholder="Remarques diverses, points de vigilance, matériel à prévoir…"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-hv" id="btnEnregistrerCR">Enregistrer le CR</button>
+      <button class="btn btn-ligne" id="btnViderCR">Vider le formulaire</button>
+    </div>
+  </section>
+
+  <!-- ================= HISTORIQUE ================= -->
+  <section class="vue" id="vue-historique">
+    <h2>Historique des CR</h2>
+    <p class="sous-titre">Aperçu, impression PDF, préparation de l'e-mail et suivi du délai de 24 h.</p>
+
+    <div class="carte filtres">
+      <div>
+        <label for="filtreTexte">Recherche (secteur)</label>
+        <input type="text" id="filtreTexte" placeholder="Ex. : Galerie G12">
+      </div>
+      <div>
+        <label for="filtreDateDebut">Du</label>
+        <input type="date" id="filtreDateDebut">
+      </div>
+      <div>
+        <label for="filtreDateFin">Au</label>
+        <input type="date" id="filtreDateFin">
+      </div>
+      <div>
+        <label for="filtreStatut">Statut</label>
+        <select id="filtreStatut">
+          <option value="">Tous</option>
+          <option value="a_envoyer">À envoyer</option>
+          <option value="envoye">Envoyé</option>
+          <option value="incident">Avec incident(s)</option>
+        </select>
+      </div>
+      <div style="flex:0 0 auto">
+        <button class="btn btn-ligne btn-petit" id="btnReinitFiltres">Réinitialiser</button>
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:0;margin-bottom:16px">
+      <button class="btn btn-sombre btn-petit" id="btnExporterCSV">⬇ Exporter la liste (CSV)</button>
+    </div>
+
+    <div id="listeCR"></div>
+  </section>
+
+  <!-- ================= ÉQUIPE ================= -->
+  <section class="vue" id="vue-equipe">
+    <h2>Équipe — exécutants</h2>
+    <p class="sous-titre">Cette liste alimente le planning et les comptes-rendus.</p>
+
+    <div class="carte">
+      <h3>Sauvegarde &amp; restauration</h3>
+      <p class="sous-titre" style="margin-bottom:10px">Exportez un fichier de secours régulièrement, notamment avant une intervention sans connexion.</p>
+      <div class="actions" style="margin-top:0">
+        <button class="btn btn-sombre" id="btnExporter">⬇ Exporter (JSON)</button>
+        <button class="btn btn-ligne" id="btnImporter">⬆ Importer un fichier</button>
+      </div>
+      <input type="file" id="fichImport" accept="application/json" hidden>
+    </div>
+
+    <div class="carte">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:1;min-width:200px">
+          <label for="nvExec">Nom de l'exécutant</label>
+          <input type="text" id="nvExec" placeholder="Ex. : A. TCHADJEU">
+        </div>
+        <button class="btn btn-sombre" id="btnAjoutExec">Ajouter</button>
+      </div>
+      <div class="puces" id="listeEquipe" style="margin-top:14px"></div>
+    </div>
+    <div class="carte">
+      <h3>Contact destinataire des CR</h3>
+      <p>Mario DE JESUS (GTA GE) — <span style="font-family:var(--mono)">m.dejesus@gtage.fr</span><br>
+      <span style="color:var(--acier);font-size:13px">Envoi contractuel sous 24 h après l'intervention.</span></p>
+    </div>
+  </section>
+
+</main>
+
+<div id="zoneImpression"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ============================================================
+   CR Galeries & Égouts — GTA Energies · Mission 1914_E
+   Données conservées via Supabase (fallback mémoire).
+   ============================================================ */
+
+const TYPES_INCIDENTS = [
+  "Fuite",
+  "Fissure sur génie civil",
+  "Éboulement sur génie civil",
+  "Mauvais état des BR",
+  "Présence importante d'eau au sol",
+  "Déchets au sol",
+  "Autre (préciser)"
+];
+const CLE_ETAT = "gta1914e_etat";
+const DELAI_MS = 24*3600*1000;
+
+let etat = { equipe: [], semaines: [], crs: [] };
+let memoireSecours = {};
+let stockageOK = true;
+
+/* ---------- Stockage (Supabase) ---------- */
+const supabase = window.supabase.createClient(
+  "https://reymqvaglfsnqbtcffpn.supabase.co",
+  "sb_publishable_m_F9ZC0xcGZRp_c_OweIEg_4WPMUYLQ"
+);
+
+async function lire(cle){
+  try{
+    const { data, error } = await supabase
+      .from("gta1914e_kv")
+      .select("valeur")
+      .eq("cle", cle)
+      .maybeSingle();
+    if(error) throw error;
+    return data ? data.valeur : (memoireSecours[cle] ?? null);
+  }catch(e){
+    return memoireSecours[cle] ?? null;
+  }
+}
+async function ecrire(cle, val){
+  try{
+    const { error } = await supabase
+      .from("gta1914e_kv")
+      .upsert({ cle, valeur: val, maj_le: new Date().toISOString() });
+    if(error) throw error;
+    stockageOK = true;
+    document.getElementById("bandeauMemoire").style.display = "none";
+  }catch(e){
+    stockageOK = false;
+    memoireSecours[cle] = val;
+    document.getElementById("bandeauMemoire").style.display = "block";
+  }
+}
+async function supprimerCle(cle){
+  try{ await supabase.from("gta1914e_kv").delete().eq("cle", cle); }catch(e){}
+  delete memoireSecours[cle];
+}
+async function sauver(){ await ecrire(CLE_ETAT, {equipe:etat.equipe, semaines:etat.semaines, crs:etat.crs}); }
+
+/* ---------- Utilitaires ---------- */
+const $ = s => document.querySelector(s);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+function echap(t){ return String(t??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function frDate(iso){
+  if(!iso) return "—";
+  const d = new Date(iso + (iso.length===10 ? "T12:00:00" : ""));
+  return d.toLocaleDateString("fr-FR", {weekday:"long", day:"2-digit", month:"long", year:"numeric"});
+}
+function compresserImage(fichier){
+  return new Promise(resoudre=>{
+    const fr = new FileReader();
+    fr.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const max = 1000;
+        const s = Math.min(1, max/Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+        c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+        resoudre(c.toDataURL("image/jpeg",0.62));
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(fichier);
+  });
+}
+
+/* ---------- Navigation ---------- */
+document.querySelectorAll("nav button").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll("nav button").forEach(x=>x.classList.remove("actif"));
+    document.querySelectorAll(".vue").forEach(v=>v.classList.remove("active"));
+    b.classList.add("actif");
+    document.getElementById("vue-"+b.dataset.vue).classList.add("active");
+  });
+});
+
+/* ============================================================
+   PLANNING
+   ============================================================ */
+let semaineCourante = null;
+
+function lundiDe(dateISO){
+  const d = new Date(dateISO+"T12:00:00");
+  const j = (d.getDay()+6)%7;
+  d.setDate(d.getDate()-j);
+  return d.toISOString().slice(0,10);
+}
+$("#btnNouvelleSemaine").addEventListener("click", async ()=>{
+  const saisie = prompt("Date du lundi de la semaine (AAAA-MM-JJ) :", new Date().toISOString().slice(0,10));
+  if(!saisie) return;
+  const lundi = lundiDe(saisie);
+  const sem = { id: uid(), lundi, jours: [] };
+  etat.semaines.push(sem);
+  etat.semaines.sort((a,b)=>a.lundi.localeCompare(b.lundi));
+  semaineCourante = sem.id;
+  await sauver(); rendrePlanning();
+});
+$("#btnDupliquerSemaine").addEventListener("click", async ()=>{
+  const sem = etat.semaines.find(s=>s.id===semaineCourante);
+  if(!sem){ alert("Aucune semaine à dupliquer."); return; }
+  const saisie = prompt("Date du lundi de la nouvelle semaine (AAAA-MM-JJ) :", new Date().toISOString().slice(0,10));
+  if(!saisie) return;
+  const lundi = lundiDe(saisie);
+  const copie = {
+    id: uid(),
+    lundi,
+    jours: sem.jours.map(j=>({date:"", zone:j.zone||"", execs:[...(j.execs||[])], note:j.note||""}))
+  };
+  etat.semaines.push(copie);
+  etat.semaines.sort((a,b)=>a.lundi.localeCompare(b.lundi));
+  semaineCourante = copie.id;
+  await sauver(); rendrePlanning();
+});
+$("#btnSupprSemaine").addEventListener("click", async ()=>{
+  const sem = etat.semaines.find(s=>s.id===semaineCourante);
+  if(!sem) return;
+  if(!confirm("Supprimer cette semaine et ses journées de terrain ?")) return;
+  etat.semaines = etat.semaines.filter(s=>s.id!==semaineCourante);
+  semaineCourante = etat.semaines.length ? etat.semaines[etat.semaines.length-1].id : null;
+  await sauver(); rendrePlanning();
+});
+$("#selSemaine").addEventListener("change", e=>{ semaineCourante = e.target.value; rendrePlanning(); });
+
+function etiquetteSemaine(s){
+  const d = new Date(s.lundi+"T12:00:00");
+  const fin = new Date(d); fin.setDate(fin.getDate()+6);
+  const f = x => x.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});
+  return "Semaine du " + f(d) + " au " + f(fin) + " " + fin.getFullYear();
+}
+
+function rendrePlanning(){
+  const sel = $("#selSemaine");
+  sel.innerHTML = etat.semaines.map(s=>`<option value="${s.id}" ${s.id===semaineCourante?"selected":""}>${etiquetteSemaine(s)}</option>`).join("") || `<option value="">— Aucune semaine créée —</option>`;
+  const cont = $("#conteneurSemaine");
+  const sem = etat.semaines.find(s=>s.id===semaineCourante);
+  if(!sem){ cont.innerHTML = `<div class="carte vide">Aucune semaine affichée.<br>Cliquez sur <b>+ Nouvelle semaine</b> pour démarrer le planning.</div>`; return; }
+
+  cont.innerHTML = `<div class="carte">
+    <h3>${etiquetteSemaine(sem)}</h3>
+    <div id="listeJours"></div>
+    <button class="btn btn-sombre btn-petit" id="btnAjoutJour">+ Ajouter une journée de terrain</button>
+  </div>`;
+
+  const lj = $("#listeJours");
+  sem.jours.forEach((j,idx)=>{
+    const div = document.createElement("div");
+    div.className = "jour";
+    div.innerHTML = `
+      <div class="jour-entete">
+        <span class="num">Journée ${idx+1}</span>
+        <input type="date" value="${j.date||""}" data-champ="date">
+        <input type="text" value="${echap(j.zone)}" placeholder="Secteur / galerie prévue" data-champ="zone" style="flex:1;min-width:180px">
+        <button class="btn btn-danger btn-petit" data-action="supprimer">✕</button>
+      </div>
+      <label style="margin-top:10px">Exécutants affectés</label>
+      <div class="puces" data-role="execs"></div>
+      <label>Consignes du jour</label>
+      <input type="text" value="${echap(j.note)}" placeholder="Ex. : prévoir aide installation lumière + déplacement sphères géomètres" data-champ="note">`;
+    const zone = div.querySelector('[data-role="execs"]');
+    if(etat.equipe.length===0) zone.innerHTML = `<span style="color:var(--acier);font-size:13px">Ajoutez d'abord des exécutants dans l'onglet Équipe.</span>`;
+    etat.equipe.forEach(nom=>{
+      const coche = (j.execs||[]).includes(nom);
+      const lab = document.createElement("label");
+      lab.className = "puce" + (coche?" coche":"");
+      lab.innerHTML = `<input type="checkbox" ${coche?"checked":""}> ${echap(nom)}`;
+      lab.querySelector("input").addEventListener("change", async ev=>{
+        j.execs = j.execs||[];
+        if(ev.target.checked){ j.execs.push(nom); lab.classList.add("coche"); }
+        else { j.execs = j.execs.filter(n=>n!==nom); lab.classList.remove("coche"); }
+        await sauver();
+      });
+      zone.appendChild(lab);
+    });
+    div.querySelectorAll("[data-champ]").forEach(inp=>{
+      inp.addEventListener("change", async ()=>{ j[inp.dataset.champ] = inp.value; await sauver(); });
+    });
+    div.querySelector('[data-action="supprimer"]').addEventListener("click", async ()=>{
+      if(!confirm("Supprimer cette journée ?")) return;
+      sem.jours.splice(idx,1); await sauver(); rendrePlanning();
+    });
+    lj.appendChild(div);
+  });
+
+  $("#btnAjoutJour").addEventListener("click", async ()=>{
+    sem.jours.push({date:"", zone:"", execs:[], note:""});
+    await sauver(); rendrePlanning();
+  });
+}
+
+/* ============================================================
+   NOUVEAU CR
+   ============================================================ */
+let photosAcces = [];
+let photosIncident = [];
+let idCREnEdition = null;
+
+function rendreFormulaireCR(){
+  if(!$("#crDate").value) $("#crDate").value = new Date().toISOString().slice(0,10);
+  const zone = $("#crExecutants");
+  zone.innerHTML = "";
+  if(etat.equipe.length===0) zone.innerHTML = `<span style="color:var(--acier);font-size:13px">Ajoutez des exécutants dans l'onglet Équipe.</span>`;
+  etat.equipe.forEach(nom=>{
+    const lab = document.createElement("label");
+    lab.className = "puce";
+    lab.innerHTML = `<input type="checkbox" value="${echap(nom)}"> ${echap(nom)}`;
+    lab.querySelector("input").addEventListener("change", ev=>lab.classList.toggle("coche", ev.target.checked));
+    zone.appendChild(lab);
+  });
+  const li = $("#crIncidents");
+  li.innerHTML = "";
+  TYPES_INCIDENTS.forEach(t=>{
+    const lab = document.createElement("label");
+    lab.innerHTML = `<input type="checkbox" value="${echap(t)}"> ${echap(t)}`;
+    lab.querySelector("input").addEventListener("change", ev=>lab.classList.toggle("coche", ev.target.checked));
+    li.appendChild(lab);
+  });
+}
+
+async function chargerCRPourEdition(cr){
+  idCREnEdition = cr.id;
+  $("#crDate").value = cr.date;
+  $("#crSecteur").value = cr.secteur;
+  $("#crTravaux").value = cr.travaux;
+  $("#crIncidentDesc").value = cr.incidentDesc;
+  $("#crObs").value = cr.obs;
+  rendreFormulaireCR();
+  document.querySelectorAll("#crExecutants input").forEach(i=>{
+    if(cr.execs.includes(i.value)){ i.checked = true; i.closest("label").classList.add("coche"); }
+  });
+  document.querySelectorAll("#crIncidents input").forEach(i=>{
+    if(cr.incidents.includes(i.value)){ i.checked = true; i.closest("label").classList.add("coche"); }
+  });
+  const photos = await lire("gta1914e_photos_"+cr.id) || {acces:[],incidents:[]};
+  photosAcces.length = 0; photosAcces.push(...photos.acces);
+  photosIncident.length = 0; photosIncident.push(...photos.incidents);
+  rendreVignettes("#vignAcces", photosAcces);
+  rendreVignettes("#vignIncident", photosIncident);
+  $("#vue-nouveau h2").textContent = "Modifier le compte-rendu";
+  document.querySelector('nav button[data-vue="nouveau"]').click();
+}
+
+function brancherPhotos(idZone, idInput, idVign, tableau){
+  $(idZone).addEventListener("click", ()=>$(idInput).click());
+  $(idInput).addEventListener("change", async ev=>{
+    for(const f of ev.target.files){
+      tableau.push(await compresserImage(f));
+    }
+    ev.target.value = "";
+    rendreVignettes(idVign, tableau);
+  });
+}
+function rendreVignettes(idVign, tableau){
+  const v = $(idVign);
+  v.innerHTML = "";
+  tableau.forEach((src,i)=>{
+    const d = document.createElement("div");
+    d.className = "vignette";
+    d.innerHTML = `<img src="${src}" alt="photo ${i+1}"><button title="Retirer">✕</button>`;
+    d.querySelector("button").addEventListener("click", ()=>{ tableau.splice(i,1); rendreVignettes(idVign,tableau); });
+    v.appendChild(d);
+  });
+}
+brancherPhotos("#zoneAcces","#fichAcces","#vignAcces",photosAcces);
+brancherPhotos("#zoneIncident","#fichIncident","#vignIncident",photosIncident);
+
+function viderFormulaire(){
+  idCREnEdition = null;
+  $("#vue-nouveau h2").textContent = "Nouveau compte-rendu";
+  $("#crDate").value = new Date().toISOString().slice(0,10);
+  $("#crSecteur").value = ""; $("#crTravaux").value = "";
+  $("#crIncidentDesc").value = ""; $("#crObs").value = "";
+  photosAcces.length = 0; photosIncident.length = 0;
+  rendreVignettes("#vignAcces",photosAcces); rendreVignettes("#vignIncident",photosIncident);
+  rendreFormulaireCR();
+}
+$("#btnViderCR").addEventListener("click", ()=>{ if(confirm("Vider le formulaire ?")) viderFormulaire(); });
+
+$("#btnEnregistrerCR").addEventListener("click", async ()=>{
+  const execs = [...document.querySelectorAll("#crExecutants input:checked")].map(i=>i.value);
+  const incidents = [...document.querySelectorAll("#crIncidents input:checked")].map(i=>i.value);
+  if(!$("#crSecteur").value.trim()){ alert("Indiquez le secteur / la galerie concernée."); return; }
+  if(incidents.length && !$("#crIncidentDesc").value.trim()){
+    if(!confirm("Un incident est coché mais la description est vide. Enregistrer quand même ?")) return;
+  }
+
+  if(idCREnEdition){
+    const cr = etat.crs.find(c=>c.id===idCREnEdition);
+    if(cr){
+      Object.assign(cr, {
+        date: $("#crDate").value,
+        secteur: $("#crSecteur").value.trim(),
+        execs, incidents,
+        travaux: $("#crTravaux").value.trim(),
+        incidentDesc: $("#crIncidentDesc").value.trim(),
+        obs: $("#crObs").value.trim(),
+        nbAcces: photosAcces.length,
+        nbIncident: photosIncident.length,
+        modifie: Date.now()
+      });
+      await ecrire("gta1914e_photos_"+cr.id, {acces:[...photosAcces], incidents:[...photosIncident]});
+      await sauver();
+    }
+  } else {
+    const cr = {
+      id: uid(),
+      date: $("#crDate").value,
+      secteur: $("#crSecteur").value.trim(),
+      execs, incidents,
+      travaux: $("#crTravaux").value.trim(),
+      incidentDesc: $("#crIncidentDesc").value.trim(),
+      obs: $("#crObs").value.trim(),
+      cree: Date.now(),
+      statut: "brouillon",
+      nbAcces: photosAcces.length,
+      nbIncident: photosIncident.length
+    };
+    etat.crs.unshift(cr);
+    await ecrire("gta1914e_photos_"+cr.id, {acces:[...photosAcces], incidents:[...photosIncident]});
+    await sauver();
+  }
+  viderFormulaire();
+  rendreHistorique();
+  document.querySelector('nav button[data-vue="historique"]').click();
+});
+
+/* ============================================================
+   HISTORIQUE
+   ============================================================ */
+function texteDelai(cr){
+  if(cr.statut==="envoye") return {txt:"Envoyé", cls:"badge-ok"};
+  const restant = cr.cree + DELAI_MS - Date.now();
+  if(restant <= 0) return {txt:"Délai 24 h dépassé", cls:"badge-urgent"};
+  const h = Math.floor(restant/3600000), m = Math.floor((restant%3600000)/60000);
+  return {txt:`À envoyer — reste ${h} h ${String(m).padStart(2,"0")} min`, cls: restant<6*3600000 ? "badge-urgent" : "badge-delai"};
+}
+
+function crsFiltres(){
+  const texte = $("#filtreTexte").value.trim().toLowerCase();
+  const debut = $("#filtreDateDebut").value;
+  const fin = $("#filtreDateFin").value;
+  const statut = $("#filtreStatut").value;
+  return etat.crs.filter(cr=>{
+    if(texte && !cr.secteur.toLowerCase().includes(texte)) return false;
+    if(debut && cr.date < debut) return false;
+    if(fin && cr.date > fin) return false;
+    if(statut==="envoye" && cr.statut!=="envoye") return false;
+    if(statut==="a_envoyer" && cr.statut==="envoye") return false;
+    if(statut==="incident" && cr.incidents.length===0) return false;
+    return true;
+  });
+}
+
+function rendreHistorique(){
+  $("#compteurCR").textContent = etat.crs.length ? "("+etat.crs.length+")" : "";
+  const urgent = etat.crs.some(cr => cr.statut!=="envoye" && (cr.cree + DELAI_MS - Date.now()) <= 6*3600000);
+  $("#pastilleUrgent").style.display = urgent ? "inline-block" : "none";
+
+  const l = $("#listeCR");
+  if(etat.crs.length===0){ l.innerHTML = `<div class="carte vide">Aucun compte-rendu enregistré.<br>Créez-en un depuis l'onglet <b>Nouveau CR</b>.</div>`; return; }
+
+  const liste = crsFiltres();
+  if(liste.length===0){ l.innerHTML = `<div class="carte vide">Aucun CR ne correspond aux filtres.</div>`; return; }
+
+  l.innerHTML = "";
+  liste.forEach(cr=>{
+    const d = texteDelai(cr);
+    const div = document.createElement("div");
+    div.className = "carte cr-item";
+    div.innerHTML = `
+      <div class="infos">
+        <div class="titre">CR du ${frDate(cr.date)}</div>
+        <div class="meta">${echap(cr.secteur)} · ${cr.execs.length ? echap(cr.execs.join(", ")) : "exécutants non renseignés"} · ${cr.nbAcces+cr.nbIncident} photo(s)</div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="badge ${d.cls}">${d.txt}</span>
+          ${cr.incidents.length ? `<span class="badge badge-incident">${cr.incidents.length} incident(s)</span>` : `<span class="badge badge-ras">RAS</span>`}
+        </div>
+      </div>
+      <div class="actions" style="margin-top:0">
+        <button class="btn btn-sombre btn-petit" data-a="imprimer">Aperçu / PDF</button>
+        <button class="btn btn-hv btn-petit" data-a="email">Préparer l'e-mail</button>
+        <button class="btn btn-ligne btn-petit" data-a="modifier">Modifier</button>
+        ${cr.statut==="envoye"
+          ? `<button class="btn btn-ligne btn-petit" data-a="annuler-envoi">Annuler l'envoi</button>`
+          : `<button class="btn btn-ligne btn-petit" data-a="envoye">Marquer envoyé</button>`}
+        <button class="btn btn-danger btn-petit" data-a="supprimer">Supprimer</button>
+      </div>`;
+    div.querySelector('[data-a="imprimer"]').addEventListener("click", ()=>imprimerCR(cr));
+    div.querySelector('[data-a="email"]').addEventListener("click", ()=>preparerEmail(cr));
+    div.querySelector('[data-a="modifier"]').addEventListener("click", ()=>chargerCRPourEdition(cr));
+    const bE = div.querySelector('[data-a="envoye"]');
+    if(bE) bE.addEventListener("click", async ()=>{ cr.statut="envoye"; cr.envoye=Date.now(); await sauver(); rendreHistorique(); });
+    const bA = div.querySelector('[data-a="annuler-envoi"]');
+    if(bA) bA.addEventListener("click", async ()=>{ cr.statut="brouillon"; delete cr.envoye; await sauver(); rendreHistorique(); });
+    div.querySelector('[data-a="supprimer"]').addEventListener("click", async ()=>{
+      if(!confirm("Supprimer définitivement ce CR ?")) return;
+      etat.crs = etat.crs.filter(c=>c.id!==cr.id);
+      await supprimerCle("gta1914e_photos_"+cr.id);
+      await sauver(); rendreHistorique();
+    });
+    l.appendChild(div);
+  });
+}
+["filtreTexte","filtreDateDebut","filtreDateFin","filtreStatut"].forEach(id=>{
+  $("#"+id).addEventListener("input", rendreHistorique);
+});
+$("#btnReinitFiltres").addEventListener("click", ()=>{
+  $("#filtreTexte").value=""; $("#filtreDateDebut").value=""; $("#filtreDateFin").value=""; $("#filtreStatut").value="";
+  rendreHistorique();
+});
+setInterval(()=>{ if(document.getElementById("vue-historique").classList.contains("active")) rendreHistorique(); }, 30000);
+
+function exporterCSV(){
+  const lignes = [["Date","Secteur","Exécutants","Statut","Incidents","Nb incidents","Nb photos"]];
+  etat.crs.forEach(cr=>{
+    lignes.push([
+      cr.date, cr.secteur, cr.execs.join(" / "),
+      cr.statut==="envoye" ? "Envoyé" : "À envoyer",
+      cr.incidents.length ? cr.incidents.join(" / ") : "RAS",
+      cr.incidents.length, cr.nbAcces + cr.nbIncident
+    ]);
+  });
+  const csv = lignes.map(l => l.map(v => `"${String(v).replace(/"/g,'""')}"`).join(";")).join("\r\n");
+  const blob = new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "gta1914e_liste_cr_"+new Date().toISOString().slice(0,10)+".csv";
+  a.click(); URL.revokeObjectURL(url);
+}
+$("#btnExporterCSV").addEventListener("click", exporterCSV);
+
+function preparerEmail(cr){
+  const sujet = `CR intervention ${cr.date} — ${cr.secteur} — Mission 1914_E`;
+  const corps =
+`Bonjour Monsieur DE JESUS,
+
+Veuillez trouver ci-joint le compte-rendu de l'intervention du ${frDate(cr.date)} (secteur : ${cr.secteur}).
+
+Exécutants : ${cr.execs.join(", ") || "—"}
+Incidents remarqués : ${cr.incidents.length ? cr.incidents.join(" ; ") : "RAS"}
+${cr.incidentDesc ? "Détail : " + cr.incidentDesc : ""}
+
+Le CR au format PDF ainsi que les photos (BR accès et incidents) sont joints à ce message.
+
+Cordialement,`;
+  location.href = "mailto:m.dejesus@gtage.fr?subject="+encodeURIComponent(sujet)+"&body="+encodeURIComponent(corps);
+  alert("N'oubliez pas de joindre le PDF du CR (bouton Aperçu / PDF) et les photos à l'e-mail.");
+}
+
+async function imprimerCR(cr){
+  const photos = await lire("gta1914e_photos_"+cr.id) || {acces:[],incidents:[]};
+  const z = $("#zoneImpression");
+  const badgeIncidents = cr.incidents.length
+    ? `<span class="badge-print">${cr.incidents.length} incident(s) remarqué(s)</span>`
+    : `<span class="badge-print badge-print-ok">RAS — rien à signaler</span>`;
+  z.innerHTML = `
+  <div class="page-cr">
+    <h1>GTA Energies — Compte-rendu d'intervention</h1>
+    <div class="sous-entete">Mission 1914_E — Relevé des galeries &amp; égouts &nbsp;·&nbsp; CR du ${frDate(cr.date)}</div>
+    <div class="hazard"></div>
+
+    <div class="section-titre">1. Informations de l'intervention</div>
+    <table>
+      <tr><th>Mission</th><td>1914_E — Relevé des galeries et égouts</td></tr>
+      <tr><th>Maître d'ouvrage</th><td>GTA Energies</td></tr>
+      <tr><th>Date d'intervention</th><td>${frDate(cr.date)}</td></tr>
+      <tr><th>Secteur / galerie / ouvrage</th><td>${echap(cr.secteur)}</td></tr>
+      <tr><th>Exécutants présents</th><td>${echap(cr.execs.join(", ")||"—")}</td></tr>
+      <tr><th>Destinataire du CR</th><td>Mario DE JESUS (GTA GE) — m.dejesus@gtage.fr</td></tr>
+      <tr><th>Délai d'envoi contractuel</th><td>24 h après l'intervention</td></tr>
+      <tr><th>Statut incidents</th><td>${badgeIncidents}</td></tr>
+    </table>
+
+    <div class="section-titre">2. Travaux réalisés</div>
+    <div class="contenu-section">${echap(cr.travaux||"—").replace(/\n/g,"<br>")}</div>
+
+    <div class="section-titre">3. Photos BR accès (vue panoramique)</div>
+    <div class="contenu-section">
+      ${photos.acces.length ? `<div class="photos-print">${photos.acces.map(s=>`<img src="${s}">`).join("")}</div>` : "Aucune photo."}
+    </div>
+
+    <div class="section-titre">4. Incidents remarqués</div>
+    <div class="contenu-section">
+      ${cr.incidents.length
+        ? `<ul style="margin-left:16px">${cr.incidents.map(i=>`<li>${echap(i)}</li>`).join("")}</ul>
+           <div style="margin-top:6px">${echap(cr.incidentDesc||"—").replace(/\n/g,"<br>")}</div>
+           ${photos.incidents.length ? `<div class="photos-print" style="margin-top:8px">${photos.incidents.map(s=>`<img src="${s}">`).join("")}</div>` : ""}`
+        : "Rien à signaler."}
+    </div>
+
+    <div class="section-titre">5. Observations &amp; suites à donner</div>
+    <div class="contenu-section">${echap(cr.obs||"—").replace(/\n/g,"<br>")}</div>
+
+    <p style="margin-top:16px;color:#555;font-size:11px">Dossier : N:\\DOSSIERS 2026\\1914_E\\Travail\\SAU - preparation terrain — CR généré le ${new Date().toLocaleDateString("fr-FR")} à ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}.</p>
+  </div>`;
+  window.print();
+}
+
+/* ============================================================
+   ÉQUIPE
+   ============================================================ */
+function rendreEquipe(){
+  const l = $("#listeEquipe");
+  l.innerHTML = etat.equipe.length ? "" : `<span style="color:var(--acier)">Aucun exécutant enregistré.</span>`;
+  etat.equipe.forEach(nom=>{
+    const p = document.createElement("span");
+    p.className = "puce";
+    p.innerHTML = `${echap(nom)} <button style="border:none;background:none;cursor:pointer;color:var(--alerte);font-weight:700">✕</button>`;
+    p.querySelector("button").addEventListener("click", async ()=>{
+      if(!confirm("Retirer "+nom+" de l'équipe ?")) return;
+      etat.equipe = etat.equipe.filter(n=>n!==nom);
+      await sauver(); rendreEquipe(); rendreFormulaireCR(); rendrePlanning();
+    });
+    l.appendChild(p);
+  });
+}
+$("#btnAjoutExec").addEventListener("click", async ()=>{
+  const nom = $("#nvExec").value.trim();
+  if(!nom) return;
+  const existeDeja = etat.equipe.some(n => n.toLowerCase() === nom.toLowerCase());
+  if(existeDeja){ alert("Cet exécutant existe déjà dans l'équipe."); $("#nvExec").value=""; return; }
+  etat.equipe.push(nom);
+  $("#nvExec").value = "";
+  await sauver(); rendreEquipe(); rendreFormulaireCR(); rendrePlanning();
+});
+$("#nvExec").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#btnAjoutExec").click(); });
+
+/* ============================================================
+   EXPORT / IMPORT
+   ============================================================ */
+async function exporterDonnees(){
+  const photos = {};
+  for(const cr of etat.crs){
+    photos[cr.id] = await lire("gta1914e_photos_"+cr.id) || {acces:[],incidents:[]};
+  }
+  const paquet = {
+    export_le: new Date().toISOString(),
+    equipe: etat.equipe,
+    semaines: etat.semaines,
+    crs: etat.crs,
+    photos
+  };
+  const blob = new Blob([JSON.stringify(paquet,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "gta1914e_sauvegarde_"+new Date().toISOString().slice(0,10)+".json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+async function importerDonnees(fichier){
+  let paquet;
+  try{ paquet = JSON.parse(await fichier.text()); }
+  catch(e){ alert("Fichier invalide."); return; }
+  if(!confirm("L'import va remplacer toutes les données actuelles (équipe, planning, CR). Continuer ?")) return;
+  etat.equipe = paquet.equipe || [];
+  etat.semaines = paquet.semaines || [];
+  etat.crs = paquet.crs || [];
+  await sauver();
+  for(const id in (paquet.photos||{})){
+    await ecrire("gta1914e_photos_"+id, paquet.photos[id]);
+  }
+  rendrePlanning(); rendreFormulaireCR(); rendreHistorique(); rendreEquipe();
+  alert("Import terminé.");
+}
+$("#btnExporter").addEventListener("click", exporterDonnees);
+$("#btnImporter").addEventListener("click", ()=>$("#fichImport").click());
+$("#fichImport").addEventListener("change", async e=>{
+  const f = e.target.files[0];
+  if(f) await importerDonnees(f);
+  e.target.value = "";
+});
+
+/* ============================================================
+   Initialisation
+   ============================================================ */
+(async function init(){
+  const sauvegarde = await lire(CLE_ETAT);
+  if(sauvegarde){
+    etat.equipe = sauvegarde.equipe||[];
+    etat.semaines = sauvegarde.semaines||[];
+    etat.crs = sauvegarde.crs||[];
+  }
+  if(etat.semaines.length) semaineCourante = etat.semaines[etat.semaines.length-1].id;
+  rendrePlanning();
+  rendreFormulaireCR();
+  rendreHistorique();
+  rendreEquipe();
+})();
+</script>
+</body>
+</html>
