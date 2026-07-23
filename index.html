@@ -236,7 +236,7 @@
 
     <div class="rappel" id="rappelDelai">
       <span>&#9201;</span>
-      <div><b>Delai contractuel : 24 h</b> pour envoyer le CR a Mario DE JESUS (GTA GE) — <span style="font-family:var(--mono)">m.dejesus@gtage.fr</span>. Le compte a rebours demarre a l'enregistrement.</div>
+      <div><b>Delai contractuel : 24 h</b> pour envoyer le CR a <span id="contactNomDelai"></span> (<span id="contactEntiteDelai"></span>) — <span id="contactEmailDelai" style="font-family:var(--mono)"></span>. Le compte a rebours demarre a l'enregistrement.</div>
     </div>
 
     <div class="carte">
@@ -374,7 +374,7 @@
 
     <div class="carte">
       <h3>Contact destinataire</h3>
-      <p>Mario DE JESUS (GTA GE) — <span style="font-family:var(--mono)">m.dejesus@gtage.fr</span><br><span style="color:var(--acier);font-size:13px">Envoi contractuel sous 24 h apres l'intervention.</span></p>
+      <p><span id="contactNomCarte"></span> (<span id="contactEntiteCarte"></span>) — <span id="contactEmailCarte" style="font-family:var(--mono)"></span><br><span style="color:var(--acier);font-size:13px">Envoi contractuel sous 24 h apres l'intervention.</span></p>
     </div>
   </section>
 
@@ -399,6 +399,13 @@ const TYPES_INCIDENTS = [
   "Dechets au sol","Autre (preciser)"
 ];
 const DELAI_MS = 24*3600*1000;
+
+const CONTACT_DESTINATAIRE = {
+  nom: "Mario DE JESUS",
+  entite: "GTA GE",
+  email: "m.dejesus@gtage.fr",
+  civilite: "Monsieur DE JESUS"
+};
 
 let sb = null, utilisateur = null, modeHorsLigne = false;
 let etat = { equipe: { "GTA GE": [], "GTA ENERGIES": [], "SOUS-TRAITANT": [] }, semaines: [], crs: [] };
@@ -1222,7 +1229,7 @@ $("#btnExporterPDF").addEventListener("click", ()=>{
 function preparerEmail(cr){
   const typeLabel = cr.type === 'minutes' ? 'Minutes de chantier' : 'Compte-rendu';
   const sujet = typeLabel + " " + cr.date + " — " + cr.secteur + " — Mission 1914_E";
-  const corps = "Bonjour Monsieur DE JESUS," + String.fromCharCode(10,10) + "Veuillez trouver ci-joint le " + typeLabel.toLowerCase() + " du " + frDate(cr.date) + " (secteur : " + cr.secteur + ")." + String.fromCharCode(10,10) + "Entite : " + (cr.entite || "GTA GE") + String.fromCharCode(10) + "Executants : " + (cr.execs.join(", ") || "—") + String.fromCharCode(10) + (cr.type === 'cr' ? "Incidents : " + (cr.incidents.length ? cr.incidents.join(" ; ") : "RAS") : "Points abordes : " + (cr.pointsAbordes || "—")) + String.fromCharCode(10,10) + "Le document au format PDF ainsi que les photos sont joints." + String.fromCharCode(10,10) + "Cordialement,";
+  const corps = "Bonjour " + CONTACT_DESTINATAIRE.civilite + "," + String.fromCharCode(10,10) + "Veuillez trouver ci-joint le " + typeLabel.toLowerCase() + " du " + frDate(cr.date) + " (secteur : " + cr.secteur + ")." + String.fromCharCode(10,10) + "Entite : " + (cr.entite || "GTA GE") + String.fromCharCode(10) + "Executants : " + (cr.execs.join(", ") || "—") + String.fromCharCode(10) + (cr.type === 'cr' ? "Incidents : " + (cr.incidents.length ? cr.incidents.join(" ; ") : "RAS") : "Points abordes : " + (cr.pointsAbordes || "—")) + String.fromCharCode(10,10) + "Le document au format PDF ainsi que les photos sont joints." + String.fromCharCode(10,10) + "Cordialement,";
   location.href = "mailto:m.dejesus@gtage.fr?subject="+encodeURIComponent(sujet)+"&body="+encodeURIComponent(corps);
   alert("N'oubliez pas de joindre le PDF et les photos.");
 }
@@ -1369,8 +1376,18 @@ $("#btnExporter").addEventListener("click", exporterDonnees);
 $("#btnImporter").addEventListener("click", ()=>$("#fichImport").click());
 $("#fichImport").addEventListener("change", async e=>{ const f = e.target.files[0]; if(f) await importerDonnees(f); e.target.value = ""; });
 
+function afficherContactDestinataire(){
+  ["Delai","Carte"].forEach(suffixe=>{
+    const nom = $("#contactNom"+suffixe), entite = $("#contactEntite"+suffixe), email = $("#contactEmail"+suffixe);
+    if(nom) nom.textContent = CONTACT_DESTINATAIRE.nom;
+    if(entite) entite.textContent = CONTACT_DESTINATAIRE.entite;
+    if(email) email.textContent = CONTACT_DESTINATAIRE.email;
+  });
+}
+
 // === INIT ===
 (async function init(){
+  afficherContactDestinataire();
   sb = initSupabase();
   chargerLocal();
   if(etat.semaines.length) semaineCourante = etat.semaines[etat.semaines.length-1].id;
