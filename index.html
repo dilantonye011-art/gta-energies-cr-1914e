@@ -6,8 +6,8 @@
 <title>CR Galeries & Egouts — GTA Energies · Mission 1914_E</title>
 <style>
   :root{
-    --bitume:#1A1A1A; --beton:#F5F5F5; --carte:#FFFFFF;
-    --rouge:#E31E24; --bleu:#00A0E3; --degrade:linear-gradient(135deg,#E31E24 0%,#00A0E3 100%);
+    --bitume:#1A1A1A; --beton:#F2F2F0; --carte:#FFFFFF;
+    --rouge:#E31E24; --rouge-fonce:#B8151A; --gris-label:#8A8F95;
     --securite:#1E7A46; --alerte:#C6432E; --acier:#5B6570;
     --ligne:#D8DBD6; --radius:10px;
     --display:'Barlow Condensed','Arial Narrow',Impact,sans-serif;
@@ -16,12 +16,15 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--beton);color:var(--bitume);font-family:var(--body);font-size:15px;line-height:1.5}
-  header{background:var(--bitume);color:#fff;padding:18px 22px 14px}
-  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-  .brand h1{font-family:var(--display);font-size:34px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-  .brand h1 span{background:var(--degrade);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-  .brand .mission{font-family:var(--mono);font-size:13px;color:#C9CED4}
-  .hazard{height:10px;background:var(--degrade)}
+  header{background:#fff;color:var(--bitume);padding:16px 22px;border-bottom:1px solid var(--ligne);display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo-mark{width:44px;height:44px;border-radius:8px;background:var(--rouge);color:#fff;font-family:var(--display);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;letter-spacing:.02em;flex-shrink:0}
+  .brand h1{font-family:var(--display);font-size:26px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--bitume)}
+  .brand h1 span{color:var(--rouge)}
+  .brand h1 em{font-style:normal;font-family:var(--body);font-size:12px;font-weight:400;color:var(--acier);text-transform:none;letter-spacing:0;margin-left:8px;vertical-align:middle}
+  .brand .mission{font-family:var(--mono);font-size:12.5px;color:var(--acier);margin-top:2px}
+  .app-tag{font-size:12px;color:var(--acier);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;padding-top:6px}
+  .hazard{height:5px;background:var(--rouge)}
   nav{display:flex;gap:4px;background:var(--carte);border-bottom:1px solid var(--ligne);padding:0 14px;overflow-x:auto}
   nav button{appearance:none;border:none;background:none;cursor:pointer;padding:13px 16px;font-family:var(--display);font-size:19px;letter-spacing:.03em;text-transform:uppercase;color:var(--acier);border-bottom:3px solid transparent;white-space:nowrap}
   nav button:hover{color:var(--bitume)}
@@ -38,12 +41,19 @@
   label:first-child{margin-top:0}
   input[type=text],input[type=date],input[type=email],input[type=password],select,textarea{
     width:100%;padding:9px 11px;border:1px solid var(--ligne);border-radius:6px;font-family:var(--body);font-size:15px;background:#FBFBFA;color:var(--bitume)}
-  input:focus,select:focus,textarea:focus{outline:2px solid var(--bleu);outline-offset:0;border-color:var(--bleu)}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--rouge);outline-offset:0;border-color:var(--rouge)}
   textarea{min-height:84px;resize:vertical}
   .grille2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
   @media(max-width:640px){.grille2{grid-template-columns:1fr}}
+  .grille3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px}
+  @media(max-width:800px){.grille3{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.grille3{grid-template-columns:1fr}}
+  .moe-carte{border:1px solid var(--ligne);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:#FBFBFA;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .moe-carte .nom{font-weight:700}
+  .moe-carte .role{color:var(--rouge);font-size:13px;font-style:italic;margin-top:1px}
+  .moe-carte .coord{color:var(--acier);font-size:12.5px;font-family:var(--mono);margin-top:3px}
   .btn{appearance:none;cursor:pointer;border:none;border-radius:7px;padding:10px 16px;font-weight:700;font-size:14px;font-family:var(--body)}
-  .btn-hv{background:var(--degrade);color:#fff}
+  .btn-hv{background:var(--rouge);color:#fff}
   .btn-hv:hover{opacity:0.9}
   .btn-sombre{background:var(--bitume);color:#fff}
   .btn-sombre:hover{background:#343B42}
@@ -61,7 +71,7 @@
   .liste-incidents label{display:flex;align-items:center;gap:8px;font-weight:500;margin:0;padding:7px 10px;border:1px solid var(--ligne);border-radius:6px;cursor:pointer;background:#FBFBFA}
   .liste-incidents label.coche{border-color:var(--alerte);background:#FBEDEA}
   .zone-photos{border:2px dashed var(--ligne);border-radius:8px;padding:14px;text-align:center;color:var(--acier);cursor:pointer;background:#FBFBFA}
-  .zone-photos:hover{border-color:var(--bleu)}
+  .zone-photos:hover{border-color:var(--rouge)}
   .vignettes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .vignette{position:relative;width:92px;height:92px;border-radius:6px;overflow:hidden;border:1px solid var(--ligne)}
   .vignette img{width:100%;height:100%;object-fit:cover}
@@ -72,13 +82,13 @@
   .cr-item .titre{font-family:var(--display);font-size:21px;text-transform:uppercase;letter-spacing:.02em}
   .cr-item .meta{color:var(--acier);font-size:13px;margin-top:2px}
   .badge{display:inline-block;border-radius:5px;padding:3px 9px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-  .badge-delai{background:var(--degrade);color:#fff}
+  .badge-delai{background:var(--rouge);color:#fff}
   .badge-urgent{background:var(--alerte);color:#fff}
   .badge-ok{background:var(--securite);color:#fff}
   .badge-incident{background:#FBEDEA;color:var(--alerte);border:1px solid var(--alerte)}
   .badge-ras{background:#EAF4EE;color:var(--securite);border:1px solid var(--securite)}
   .rappel{display:flex;gap:10px;align-items:flex-start;background:#FFF0F0;border:1px solid var(--rouge);border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:14px}
-  .chemin{font-family:var(--mono);font-size:12.5px;background:var(--bitume);color:var(--bleu);border-radius:6px;padding:8px 10px;margin-top:10px;overflow-x:auto;white-space:nowrap}
+  .chemin{font-family:var(--mono);font-size:12.5px;background:var(--bitume);color:var(--rouge);border-radius:6px;padding:8px 10px;margin-top:10px;overflow-x:auto;white-space:nowrap}
   .vide{text-align:center;color:var(--acier);padding:30px 10px}
   .bandeau-memoire,.bandeau-connexion,.bandeau-deconnecte{display:none;padding:8px 14px;font-size:13px;text-align:center;color:#fff}
   .bandeau-memoire{background:var(--alerte)}
@@ -109,6 +119,14 @@
 
   .photo-geo-info{background:#f0f4f8;border:1px solid #d0d8e0;border-radius:6px;padding:8px 12px;margin-top:8px;font-size:12px;color:#444;font-family:var(--mono)}
 
+  .ligne-synthese{border:1px solid var(--ligne);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:#FBFBFA}
+  .ligne-synthese .entete-synthese{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .ligne-synthese .libelle-synthese{font-weight:700;font-size:14px;flex:1;min-width:180px}
+  .ligne-synthese select{width:auto;min-width:160px;padding:6px 9px;font-size:13px}
+  .ligne-synthese input[type=text]{margin-top:7px}
+  .sous-carte{border:1px solid var(--ligne);border-radius:8px;padding:10px 12px;margin-top:8px;background:#FBFBFA}
+  .sous-carte-titre{font-weight:700;color:var(--rouge);font-size:13px;margin-bottom:6px}
+
   .type-doc-selector{display:flex;gap:8px;margin-bottom:16px}
   .type-doc-selector button{flex:1;padding:12px;font-family:var(--display);font-size:16px;text-transform:uppercase;letter-spacing:.02em;border:2px solid var(--ligne);background:#fff;border-radius:8px;cursor:pointer}
   .type-doc-selector button.actif{border-color:var(--rouge);background:#FFF0F0}
@@ -123,32 +141,61 @@
     body>*{display:none !important}
     #zoneImpression{display:block !important;background:#fff}
     .page-cr{padding:0;font-size:11px;font-family:'Segoe UI',Arial,sans-serif;color:#333}
-    .page-cr .header-print{background:var(--bitume);color:#fff;padding:12mm 15mm 8mm;position:relative}
-    .page-cr .header-print::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;background:var(--degrade)}
-    .page-cr .header-print h1{font-family:var(--display);font-size:28px;text-transform:uppercase;letter-spacing:.05em;margin:0}
-    .page-cr .header-print .subtitle{font-size:11px;color:#C9CED4;margin-top:4px;font-family:var(--mono)}
-    .page-cr .header-print .logo-area{display:flex;align-items:center;gap:12px}
-    .page-cr .header-print .logo-placeholder{width:50px;height:50px;border:2px solid var(--rouge);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--rouge);font-size:10px;font-weight:bold}
+    .page-cr .header-print{background:#fff;color:var(--bitume);padding:8mm 15mm 6mm;border-bottom:3px solid var(--rouge);display:flex;justify-content:space-between;align-items:flex-start}
+    .page-cr .header-print h1{font-family:var(--display);font-size:20px;text-transform:uppercase;letter-spacing:.04em;margin:0;color:var(--bitume)}
+    .page-cr .header-print .subtitle{font-size:9.5px;color:var(--acier);margin-top:3px;font-family:var(--mono)}
+    .page-cr .header-print .logo-area{display:flex;align-items:center;gap:10px}
+    .page-cr .header-print .logo-placeholder{width:42px;height:42px;border-radius:6px;background:var(--rouge);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:bold;font-family:var(--display)}
+    .page-cr .header-print .app-tag-print{font-size:9.5px;color:var(--acier);text-transform:uppercase;letter-spacing:.03em;text-align:right;padding-top:4px}
+    .page-cr .titre-doc-print{background:var(--rouge);color:#fff;padding:9px 15mm;display:flex;justify-content:space-between;align-items:center}
+    .page-cr .titre-doc-print .titre{font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.04em}
+    .page-cr .titre-doc-print .sous{font-size:9.5px;font-family:var(--mono);opacity:.9;margin-top:2px}
+    .page-cr .ref-badge{background:#fff;color:var(--rouge);font-family:var(--display);font-size:15px;font-weight:700;border-radius:4px;padding:3px 10px;letter-spacing:.03em;white-space:nowrap}
     .page-cr .content-print{padding:10mm 15mm}
     .page-cr .section-print{margin-bottom:14px}
-    .page-cr .section-title{background:var(--bitume);color:#fff;font-family:var(--display);font-size:13px;text-transform:uppercase;letter-spacing:.04em;padding:5px 10px;margin:0;border:1px solid var(--bitume)}
-    .page-cr .section-body{border:1px solid #999;border-top:none;padding:8px 10px}
+    .page-cr .section-title{background:var(--rouge);color:#fff;font-family:var(--display);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;padding:6px 10px;margin:0;display:flex;align-items:center;gap:8px}
+    .page-cr .num-badge{background:#fff;color:var(--rouge);width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+    .page-cr .section-body{border:1px solid var(--ligne);border-top:none;padding:8px 10px;background:#fff}
     .page-cr .info-table{width:100%;border-collapse:collapse}
-    .page-cr .info-table td,.page-cr .info-table th{border:1px solid #999;padding:5px 8px;font-size:10.5px;vertical-align:top}
-    .page-cr .info-table th{background:#F1F2EF;width:30%;font-weight:700}
+    .page-cr .info-table td,.page-cr .info-table th{border:1px solid var(--ligne);padding:6px 8px;font-size:10.5px;vertical-align:top}
+    .page-cr .info-table th{background:#FAFAFA;color:var(--gris-label);width:28%;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:.03em}
+    .page-cr .info-table td{font-weight:600;color:var(--bitume)}
+    .page-cr .info-table-projet th{width:19%}
+    .page-cr .info-table-projet td{width:31%}
     .page-cr .photos-print{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
     .page-cr .photos-print img{width:46%;max-height:180px;object-fit:contain;border:1px solid #ccc}
     .page-cr .badge-print{display:inline-block;border:1px solid #C6432E;color:#C6432E;background:#FBEDEA;border-radius:3px;padding:2px 6px;font-size:9px;font-weight:700;text-transform:uppercase}
     .page-cr .badge-print-ok{border-color:#1E7A46;color:#1E7A46;background:#EAF4EE}
-    .page-cr .footer-print{background:var(--bitume);color:#fff;padding:6mm 15mm;font-size:9px;display:flex;justify-content:space-between;align-items:center;margin-top:10mm;position:relative}
-    .page-cr .footer-print::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--degrade)}
+    .page-cr .footer-print{background:#fff;color:var(--acier);padding:6mm 15mm;font-size:9px;display:flex;justify-content:space-between;align-items:center;margin-top:10mm;border-top:3px solid var(--rouge)}
     .page-cr .signature-print{margin-top:10px;border-top:1px solid #ccc;padding-top:8px}
     .page-cr .signature-print img{max-height:60px}
   }
+
+  /* ===== Modales internes (remplace alert/confirm/prompt) ===== */
+  #modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:16px;}
+  #modalOverlay.actif{display:flex;}
+  #modalBox{background:#fff;border-radius:12px;max-width:420px;width:100%;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.3);animation:modalPop .15s ease-out;}
+  @keyframes modalPop{from{transform:scale(.95);opacity:0;}to{transform:scale(1);opacity:1;}}
+  #modalMsg{font-size:15px;line-height:1.5;margin-bottom:16px;white-space:pre-wrap;color:#222;}
+  #modalInput{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:15px;margin-bottom:16px;box-sizing:border-box;}
+  #modalBtns{display:flex;gap:10px;justify-content:flex-end;}
+  #modalBtns button{padding:9px 18px;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;}
+  #modalBtnCancel{background:#eee;color:#333;}
+  #modalBtnOk{background:#2563eb;color:#fff;}
 </style>
 <base target="_blank">
 </head>
 <body>
+<div id="modalOverlay">
+  <div id="modalBox">
+    <div id="modalMsg"></div>
+    <input id="modalInput" type="text" style="display:none;">
+    <div id="modalBtns">
+      <button id="modalBtnCancel" type="button" style="display:none;">Annuler</button>
+      <button id="modalBtnOk" type="button">OK</button>
+    </div>
+  </div>
+</div>
 
 <div class="bandeau-memoire" id="bandeauMemoire">Mode hors-ligne : les donnees sont stockees localement et seront synchronisees a la reconnexion.</div>
 <div class="bandeau-connexion" id="bandeauConnexion">Connecte a Supabase — synchronisation active</div>
@@ -156,9 +203,13 @@
 
 <header>
   <div class="brand">
-    <h1>GTA <span>Energies</span></h1>
-    <div class="mission">Mission 1914_E · Releve des galeries & egouts · Suivi terrain & CR</div>
+    <div class="logo-mark">GTA</div>
+    <div>
+      <h1>GTA <span>Energies</span> <em>by Vulcain</em></h1>
+      <div class="mission">Mission 1914_E · Releve des galeries & egouts · Suivi terrain & CR</div>
+    </div>
   </div>
+  <div class="app-tag">VIGIE Chantiers — GTA Energies</div>
 </header>
 <div class="hazard"></div>
 
@@ -240,6 +291,121 @@
     </div>
 
     <div class="carte">
+      <h3>Informations projet</h3>
+      <label for="crSiteLoc">Site de localisation du projet</label>
+      <input type="text" id="crSiteLoc" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris — angle Malesherbes / coordonnees GPS">
+      <div class="grille3">
+        <div><label for="crNCite">N&deg; cite / N&deg; de demande</label><input type="text" id="crNCite" placeholder="Ex. : 202500898402 / 934244"></div>
+        <div><label for="crNIntervenant">N&deg; intervenant</label><input type="text" id="crNIntervenant" placeholder="Ex. : 19911 — EP-0000003809"></div>
+        <div><label for="crAdresseChantier">Adresse du chantier</label><input type="text" id="crAdresseChantier" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris"></div>
+      </div>
+      <div class="grille3">
+        <div><label for="crEmprises">Emprise(s) / Parite</label><input type="text" id="crEmprises" placeholder="Ex. : N°1 — 17 rue Juliette Lamber"></div>
+        <div><label for="crDebutTravaux">Debut des travaux</label><input type="date" id="crDebutTravaux"></div>
+        <div><label for="crFinTravaux">Fin des travaux</label><input type="date" id="crFinTravaux"></div>
+      </div>
+      <div class="grille2">
+        <div><label for="crRemiseVoie">Remise en etat de la voie</label><input type="date" id="crRemiseVoie"></div>
+        <div><label for="crRemiseCirculation">Remise a la circulation</label><input type="date" id="crRemiseCirculation"></div>
+      </div>
+      <label>Code couleur du document</label>
+      <div class="entite-selector" id="crCodeCouleur">
+        <label><input type="radio" name="codeCouleur" value="S" checked> [S] Securite / procedure</label>
+        <label><input type="radio" name="codeCouleur" value="P"> [P] Projection travaux</label>
+        <label><input type="radio" name="codeCouleur" value="A"> [A] Action rapide demandee</label>
+        <label><input type="radio" name="codeCouleur" value="conforme"> Conforme — RAS</label>
+        <label><input type="radio" name="codeCouleur" value="action-rapide"> Action rapide</label>
+        <label><input type="radio" name="codeCouleur" value="non-applicable"> Non applicable</label>
+      </div>
+    </div>
+
+    <div class="carte">
+      <h3>Client &amp; intervenants du projet</h3>
+      <div class="grille2">
+        <div><label for="crMaitreOuvrage">Maitre d'ouvrage (societe)</label><input type="text" id="crMaitreOuvrage" placeholder="Ex. : CPCU"></div>
+        <div><label for="crReferentClient">Referent client</label><input type="text" id="crReferentClient" placeholder="Nom du referent"></div>
+      </div>
+      <div class="grille2">
+        <div><label for="crReferentTel">Telephone</label><input type="text" id="crReferentTel" placeholder="Ex. : 07 56 10 60 25"></div>
+        <div><label for="crReferentEmail">E-mail</label><input type="email" id="crReferentEmail" placeholder="contact@..."></div>
+      </div>
+      <div class="sous-carte">
+        <div class="sous-carte-titre">Entreprise travaux</div>
+        <div class="grille3">
+          <div><input type="text" id="crEntTravauxNom" placeholder="Nom de l'entreprise"></div>
+          <div><input type="text" id="crEntTravauxContact" placeholder="Contact"></div>
+          <div><input type="text" id="crEntTravauxTel" placeholder="Telephone"></div>
+        </div>
+      </div>
+      <div class="sous-carte">
+        <div class="sous-carte-titre">Ville / Voirie</div>
+        <div class="grille3">
+          <div><input type="text" id="crVilleVoirieNom" placeholder="Ex. : Ville de Paris — Section..."></div>
+          <div><input type="text" id="crVilleVoirieContact" placeholder="Contact"></div>
+          <div><input type="text" id="crVilleVoirieTel" placeholder="Telephone / e-mail"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carte">
+      <h3>Prescriptions particulieres a respecter</h3>
+      <div class="liste-incidents" id="crPrescriptions">
+        <label><input type="checkbox" value="Emprise hermetique — tenue de chantier irreprochable"> Emprise hermetique — tenue de chantier irreprochable</label>
+        <label><input type="checkbox" value="Cheminement des pietons continu et securise, aucun passage sous charge"> Cheminement des pietons continu et securise, aucun passage sous charge</label>
+        <label><input type="checkbox" value="Signalisation reglementaire — continuite des pistes cyclables en securite"> Signalisation reglementaire — continuite des pistes cyclables en securite</label>
+        <label><input type="checkbox" value="Ne pas masquer la signalisation reglementaire existante"> Ne pas masquer la signalisation reglementaire existante</label>
+        <label><input type="checkbox" value="Identification de l'entreprise"> Identification de l'entreprise</label>
+        <label><input type="checkbox" value="Affichage obligatoire de la demande CITE"> Affichage obligatoire de la demande CITE</label>
+        <label><input type="checkbox" value="Respect du protocole de bonne tenue de chantier"> Respect du protocole de bonne tenue de chantier</label>
+        <label><input type="checkbox" value="Respect du reglement de voirie"> Respect du reglement de voirie</label>
+      </div>
+    </div>
+
+    <div class="carte">
+      <h3>Avancement &amp; points releves</h3>
+      <label for="crAvancementPhase">Avancement des travaux (phase en cours)</label>
+      <textarea id="crAvancementPhase" placeholder="Ex. : Phase 1 — Terrassements a la pelle, fouille blindee et etayee…"></textarea>
+    </div>
+
+    <div class="carte">
+      <h3>Personnels &amp; materiels</h3>
+      <div class="grille3">
+        <div><label for="crPersoCompagnons">Compagnons</label><input type="number" id="crPersoCompagnons" min="0" value="0"></div>
+        <div><label for="crPersoPelles">Pelles mecaniques</label><input type="number" id="crPersoPelles" min="0" value="0"></div>
+        <div><label for="crPersoCamions">Camions</label><input type="number" id="crPersoCamions" min="0" value="0"></div>
+      </div>
+      <label for="crPersoNote">Note</label>
+      <textarea id="crPersoNote" placeholder="Ex. : pas de travaux ce jour"></textarea>
+    </div>
+
+    <div class="carte" id="blocPhotosChantier">
+      <h3>Photos du chantier</h3>
+      <div class="zone-photos" id="zoneChantier">&#128247; Ajouter des photos — cliquez ou deposez</div>
+      <input type="file" id="fichChantier" accept="image/*" multiple hidden>
+      <div class="vignettes" id="vignChantier"></div>
+      <div class="photo-geo-info" id="geoInfoChantier" style="display:none"></div>
+    </div>
+
+    <div class="carte">
+      <h3>Synthese suivi chantier</h3>
+      <div id="crSynthese"></div>
+    </div>
+
+    <div class="carte">
+      <h3>Validation &amp; signatures</h3>
+      <label>Pour le maitre d'oeuvre — GTA Energies</label>
+      <div class="grille2">
+        <div><label for="crSigMoeNom">Nom du signataire</label><input type="text" id="crSigMoeNom"></div>
+        <div><label for="crSigMoeDate">Date</label><input type="date" id="crSigMoeDate"></div>
+      </div>
+      <label style="margin-top:16px">Visa du maitre d'ouvrage</label>
+      <div class="grille2">
+        <div><label for="crSigMoNom">Nom du signataire</label><input type="text" id="crSigMoNom"></div>
+        <div><label for="crSigMoDate">Date</label><input type="date" id="crSigMoDate"></div>
+      </div>
+    </div>
+
+    <div class="carte">
       <h3>Informations generales</h3>
       <div class="grille2">
         <div><label for="crDate">Date</label><input type="date" id="crDate"></div>
@@ -258,7 +424,7 @@
     </div>
 
     <div class="carte" id="blocPhotosAcces">
-      <h3>Photos BR acces (vue panoramique)</h3>
+      <h3 id="titrePhotosAcces">Photos BR acces (vue panoramique)</h3>
       <div class="zone-photos" id="zoneAcces">&#128247; Ajouter des photos — cliquez ou deposez</div>
       <input type="file" id="fichAcces" accept="image/*" multiple hidden>
       <div class="vignettes" id="vignAcces"></div>
@@ -376,6 +542,21 @@
       <h3>Contact destinataire</h3>
       <p><span id="contactNomCarte"></span> (<span id="contactEntiteCarte"></span>) — <span id="contactEmailCarte" style="font-family:var(--mono)"></span><br><span style="color:var(--acier);font-size:13px">Envoi contractuel sous 24 h apres l'intervention.</span></p>
     </div>
+
+    <div class="carte">
+      <h3>Maitrise d'oeuvre — GTA Energies</h3>
+      <p class="sous-titre" style="margin-bottom:10px">Contacts affiches sur les documents (chef de projet, dossier instruit par…).</p>
+      <div class="grille2">
+        <div><label for="nvMoeNom">Nom</label><input type="text" id="nvMoeNom" placeholder="Ex. : M. Hortense HENRY"></div>
+        <div><label for="nvMoeRole">Role</label><input type="text" id="nvMoeRole" placeholder="Ex. : Chef de projet (MOE)"></div>
+      </div>
+      <div class="grille2">
+        <div><label for="nvMoeTel">Telephone</label><input type="text" id="nvMoeTel" placeholder="Ex. : 06 00 00 00 00"></div>
+        <div><label for="nvMoeEmail">E-mail</label><input type="email" id="nvMoeEmail" placeholder="prenom.nom@gta-energies.fr"></div>
+      </div>
+      <div class="actions"><button class="btn btn-sombre" id="btnAjoutMoe">Ajouter</button></div>
+      <div id="listeMoe" style="margin-top:14px"></div>
+    </div>
   </section>
 
 </main>
@@ -400,19 +581,104 @@ const TYPES_INCIDENTS = [
 ];
 const DELAI_MS = 24*3600*1000;
 
+const SYNTHESE_ITEMS = [
+  {cle:"affichages", libelle:"Affichages arretes et dates"},
+  {cle:"baches", libelle:"Baches communication"},
+  {cle:"ovp", libelle:"Occupation de la Voie Publique (OVP)"},
+  {cle:"circulation", libelle:"Circulation et balisage"},
+  {cle:"barrieres", libelle:"Barrieres Ville de Paris 1m / Heras 2m"},
+  {cle:"proprete", libelle:"Proprete generale du chantier"},
+  {cle:"cheminementsPmr", libelle:"Cheminements pietons et PMR"},
+  {cle:"accesResidences", libelle:"Acces residences"},
+  {cle:"dechets", libelle:"Stockage des dechets"},
+  {cle:"arbres", libelle:"Protection des arbres & systemes racinaires"},
+  {cle:"horaires", libelle:"Respect des horaires (8h – 18h)"},
+  {cle:"epi", libelle:"Port des EPI"}
+];
+const STATUTS_SYNTHESE = [
+  {valeur:"conforme", libelle:"Conforme — RAS"},
+  {valeur:"rappel", libelle:"Rappel"},
+  {valeur:"action-rapide", libelle:"Action rapide"},
+  {valeur:"non-applicable", libelle:"Non applicable"}
+];
+
+const LABELS_CODE_COULEUR = {
+  "S": "[S] Securite / procedure",
+  "P": "[P] Projection travaux",
+  "A": "[A] Action rapide demandee",
+  "conforme": "Conforme — RAS",
+  "action-rapide": "Action rapide",
+  "non-applicable": "Non applicable"
+};
+
 const CONTACT_DESTINATAIRE = {
-  nom: "ACHILLE",
+  nom: "Mario DE JESUS",
   entite: "GTA GE",
-  email: "achilletchadjeu10@gmail.com",
-  civilite: "Monsieur DE Achile"
+  email: "m.dejesus@gtage.fr",
+  civilite: "Monsieur DE JESUS"
 };
 
 let sb = null, utilisateur = null, modeHorsLigne = false;
-let etat = { equipe: { "GTA GE": [], "GTA ENERGIES": [], "SOUS-TRAITANT": [] }, semaines: [], crs: [] };
+let etat = { equipe: { "GTA GE": [], "GTA ENERGIES": [], "SOUS-TRAITANT": [] }, semaines: [], crs: [], moe: [] };
 let typeDocumentActuel = 'cr';
 let signatureData = null;
 
 const $ = s => document.querySelector(s);
+
+/* ===== Modales internes : remplacent alert()/confirm()/prompt() natifs =====
+   Necessaire car en PWA/ecran d'accueil et dans certaines WebView, les dialogues
+   natifs du navigateur sont bloques ou mal geres. Ces fonctions sont async et
+   se pilotent avec await, exactement comme leurs equivalents natifs. */
+function modalAlert(msg){
+  return new Promise(resolve=>{
+    const ov=$("#modalOverlay"), inp=$("#modalInput"), cancel=$("#modalBtnCancel"), ok=$("#modalBtnOk");
+    $("#modalMsg").textContent = msg;
+    inp.style.display="none";
+    cancel.style.display="none";
+    ok.textContent="OK";
+    ov.classList.add("actif");
+    const fermer=()=>{ ov.classList.remove("actif"); ok.removeEventListener("click", fermer); resolve(true); };
+    ok.addEventListener("click", fermer);
+    ok.focus();
+  });
+}
+function modalConfirm(msg){
+  return new Promise(resolve=>{
+    const ov=$("#modalOverlay"), inp=$("#modalInput"), cancel=$("#modalBtnCancel"), ok=$("#modalBtnOk");
+    $("#modalMsg").textContent = msg;
+    inp.style.display="none";
+    cancel.style.display="inline-block";
+    ok.textContent="Confirmer";
+    ov.classList.add("actif");
+    const nettoyer=(val)=>{ ov.classList.remove("actif"); ok.removeEventListener("click", surOk); cancel.removeEventListener("click", surCancel); resolve(val); };
+    const surOk=()=>nettoyer(true);
+    const surCancel=()=>nettoyer(false);
+    ok.addEventListener("click", surOk);
+    cancel.addEventListener("click", surCancel);
+    ok.focus();
+  });
+}
+function modalPrompt(msg, valeurParDefaut){
+  return new Promise(resolve=>{
+    const ov=$("#modalOverlay"), inp=$("#modalInput"), cancel=$("#modalBtnCancel"), ok=$("#modalBtnOk");
+    $("#modalMsg").textContent = msg;
+    inp.style.display="block";
+    inp.value = valeurParDefaut ?? "";
+    cancel.style.display="inline-block";
+    ok.textContent="OK";
+    ov.classList.add("actif");
+    const nettoyer=(val)=>{ ov.classList.remove("actif"); ok.removeEventListener("click", surOk); cancel.removeEventListener("click", surCancel); inp.removeEventListener("keydown", surEnter); resolve(val); };
+    const surOk=()=>nettoyer(inp.value.trim() || null);
+    const surCancel=()=>nettoyer(null);
+    const surEnter=(e)=>{ if(e.key==="Enter"){ e.preventDefault(); surOk(); } };
+    ok.addEventListener("click", surOk);
+    cancel.addEventListener("click", surCancel);
+    inp.addEventListener("keydown", surEnter);
+    inp.focus();
+    inp.select();
+  });
+}
+
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 function echap(t){ return String(t??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function frDate(iso){
@@ -456,8 +722,8 @@ const LS_CLE = "gta1914e_etat_v5";
 function lsLire(cle){ try{ const v = localStorage.getItem(cle); return v?JSON.parse(v):null; }catch(e){return null;} }
 function lsEcrire(cle,val){ try{ localStorage.setItem(cle,JSON.stringify(val)); }catch(e){} }
 function lsSuppr(cle){ try{ localStorage.removeItem(cle); }catch(e){} }
-function sauverLocal(){ lsEcrire(LS_CLE, {equipe:etat.equipe, semaines:etat.semaines, crs:etat.crs}); }
-function chargerLocal(){ const d = lsLire(LS_CLE); if(d){ etat.equipe=d.equipe||{"GTA GE":[],"GTA ENERGIES":[],"SOUS-TRAITANT":[]}; etat.semaines=d.semaines||[]; etat.crs=d.crs||[]; } }
+function sauverLocal(){ lsEcrire(LS_CLE, {equipe:etat.equipe, semaines:etat.semaines, crs:etat.crs, moe:etat.moe}); }
+function chargerLocal(){ const d = lsLire(LS_CLE); if(d){ etat.equipe=d.equipe||{"GTA GE":[],"GTA ENERGIES":[],"SOUS-TRAITANT":[]}; etat.semaines=d.semaines||[]; etat.crs=d.crs||[]; etat.moe=d.moe||[]; } }
 
 function initSupabase(){
   try{
@@ -480,18 +746,18 @@ function basculerAuth(){
 }
 
 async function connexion(email, password){
-  if(!sb){ alert("Supabase non configure. Utilisez le mode hors-ligne."); return false; }
+  if(!sb){ await modalAlert("Supabase non configure. Utilisez le mode hors-ligne."); return false; }
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if(error){ alert("Erreur : " + error.message); return false; }
+  if(error){ await modalAlert("Erreur : " + error.message); return false; }
   utilisateur = data.user;
   return true;
 }
 
 async function inscription(email, password, nom){
-  if(!sb){ alert("Supabase non configure. Utilisez le mode hors-ligne."); return false; }
+  if(!sb){ await modalAlert("Supabase non configure. Utilisez le mode hors-ligne."); return false; }
   const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name: nom } } });
-  if(error){ alert("Erreur : " + error.message); return false; }
-  if(data.user && !data.session){ alert("Compte cree ! Verifiez votre e-mail."); }
+  if(error){ await modalAlert("Erreur : " + error.message); return false; }
+  if(data.user && !data.session){ await modalAlert("Compte cree ! Verifiez votre e-mail."); }
   utilisateur = data.user;
   return !!data.user;
 }
@@ -525,7 +791,7 @@ function afficherApp(){
 
 $("#btnAuthAction").addEventListener("click", async ()=>{
   const email = $("#authEmail").value.trim(); const password = $("#authPassword").value;
-  if(!email || !password){ alert("Renseignez l'e-mail et le mot de passe."); return; }
+  if(!email || !password){ await modalAlert("Renseignez l'e-mail et le mot de passe."); return; }
   if(modeInscription){ const nom = $("#authNom").value.trim(); const ok = await inscription(email, password, nom); if(ok) afficherApp(); }
   else { const ok = await connexion(email, password); if(ok){ await syncDepuisSupabase(); afficherApp(); } }
 });
@@ -538,6 +804,8 @@ async function syncDepuisSupabase(){
   try{
     const { data: equipeData } = await sb.from('equipe').select('*').order('nom');
     if(equipeData){ etat.equipe = {"GTA GE":[],"GTA ENERGIES":[],"SOUS-TRAITANT":[]}; equipeData.forEach(e=>{ if(etat.equipe[e.entite]) etat.equipe[e.entite].push(e.nom); }); }
+    const { data: moeData } = await sb.from('contacts_moe').select('*').order('cree', {ascending:true});
+    if(moeData) etat.moe = moeData.map(m=>({id:m.id, nom:m.nom, role:m.role, tel:m.tel, email:m.email}));
     const { data: semData } = await sb.from('semaines').select('*').order('lundi');
     if(semData) etat.semaines = semData.map(s=>({id:s.id, lundi:s.lundi, jours:s.jours||[]}));
     const { data: crData } = await sb.from('comptes_rendus').select('*').order('cree',{ascending:false});
@@ -549,7 +817,7 @@ async function syncDepuisSupabase(){
         decisions:c.decisions, prochainesEtapes:c.prochaines_etapes,
         cree:c.cree, statut:c.statut, envoye:c.envoye, modifie:c.modifie,
         nbAcces:c.nb_acces, nbIncident:c.nb_incident, auteur:c.auteur,
-        signature:c.signature
+        signature:c.signature, infoProjet:c.info_projet||{}
       }));
     }
     sauverLocal();
@@ -573,18 +841,19 @@ async function uploadPhoto(crId, type, dataUrl, index){
 }
 
 async function getPhotosCR(crId){
-  if(!sb || modeHorsLigne) return lsLire("gta1914e_photos_"+crId) || {acces:[],incidents:[]};
+  if(!sb || modeHorsLigne) return lsLire("gta1914e_photos_"+crId) || {acces:[],incidents:[],chantier:[]};
   try{
     const { data: files } = await sb.storage.from('photos-cr').list('cr_' + crId);
-    if(!files) return {acces:[],incidents:[]};
-    const acces=[], incidents=[];
+    if(!files) return {acces:[],incidents:[],chantier:[]};
+    const acces=[], incidents=[], chantier=[];
     for(const f of files){
       const { data } = sb.storage.from('photos-cr').getPublicUrl('cr_' + crId + '/' + f.name);
       if(f.name.startsWith('acces_')) acces.push(data.publicUrl);
       else if(f.name.startsWith('incident_')) incidents.push(data.publicUrl);
+      else if(f.name.startsWith('chantier_')) chantier.push(data.publicUrl);
     }
-    return {acces, incidents};
-  }catch(e){ return {acces:[],incidents:[]}; }
+    return {acces, incidents, chantier};
+  }catch(e){ return {acces:[],incidents:[],chantier:[]}; }
 }
 
 document.querySelectorAll("nav button").forEach(b=>{
@@ -605,7 +874,7 @@ function lundiDe(dateISO){
 }
 
 $("#btnNouvelleSemaine").addEventListener("click", async ()=>{
-  const saisie = prompt("Date du lundi (AAAA-MM-JJ):", new Date().toISOString().slice(0,10));
+  const saisie = await modalPrompt("Date du lundi (AAAA-MM-JJ):", new Date().toISOString().slice(0,10));
   if(!saisie) return;
   const lundi = lundiDe(saisie);
   const sem = { id: uid(), lundi, jours: [] };
@@ -617,8 +886,8 @@ $("#btnNouvelleSemaine").addEventListener("click", async ()=>{
 
 $("#btnDupliquerSemaine").addEventListener("click", async ()=>{
   const sem = etat.semaines.find(s=>s.id===semaineCourante);
-  if(!sem){ alert("Aucune semaine a dupliquer."); return; }
-  const saisie = prompt("Date du lundi (AAAA-MM-JJ):", new Date().toISOString().slice(0,10));
+  if(!sem){ await modalAlert("Aucune semaine a dupliquer."); return; }
+  const saisie = await modalPrompt("Date du lundi (AAAA-MM-JJ):", new Date().toISOString().slice(0,10));
   if(!saisie) return;
   const lundi = lundiDe(saisie);
   const copie = { id: uid(), lundi, jours: sem.jours.map(j=>({date:"", zone:j.zone||"", execs:[...(j.execs||[])], note:j.note||""})) };
@@ -631,7 +900,7 @@ $("#btnDupliquerSemaine").addEventListener("click", async ()=>{
 $("#btnSupprSemaine").addEventListener("click", async ()=>{
   const sem = etat.semaines.find(s=>s.id===semaineCourante);
   if(!sem) return;
-  if(!confirm("Supprimer cette semaine ?")) return;
+  if(!(await modalConfirm("Supprimer cette semaine ?"))) return;
   etat.semaines = etat.semaines.filter(s=>s.id!==semaineCourante);
   semaineCourante = etat.semaines.length ? etat.semaines[etat.semaines.length-1].id : null;
   await dbDelete('semaines', {col:'id', val:sem.id});
@@ -677,7 +946,7 @@ function rendrePlanning(){
       inp.addEventListener("change", async ()=>{ j[inp.dataset.champ] = inp.value; await dbUpdate('semaines', {jours:sem.jours}, {col:'id', val:sem.id}); sauverLocal(); });
     });
     div.querySelector('[data-action="supprimer"]').addEventListener("click", async ()=>{
-      if(!confirm("Supprimer cette journee ?")) return;
+      if(!(await modalConfirm("Supprimer cette journee ?"))) return;
       sem.jours.splice(idx,1); await dbUpdate('semaines', {jours:sem.jours}, {col:'id', val:sem.id}); sauverLocal(); rendrePlanning();
     });
     lj.appendChild(div);
@@ -699,7 +968,8 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
       $("#sousTitreNouveau").textContent = "Compte-rendu de reunion de chantier avec les parties prenantes.";
       $("#rappelDelai").style.display = "none";
       $("#blocIncidents").style.display = "none";
-      $("#blocPhotosAcces").style.display = "none";
+      $("#blocPhotosAcces").style.display = "block";
+      $("#titrePhotosAcces").textContent = "Photos";
       $("#blocMinutesOnly").style.display = "block";
       $("#labelTravaux").textContent = "Travaux en cours / a venir";
     } else {
@@ -708,6 +978,7 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
       $("#rappelDelai").style.display = "flex";
       $("#blocIncidents").style.display = "block";
       $("#blocPhotosAcces").style.display = "block";
+      $("#titrePhotosAcces").textContent = "Photos BR acces (vue panoramique)";
       $("#blocMinutesOnly").style.display = "none";
       $("#labelTravaux").textContent = "Travaux realises";
     }
@@ -758,8 +1029,8 @@ $("#fichSignature").addEventListener("change", async e=>{
 });
 
 // === PHOTOS AVEC GEOLOCALISATION ===
-let photosAcces = [], photosIncident = [];
-let geoAcces = null, geoIncident = null;
+let photosAcces = [], photosIncident = [], photosChantier = [];
+let geoAcces = null, geoIncident = null, geoChantier = null;
 
 function getGeolocation(){
   return new Promise((resolve)=>{
@@ -794,6 +1065,7 @@ async function processPhotoAvecGeo(file, type){
 
   const result = c.toDataURL("image/jpeg", 0.85);
   if(type === 'acces'){ geoAcces = geo; }
+  else if(type === 'chantier'){ geoChantier = geo; }
   else { geoIncident = geo; }
   return result;
 }
@@ -818,8 +1090,8 @@ function rendreVignettes(idVign, tableau, type){
     d.querySelector("button").addEventListener("click", ()=>{ tableau.splice(i,1); rendreVignettes(idVign,tableau,type); });
     v.appendChild(d);
   });
-  const geo = type === 'acces' ? geoAcces : geoIncident;
-  const infoId = type === 'acces' ? 'geoInfoAcces' : 'geoInfoIncident';
+  const geo = type === 'acces' ? geoAcces : (type === 'chantier' ? geoChantier : geoIncident);
+  const infoId = type === 'acces' ? 'geoInfoAcces' : (type === 'chantier' ? 'geoInfoChantier' : 'geoInfoIncident');
   if(geo){
     $(infoId).textContent = String.fromCharCode(128205) + " " + geo.lat.toFixed(5) + ", " + geo.lon.toFixed(5) + " (precision: " + Math.round(geo.accuracy) + "m)";
     $(infoId).style.display = "block";
@@ -828,6 +1100,58 @@ function rendreVignettes(idVign, tableau, type){
 
 brancherPhotos("#zoneAcces","#fichAcces","#vignAcces",photosAcces,'acces');
 brancherPhotos("#zoneIncident","#fichIncident","#vignIncident",photosIncident,'incident');
+brancherPhotos("#zoneChantier","#fichChantier","#vignChantier",photosChantier,'chantier');
+
+function rendreSynthese(){
+  const cont = $("#crSynthese");
+  cont.innerHTML = "";
+  SYNTHESE_ITEMS.forEach(item=>{
+    const div = document.createElement("div"); div.className = "ligne-synthese";
+    div.innerHTML = `
+      <div class="entete-synthese">
+        <span class="libelle-synthese">${echap(item.libelle)}</span>
+        <select id="crSynth_${item.cle}_statut">
+          ${STATUTS_SYNTHESE.map(s=>`<option value="${s.valeur}">${echap(s.libelle)}</option>`).join("")}
+        </select>
+      </div>
+      <input type="text" id="crSynth_${item.cle}_obs" placeholder="Observation...">`;
+    cont.appendChild(div);
+  });
+}
+rendreSynthese();
+
+document.querySelectorAll("#crPrescriptions input").forEach(i=>{
+  i.addEventListener("change", ()=>i.closest("label").classList.toggle("coche", i.checked));
+});
+
+function getPrescriptionsCochees(){
+  return [...document.querySelectorAll("#crPrescriptions input:checked")].map(i=>i.value);
+}
+function cocherPrescriptions(liste){
+  document.querySelectorAll("#crPrescriptions input").forEach(i=>{
+    const coche = (liste||[]).includes(i.value);
+    i.checked = coche; i.closest("label").classList.toggle("coche", coche);
+  });
+}
+function getSynthese(){
+  const res = {};
+  SYNTHESE_ITEMS.forEach(item=>{
+    res[item.cle] = {
+      statut: ($("#crSynth_"+item.cle+"_statut")||{}).value || "conforme",
+      obs: ($("#crSynth_"+item.cle+"_obs")||{}).value.trim() || ""
+    };
+  });
+  return res;
+}
+function chargerSynthese(synthese){
+  synthese = synthese || {};
+  SYNTHESE_ITEMS.forEach(item=>{
+    const d = synthese[item.cle] || {};
+    const selEl = $("#crSynth_"+item.cle+"_statut"), obsEl = $("#crSynth_"+item.cle+"_obs");
+    if(selEl) selEl.value = d.statut || "conforme";
+    if(obsEl) obsEl.value = d.obs || "";
+  });
+}
 
 let idCREnEdition = null;
 
@@ -877,6 +1201,40 @@ async function chargerCRPourEdition(cr){
   $("#crPointsAbordes").value = cr.pointsAbordes || "";
   $("#crDecisions").value = cr.decisions || "";
   $("#crProchainesEtapes").value = cr.prochainesEtapes || "";
+  const ip = cr.infoProjet || {};
+  $("#crSiteLoc").value = ip.siteLoc || "";
+  $("#crNCite").value = ip.nCite || "";
+  $("#crNIntervenant").value = ip.nIntervenant || "";
+  $("#crAdresseChantier").value = ip.adresseChantier || "";
+  $("#crEmprises").value = ip.emprises || "";
+  $("#crDebutTravaux").value = ip.debutTravaux || "";
+  $("#crFinTravaux").value = ip.finTravaux || "";
+  $("#crRemiseVoie").value = ip.remiseVoie || "";
+  $("#crRemiseCirculation").value = ip.remiseCirculation || "";
+  const codeRadio = document.querySelector(`input[name="codeCouleur"][value="${ip.codeCouleur || 'S'}"]`);
+  if(codeRadio) codeRadio.checked = true;
+
+  $("#crMaitreOuvrage").value = ip.maitreOuvrageSociete || "";
+  $("#crReferentClient").value = ip.referentClient || "";
+  $("#crReferentTel").value = ip.referentTel || "";
+  $("#crReferentEmail").value = ip.referentEmail || "";
+  $("#crEntTravauxNom").value = ip.entrepriseTravauxNom || "";
+  $("#crEntTravauxContact").value = ip.entrepriseTravauxContact || "";
+  $("#crEntTravauxTel").value = ip.entrepriseTravauxTel || "";
+  $("#crVilleVoirieNom").value = ip.villeVoirieNom || "";
+  $("#crVilleVoirieContact").value = ip.villeVoirieContact || "";
+  $("#crVilleVoirieTel").value = ip.villeVoirieTel || "";
+  cocherPrescriptions(ip.prescriptions);
+  $("#crAvancementPhase").value = ip.avancementPhase || "";
+  $("#crPersoCompagnons").value = ip.personnelCompagnons ?? 0;
+  $("#crPersoPelles").value = ip.personnelPelles ?? 0;
+  $("#crPersoCamions").value = ip.personnelCamions ?? 0;
+  $("#crPersoNote").value = ip.personnelNote || "";
+  chargerSynthese(ip.synthese);
+  $("#crSigMoeNom").value = ip.signatureMoeNom || "";
+  $("#crSigMoeDate").value = ip.signatureMoeDate || "";
+  $("#crSigMoNom").value = ip.signatureMoNom || "";
+  $("#crSigMoDate").value = ip.signatureMoDate || "";
 
   const entiteRadio = document.querySelector(`input[name="entite"][value="${cr.entite || 'GTA GE'}"]`);
   if(entiteRadio) entiteRadio.checked = true;
@@ -898,8 +1256,10 @@ async function chargerCRPourEdition(cr){
   const photos = await getPhotosCR(cr.id);
   photosAcces.length = 0; photosAcces.push(...photos.acces);
   photosIncident.length = 0; photosIncident.push(...photos.incidents);
+  photosChantier.length = 0; photosChantier.push(...(photos.chantier||[]));
   rendreVignettes("#vignAcces", photosAcces, 'acces');
   rendreVignettes("#vignIncident", photosIncident, 'incident');
+  rendreVignettes("#vignChantier", photosChantier, 'chantier');
 
   if(cr.signature){
     signatureData = cr.signature;
@@ -918,22 +1278,72 @@ function viderFormulaire(){
   $("#crSecteur").value = ""; $("#crTravaux").value = "";
   $("#crIncidentDesc").value = ""; $("#crObs").value = "";
   $("#crPointsAbordes").value = ""; $("#crDecisions").value = ""; $("#crProchainesEtapes").value = "";
-  photosAcces.length = 0; photosIncident.length = 0; geoAcces = null; geoIncident = null;
+  $("#crSiteLoc").value = ""; $("#crNCite").value = ""; $("#crNIntervenant").value = "";
+  $("#crAdresseChantier").value = ""; $("#crEmprises").value = "";
+  $("#crDebutTravaux").value = ""; $("#crFinTravaux").value = "";
+  $("#crRemiseVoie").value = ""; $("#crRemiseCirculation").value = "";
+  const codeRadioDefaut = document.querySelector('input[name="codeCouleur"][value="S"]');
+  if(codeRadioDefaut) codeRadioDefaut.checked = true;
+  photosAcces.length = 0; photosIncident.length = 0; photosChantier.length = 0;
+  geoAcces = null; geoIncident = null; geoChantier = null;
   rendreVignettes("#vignAcces",photosAcces,'acces'); rendreVignettes("#vignIncident",photosIncident,'incident');
-  $("#geoInfoAcces").style.display = "none"; $("#geoInfoIncident").style.display = "none";
+  rendreVignettes("#vignChantier",photosChantier,'chantier');
+  $("#geoInfoAcces").style.display = "none"; $("#geoInfoIncident").style.display = "none"; $("#geoInfoChantier").style.display = "none";
   ctxSig.clearRect(0, 0, canvasSig.width, canvasSig.height);
   $("#signaturePreview").style.display = "none";
+  $("#crMaitreOuvrage").value = ""; $("#crReferentClient").value = ""; $("#crReferentTel").value = ""; $("#crReferentEmail").value = "";
+  $("#crEntTravauxNom").value = ""; $("#crEntTravauxContact").value = ""; $("#crEntTravauxTel").value = "";
+  $("#crVilleVoirieNom").value = ""; $("#crVilleVoirieContact").value = ""; $("#crVilleVoirieTel").value = "";
+  cocherPrescriptions([]);
+  $("#crAvancementPhase").value = "";
+  $("#crPersoCompagnons").value = 0; $("#crPersoPelles").value = 0; $("#crPersoCamions").value = 0; $("#crPersoNote").value = "";
+  chargerSynthese({});
+  $("#crSigMoeNom").value = ""; $("#crSigMoeDate").value = ""; $("#crSigMoNom").value = ""; $("#crSigMoDate").value = "";
   rendreFormulaireCR();
 }
-$("#btnViderCR").addEventListener("click", ()=>{ if(confirm("Vider le formulaire ?")) viderFormulaire(); });
+$("#btnViderCR").addEventListener("click", async ()=>{ if(await modalConfirm("Vider le formulaire ?")) viderFormulaire(); });
 
 $("#btnEnregistrerCR").addEventListener("click", async ()=>{
   const execs = [...document.querySelectorAll("#crExecutants input:checked")].map(i=>i.value);
   const incidents = [...document.querySelectorAll("#crIncidents input:checked")].map(i=>i.value);
-  if(!$("#crSecteur").value.trim()){ alert("Indiquez le secteur."); return; }
+  if(!$("#crSecteur").value.trim()){ await modalAlert("Indiquez le secteur."); return; }
   if(typeDocumentActuel === 'cr' && incidents.length && !$("#crIncidentDesc").value.trim()){
-    alert("Un incident est coche. Decrivez-le obligatoirement."); $("#crIncidentDesc").focus(); return;
+    await modalAlert("Un incident est coche. Decrivez-le obligatoirement."); $("#crIncidentDesc").focus(); return;
   }
+
+  const infoProjet = {
+    siteLoc: $("#crSiteLoc").value.trim(),
+    nCite: $("#crNCite").value.trim(),
+    nIntervenant: $("#crNIntervenant").value.trim(),
+    adresseChantier: $("#crAdresseChantier").value.trim(),
+    emprises: $("#crEmprises").value.trim(),
+    debutTravaux: $("#crDebutTravaux").value,
+    finTravaux: $("#crFinTravaux").value,
+    remiseVoie: $("#crRemiseVoie").value,
+    remiseCirculation: $("#crRemiseCirculation").value,
+    codeCouleur: (document.querySelector('input[name="codeCouleur"]:checked')||{}).value || "S",
+    maitreOuvrageSociete: $("#crMaitreOuvrage").value.trim(),
+    referentClient: $("#crReferentClient").value.trim(),
+    referentTel: $("#crReferentTel").value.trim(),
+    referentEmail: $("#crReferentEmail").value.trim(),
+    entrepriseTravauxNom: $("#crEntTravauxNom").value.trim(),
+    entrepriseTravauxContact: $("#crEntTravauxContact").value.trim(),
+    entrepriseTravauxTel: $("#crEntTravauxTel").value.trim(),
+    villeVoirieNom: $("#crVilleVoirieNom").value.trim(),
+    villeVoirieContact: $("#crVilleVoirieContact").value.trim(),
+    villeVoirieTel: $("#crVilleVoirieTel").value.trim(),
+    prescriptions: getPrescriptionsCochees(),
+    avancementPhase: $("#crAvancementPhase").value.trim(),
+    personnelCompagnons: parseInt($("#crPersoCompagnons").value, 10) || 0,
+    personnelPelles: parseInt($("#crPersoPelles").value, 10) || 0,
+    personnelCamions: parseInt($("#crPersoCamions").value, 10) || 0,
+    personnelNote: $("#crPersoNote").value.trim(),
+    synthese: getSynthese(),
+    signatureMoeNom: $("#crSigMoeNom").value.trim(),
+    signatureMoeDate: $("#crSigMoeDate").value,
+    signatureMoNom: $("#crSigMoNom").value.trim(),
+    signatureMoDate: $("#crSigMoDate").value
+  };
 
   const crId = idCREnEdition || uid();
   const crData = {
@@ -947,7 +1357,8 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
     prochaines_etapes: typeDocumentActuel === 'minutes' ? $("#crProchainesEtapes").value.trim() : null,
     nb_acces: photosAcces.length, nb_incident: photosIncident.length,
     auteur: utilisateur ? utilisateur.email : "hors-ligne",
-    signature: signatureData
+    signature: signatureData,
+    info_projet: infoProjet
   };
 
   if(idCREnEdition){
@@ -957,13 +1368,15 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
         date:crData.date, secteur:crData.secteur, entite:crData.entite, execs, incidents,
         travaux:crData.travaux, incidentDesc:crData.incident_desc, obs:crData.obs,
         pointsAbordes:crData.points_abordes, decisions:crData.decisions, prochainesEtapes:crData.prochaines_etapes,
-        nbAcces:crData.nb_acces, nbIncident:crData.nb_incident, modifie:Date.now(), signature:signatureData
+        nbAcces:crData.nb_acces, nbIncident:crData.nb_incident, modifie:Date.now(), signature:signatureData,
+        infoProjet
       });
       await dbUpdate('comptes_rendus', {
         date:crData.date, secteur:crData.secteur, entite:crData.entite, execs, incidents,
         travaux:crData.travaux, incident_desc:crData.incident_desc, obs:crData.obs,
         points_abordes:crData.points_abordes, decisions:crData.decisions, prochaines_etapes:crData.prochaines_etapes,
-        nb_acces:crData.nb_acces, nb_incident:crData.nb_incident, modifie:Date.now(), signature:signatureData
+        nb_acces:crData.nb_acces, nb_incident:crData.nb_incident, modifie:Date.now(), signature:signatureData,
+        info_projet: infoProjet
       }, {col:'id', val:crId});
     }
   } else {
@@ -973,7 +1386,8 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
       execs, incidents, travaux:crData.travaux, incidentDesc:crData.incident_desc, obs:crData.obs,
       pointsAbordes:crData.points_abordes, decisions:crData.decisions, prochainesEtapes:crData.prochaines_etapes,
       cree:crData.cree, statut:"brouillon", nbAcces:crData.nb_acces, nbIncident:crData.nb_incident,
-      auteur:crData.auteur, signature:signatureData
+      auteur:crData.auteur, signature:signatureData,
+      infoProjet
     });
     await dbInsert('comptes_rendus', crData);
   }
@@ -981,8 +1395,9 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
   if(sb && !modeHorsLigne){
     for(let i=0; i<photosAcces.length; i++) if(photosAcces[i].startsWith('data:')) await uploadPhoto(crId, 'acces', photosAcces[i], i);
     for(let i=0; i<photosIncident.length; i++) if(photosIncident[i].startsWith('data:')) await uploadPhoto(crId, 'incident', photosIncident[i], i);
+    for(let i=0; i<photosChantier.length; i++) if(photosChantier[i].startsWith('data:')) await uploadPhoto(crId, 'chantier', photosChantier[i], i);
   } else {
-    lsEcrire("gta1914e_photos_"+crId, {acces:[...photosAcces], incidents:[...photosIncident]});
+    lsEcrire("gta1914e_photos_"+crId, {acces:[...photosAcces], incidents:[...photosIncident], chantier:[...photosChantier]});
   }
 
   viderFormulaire(); sauverLocal(); rendreHistorique();
@@ -1047,14 +1462,14 @@ function rendreHistorique(){
         <button class="btn btn-danger btn-petit" data-a="supprimer">Supprimer</button>
       </div>`;
     div.querySelector('[data-a="imprimer"]').addEventListener("click", ()=>imprimerCR(cr));
-    div.querySelector('[data-a="email"]').addEventListener("click", ()=>preparerEmail(cr));
+    div.querySelector('[data-a="email"]').addEventListener("click", async ()=>{ await preparerEmail(cr); });
     div.querySelector('[data-a="modifier"]').addEventListener("click", ()=>chargerCRPourEdition(cr));
     const bE = div.querySelector('[data-a="envoye"]');
     if(bE) bE.addEventListener("click", async ()=>{ cr.statut="envoye"; cr.envoye=Date.now(); await dbUpdate('comptes_rendus',{statut:"envoye",envoye:cr.envoye},{col:'id',val:cr.id}); sauverLocal(); rendreHistorique(); });
     const bA = div.querySelector('[data-a="annuler-envoi"]');
     if(bA) bA.addEventListener("click", async ()=>{ cr.statut="brouillon"; delete cr.envoye; await dbUpdate('comptes_rendus',{statut:"brouillon",envoye:null},{col:'id',val:cr.id}); sauverLocal(); rendreHistorique(); });
     div.querySelector('[data-a="supprimer"]').addEventListener("click", async ()=>{
-      if(!confirm("Supprimer definitivement ?")) return;
+      if(!(await modalConfirm("Supprimer definitivement ?"))) return;
       etat.crs = etat.crs.filter(c=>c.id!==cr.id);
       await dbDelete('comptes_rendus',{col:'id',val:cr.id});
       lsSuppr("gta1914e_photos_"+cr.id);
@@ -1084,6 +1499,17 @@ function exporterCSV(){
   const a = document.createElement("a"); a.href = url; a.download = "gta1914e_liste_"+new Date().toISOString().slice(0,10)+".csv"; a.click(); URL.revokeObjectURL(url);
 }
 $("#btnExporterCSV").addEventListener("click", exporterCSV);
+
+function pdfSautPage(doc, y, hauteurNecessaire){
+  if(y + hauteurNecessaire > 270){
+    doc.addPage();
+    doc.setFillColor(26,26,26); doc.rect(0,0,210,10,"F");
+    doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont("helvetica","bold");
+    doc.text("GTA ENERGIES — Mission 1914_E (suite)", 14, 6.5);
+    return 18;
+  }
+  return y;
+}
 
 async function exporterPDF(cr){
   const photos = await getPhotosCR(cr.id);
@@ -1177,10 +1603,106 @@ async function exporterPDF(cr){
   doc.setTextColor(26,26,26); doc.setFont("helvetica","normal");
   const obs = doc.splitTextToSize(cr.obs || "—", 170);
   doc.text(obs, 16, y);
+  y += obs.length * 4.5 + 6;
+
+  // === Sections issues du referentiel VIGIE Chantiers (Client, Prescriptions, Avancement, Personnels, Photos chantier, Synthese, Validation) ===
+  const ip = cr.infoProjet || {};
+  let numSuite = cr.type === 'minutes' ? 6 : 5;
+
+  const dessinerBandeau = (titre)=>{
+    doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
+    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(9);
+    doc.text(numSuite + ". " + titre, 16, y+4.5); numSuite++;
+    y += 9;
+    doc.setTextColor(26,26,26); doc.setFont("helvetica","normal");
+  };
+
+  // Client & intervenants
+  y = pdfSautPage(doc, y, 57);
+  dessinerBandeau("CLIENT & INTERVENANTS DU PROJET");
+  const clientLignes = [
+    ["Maitre d'ouvrage", ip.maitreOuvrageSociete || "—"],
+    ["Referent client", [ip.referentClient, ip.referentTel, ip.referentEmail].filter(Boolean).join(" / ") || "—"],
+    ["Entreprise travaux", [ip.entrepriseTravauxNom, ip.entrepriseTravauxContact, ip.entrepriseTravauxTel].filter(Boolean).join(" / ") || "—"],
+    ["Ville / Voirie", [ip.villeVoirieNom, ip.villeVoirieContact, ip.villeVoirieTel].filter(Boolean).join(" / ") || "—"]
+  ];
+  clientLignes.forEach(([label,val])=>{
+    doc.setFillColor(245,245,245); doc.rect(14, y, 45, 7, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.text(label, 16, y+5);
+    doc.setFont("helvetica","normal");
+    doc.text(doc.splitTextToSize(String(val), 130), 61, y+5);
+    y += 8;
+  });
+  y += 3;
+
+  // Prescriptions particulieres
+  const prescriptions = ip.prescriptions || [];
+  y = pdfSautPage(doc, y, 9 + Math.max(1, prescriptions.length) * 5);
+  dessinerBandeau("PRESCRIPTIONS PARTICULIERES A RESPECTER");
+  if(prescriptions.length){
+    prescriptions.forEach(p=>{
+      const lignes = doc.splitTextToSize("• " + p, 175);
+      doc.text(lignes, 16, y); y += lignes.length * 4.5 + 1;
+    });
+  } else { doc.text("Aucune prescription cochee.", 16, y); y += 5; }
+  y += 3;
+
+  // Avancement & points releves
+  const avancTxt = doc.splitTextToSize(ip.avancementPhase || "—", 170);
+  y = pdfSautPage(doc, y, 9 + avancTxt.length * 4.5 + 4);
+  dessinerBandeau("AVANCEMENT & POINTS RELEVES");
+  doc.text(avancTxt, 16, y); y += avancTxt.length * 4.5 + 4;
+
+  // Personnels & materiels
+  const persoNoteTxt = doc.splitTextToSize(ip.personnelNote || "—", 170);
+  y = pdfSautPage(doc, y, 9 + 7 + persoNoteTxt.length * 4.5 + 4);
+  dessinerBandeau("PERSONNELS & MATERIELS");
+  doc.setFillColor(245,245,245); doc.rect(14, y, 182, 7, "F");
+  doc.setFont("helvetica","normal"); doc.setFontSize(8);
+  doc.text("Compagnons : " + (ip.personnelCompagnons||0) + "     Pelles mecaniques : " + (ip.personnelPelles||0) + "     Camions : " + (ip.personnelCamions||0), 16, y+5);
+  y += 10;
+  doc.text(persoNoteTxt, 16, y); y += persoNoteTxt.length * 4.5 + 4;
+
+  // Photos du chantier (compte uniquement, comme pour les autres zones photo de cet export)
+  y = pdfSautPage(doc, y, 15);
+  dessinerBandeau("PHOTOS DU CHANTIER");
+  const nbPhotosChantier = (photos.chantier||[]).length;
+  doc.text(nbPhotosChantier ? nbPhotosChantier + " photo(s) jointe(s) — voir l'apercu/impression pour les visualiser." : "Aucune photo.", 16, y);
+  y += 8;
+
+  // Synthese suivi chantier
+  y = pdfSautPage(doc, y, 9 + SYNTHESE_ITEMS.length * 6);
+  dessinerBandeau("SYNTHESE SUIVI CHANTIER");
+  SYNTHESE_ITEMS.forEach(item=>{
+    const d = (ip.synthese && ip.synthese[item.cle]) || {};
+    const libStatut = (STATUTS_SYNTHESE.find(s=>s.valeur===(d.statut||"conforme"))||{}).libelle || "—";
+    y = pdfSautPage(doc, y, 6);
+    doc.setFont("helvetica","bold"); doc.setFontSize(8);
+    doc.text(item.libelle, 16, y);
+    doc.setFont("helvetica","normal");
+    doc.text(libStatut + (d.obs ? " — " + d.obs : ""), 100, y);
+    y += 5;
+  });
+  y += 4;
+
+  // Validation & signatures
+  y = pdfSautPage(doc, y, 25);
+  dessinerBandeau("VALIDATION & SIGNATURES");
+  doc.setFillColor(245,245,245); doc.rect(14, y, 182, 7, "F");
+  doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.text("Pour le maitre d'oeuvre — GTA Energies", 16, y+5);
+  doc.setFont("helvetica","normal");
+  doc.text((ip.signatureMoeNom || "Nom du signataire") + " — " + (ip.signatureMoeDate ? frDate(ip.signatureMoeDate) : "—"), 105, y+5);
+  y += 8;
+  doc.setFillColor(245,245,245); doc.rect(14, y, 182, 7, "F");
+  doc.setFont("helvetica","bold");
+  doc.text("Visa du maitre d'ouvrage" + (ip.maitreOuvrageSociete ? " — " + ip.maitreOuvrageSociete : ""), 16, y+5);
+  doc.setFont("helvetica","normal");
+  doc.text((ip.signatureMoNom || "Nom du signataire") + " — " + (ip.signatureMoDate ? frDate(ip.signatureMoDate) : "—"), 105, y+5);
+  y += 10;
 
   // Signature
   if(cr.signature){
-    y += obs.length * 4.5 + 6;
+    y = pdfSautPage(doc, y, 40);
     doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
     doc.setTextColor(255,255,255); doc.setFont("helvetica","bold");
     doc.text("SIGNATURE", 16, y+4.5); y += 9;
@@ -1214,24 +1736,35 @@ async function exporterPDF(cr){
   doc.save(prefix + "_"+cr.date+"_"+cr.secteur.replace(/\s+/g,"_").substring(0,30)+".pdf");
 }
 
-$("#btnExporterPDF").addEventListener("click", ()=>{
+$("#btnExporterPDF").addEventListener("click", async ()=>{
   const liste = crsFiltres();
-  if(liste.length===0){ alert("Aucun document a exporter."); return; }
+  if(liste.length===0){ await modalAlert("Aucun document a exporter."); return; }
   if(liste.length===1){ exporterPDF(liste[0]); }
   else {
     const choix = liste.map((cr,i)=>(i+1)+": "+(cr.type==='minutes'?'MINUTES':'CR')+" "+cr.date+" — "+cr.secteur).join(String.fromCharCode(10));
-    const rep = prompt("Plusieurs documents. Entrez le numero:" + String.fromCharCode(10) + choix);
+    const rep = await modalPrompt("Plusieurs documents. Entrez le numero:" + String.fromCharCode(10) + choix);
     const idx = parseInt(rep,10)-1;
     if(idx>=0 && idx<liste.length) exporterPDF(liste[idx]);
   }
 });
 
-function preparerEmail(cr){
+async function preparerEmail(cr){
   const typeLabel = cr.type === 'minutes' ? 'Minutes de chantier' : 'Compte-rendu';
   const sujet = typeLabel + " " + cr.date + " — " + cr.secteur + " — Mission 1914_E";
   const corps = "Bonjour " + CONTACT_DESTINATAIRE.civilite + "," + String.fromCharCode(10,10) + "Veuillez trouver ci-joint le " + typeLabel.toLowerCase() + " du " + frDate(cr.date) + " (secteur : " + cr.secteur + ")." + String.fromCharCode(10,10) + "Entite : " + (cr.entite || "GTA GE") + String.fromCharCode(10) + "Executants : " + (cr.execs.join(", ") || "—") + String.fromCharCode(10) + (cr.type === 'cr' ? "Incidents : " + (cr.incidents.length ? cr.incidents.join(" ; ") : "RAS") : "Points abordes : " + (cr.pointsAbordes || "—")) + String.fromCharCode(10,10) + "Le document au format PDF ainsi que les photos sont joints." + String.fromCharCode(10,10) + "Cordialement,";
   location.href = "mailto:m.dejesus@gtage.fr?subject="+encodeURIComponent(sujet)+"&body="+encodeURIComponent(corps);
-  alert("N'oubliez pas de joindre le PDF et les photos.");
+  await modalAlert("N'oubliez pas de joindre le PDF et les photos.");
+}
+
+function refDocument(cr){
+  const prefix = cr.type === 'minutes' ? 'MC' : 'CR';
+  const memeType = etat.crs.filter(c=>c.type===cr.type).slice().sort((a,b)=>(a.cree||0)-(b.cree||0));
+  const idx = memeType.findIndex(c=>c.id===cr.id);
+  return prefix + String(idx>=0 ? idx+1 : 1).padStart(2,'0');
+}
+
+function bandeauSection(numero, titre){
+  return `<div class="section-title"><span class="num-badge">${numero}</span>${echap(titre)}</div>`;
 }
 
 async function imprimerCR(cr){
@@ -1239,24 +1772,133 @@ async function imprimerCR(cr){
   const z = $("#zoneImpression");
   const badgeIncidents = cr.incidents.length ? `<span class="badge-print">${cr.incidents.length} incident(s)</span>` : `<span class="badge-print badge-print-ok">RAS</span>`;
   const typeLabel = cr.type === 'minutes' ? 'MINUTES DE CHANTIER' : "COMPTE-RENDU D'INTERVENTION";
+  const ip = cr.infoProjet || {};
+  let n = 1;
+
+  const sectionInfoProjet = `
+      <div class="section-print">
+        ${bandeauSection(n++, "Informations projet")}
+        <div class="section-body">
+          <div style="font-size:10.5px;color:var(--gris-label);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px">Site de localisation du projet</div>
+          <div style="font-weight:600;margin-bottom:8px">${echap(ip.siteLoc || "—")}</div>
+        </div>
+        <table class="info-table info-table-projet">
+          <tr><th>N&deg; cite / N&deg; de demande</th><td>${echap(ip.nCite||"—")}</td><th>N&deg; intervenant</th><td>${echap(ip.nIntervenant||"—")}</td></tr>
+          <tr><th>Adresse du chantier</th><td colspan="3">${echap(ip.adresseChantier||"—")}</td></tr>
+          <tr><th>Emprise(s) / Parite</th><td>${echap(ip.emprises||"—")}</td><th>Debut des travaux</th><td>${ip.debutTravaux?frDate(ip.debutTravaux):"—"}</td></tr>
+          <tr><th>Fin des travaux</th><td>${ip.finTravaux?frDate(ip.finTravaux):"—"}</td><th>Remise en etat de la voie</th><td>${ip.remiseVoie?frDate(ip.remiseVoie):"—"}</td></tr>
+          <tr><th>Remise a la circulation</th><td colspan="3">${ip.remiseCirculation?frDate(ip.remiseCirculation):"—"}</td></tr>
+        </table>
+        <div style="margin-top:8px;padding:6px 10px;background:#FAFAFA;border:1px solid var(--ligne);font-size:10px"><b>Code couleur :</b> ${echap(LABELS_CODE_COULEUR[ip.codeCouleur] || "—")}</div>
+      </div>`;
+
+  const sectionMoe = etat.moe.length ? `
+      <div class="section-print">
+        ${bandeauSection(n++, "Maitrise d'oeuvre — GTA Energies")}
+        <div class="section-body">
+          ${etat.moe.map(m=>`<div style="margin-bottom:8px"><div style="font-weight:700">${echap(m.nom)}</div><div style="color:var(--rouge);font-style:italic;font-size:10.5px">${echap(m.role||"—")}</div><div style="color:var(--acier);font-size:10px">${echap([m.tel,m.email].filter(Boolean).join(" / ")||"—")}</div></div>`).join("")}
+        </div>
+      </div>` : '';
+
+  const sectionClient = `
+      <div class="section-print">
+        ${bandeauSection(n++, "Client & intervenants du projet")}
+        <table class="info-table">
+          <tr><th>Maitre d'ouvrage (societe)</th><td>${echap(ip.maitreOuvrageSociete||"—")}</td><th>Referent client</th><td>${echap(ip.referentClient||"—")}</td></tr>
+          <tr><th>Telephone</th><td>${echap(ip.referentTel||"—")}</td><th>E-mail</th><td>${echap(ip.referentEmail||"—")}</td></tr>
+        </table>
+        <div class="section-body" style="margin-top:8px">
+          <div style="font-weight:700;color:var(--rouge);font-size:10.5px;margin-bottom:3px">Entreprise travaux</div>
+          <div>${echap(ip.entrepriseTravauxNom||"—")}</div>
+          <div style="color:var(--acier);font-size:10px">${echap([ip.entrepriseTravauxContact, ip.entrepriseTravauxTel].filter(Boolean).join(" / ")||"—")}</div>
+          <div style="font-weight:700;color:var(--rouge);font-size:10.5px;margin:8px 0 3px">Ville / Voirie</div>
+          <div>${echap(ip.villeVoirieNom||"—")}</div>
+          <div style="color:var(--acier);font-size:10px">${echap([ip.villeVoirieContact, ip.villeVoirieTel].filter(Boolean).join(" / ")||"—")}</div>
+        </div>
+      </div>`;
+
+  const sectionPrescriptions = `
+      <div class="section-print">
+        ${bandeauSection(n++, "Prescriptions particulieres a respecter")}
+        <div class="section-body">
+          ${(ip.prescriptions&&ip.prescriptions.length) ? `<ul style="margin-left:16px">${ip.prescriptions.map(p=>`<li>${echap(p)}</li>`).join("")}</ul>` : "Aucune prescription cochee."}
+        </div>
+      </div>`;
+
+  const sectionAvancement = `
+      <div class="section-print">
+        ${bandeauSection(n++, "Avancement & points releves")}
+        <div class="section-body">
+          <div style="font-size:10.5px;color:var(--gris-label);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px">Avancement des travaux (phase en cours)</div>
+          ${echap(ip.avancementPhase||"—").replace(/\n/g,"<br>")}
+        </div>
+      </div>`;
+
+  const sectionPersonnels = `
+      <div class="section-print">
+        ${bandeauSection(n++, "Personnels & materiels")}
+        <table class="info-table">
+          <tr><th>Compagnons</th><td>${ip.personnelCompagnons||0}</td><th>Pelles mecaniques</th><td>${ip.personnelPelles||0}</td><th>Camions</th><td>${ip.personnelCamions||0}</td></tr>
+        </table>
+        <div class="section-body" style="margin-top:6px">${echap(ip.personnelNote||"—").replace(/\n/g,"<br>")}</div>
+      </div>`;
+
+  const sectionPhotosChantier = `
+      <div class="section-print">
+        ${bandeauSection(n++, "Photos du chantier")}
+        <div class="section-body">${(photos.chantier&&photos.chantier.length) ? `<div class="photos-print">${photos.chantier.map(s=>`<img src="${s}">`).join("")}</div>` : "Aucune photo."}</div>
+      </div>`;
+
+  const sectionSynthese = `
+      <div class="section-print">
+        ${bandeauSection(n++, "Synthese suivi chantier")}
+        <table class="info-table">
+          ${SYNTHESE_ITEMS.map(item=>{
+            const d = (ip.synthese && ip.synthese[item.cle]) || {};
+            const libStatut = (STATUTS_SYNTHESE.find(s=>s.valeur===(d.statut||"conforme"))||{}).libelle || "—";
+            return `<tr><th>${echap(item.libelle)}</th><td>${echap(libStatut)}${d.obs?` — ${echap(d.obs)}`:""}</td></tr>`;
+          }).join("")}
+        </table>
+      </div>`;
+
+  const sectionValidation = `
+      <div class="section-print">
+        ${bandeauSection(n++, "Validation & signatures")}
+        <table class="info-table">
+          <tr><th>Pour le maitre d'oeuvre — GTA Energies</th><td>${echap(ip.signatureMoeNom||"Nom du signataire")} — ${ip.signatureMoeDate?frDate(ip.signatureMoeDate):"—"}</td></tr>
+          <tr><th>Visa du maitre d'ouvrage${ip.maitreOuvrageSociete?" — "+echap(ip.maitreOuvrageSociete):""}</th><td>${echap(ip.signatureMoNom||"Nom du signataire")} — ${ip.signatureMoDate?frDate(ip.signatureMoDate):"—"}</td></tr>
+        </table>
+      </div>`;
 
   z.innerHTML = `<div class="page-cr">
     <div class="header-print">
       <div class="logo-area">
-        <div class="logo-placeholder" style="background:linear-gradient(135deg,#E31E24 0%,#00A0E3 100%);color:#fff;border:none;font-size:18px;font-family:var(--display)">GTA</div>
+        <div class="logo-placeholder">GTA</div>
         <div>
-          <h1>GTA <span style="color:#E31E24">E</span><span style="color:#00A0E3">N</span><span style="color:#E31E24">E</span><span style="color:#00A0E3">R</span><span style="color:#E31E24">G</span><span style="color:#00A0E3">I</span><span style="color:#E31E24">E</span><span style="color:#00A0E3">S</span></h1>
+          <h1>GTA <span style="color:var(--rouge)">Energies</span></h1>
           <div class="subtitle">by Vulcain · Mission 1914_E — Releve des galeries & egouts</div>
         </div>
       </div>
+      <div class="app-tag-print">VIGIE Chantiers<br>GTA Energies</div>
+    </div>
+    <div class="titre-doc-print">
+      <div>
+        <div class="titre">${typeLabel}</div>
+        <div class="sous">${echap(cr.secteur)} · ${frDate(cr.date)}</div>
+      </div>
+      <div class="ref-badge">${refDocument(cr)}</div>
     </div>
     <div class="content-print">
-      <div style="text-align:center;margin-bottom:12px">
-        <div style="font-family:var(--display);font-size:18px;text-transform:uppercase;letter-spacing:.05em">${typeLabel}</div>
-        <div style="font-family:var(--mono);font-size:11px;color:#666;margin-top:2px">Document du ${frDate(cr.date)}</div>
-      </div>
+      ${sectionInfoProjet}
+      ${sectionMoe}
+      ${sectionClient}
+      ${sectionPrescriptions}
+      ${sectionAvancement}
+      ${sectionPersonnels}
+      ${sectionPhotosChantier}
+      ${sectionSynthese}
       <div class="section-print">
-        <div class="section-title">1. Informations generales</div>
+        ${bandeauSection(n++, "Informations generales")}
         <table class="info-table">
           <tr><th>Mission</th><td>1914_E — Releve des galeries et egouts</td></tr>
           <tr><th>Date</th><td>${frDate(cr.date)}</td></tr>
@@ -1268,33 +1910,38 @@ async function imprimerCR(cr){
         </table>
       </div>
       <div class="section-print">
-        <div class="section-title">2. ${cr.type==='minutes'?'Points abordes':'Travaux realises'}</div>
+        ${bandeauSection(n++, cr.type==='minutes'?'Points abordes':'Travaux realises')}
         <div class="section-body">${echap(cr.travaux||"—").replace(/\n/g,"<br>")}</div>
       </div>
       ${cr.type==='minutes' ? `
       <div class="section-print">
-        <div class="section-title">3. Decisions prises</div>
+        ${bandeauSection(n++, "Decisions prises")}
         <div class="section-body">${echap(cr.decisions||"—").replace(/\n/g,"<br>")}</div>
       </div>
       <div class="section-print">
-        <div class="section-title">4. Prochaines etapes</div>
+        ${bandeauSection(n++, "Prochaines etapes")}
         <div class="section-body">${echap(cr.prochainesEtapes||"—").replace(/\n/g,"<br>")}</div>
+      </div>
+      <div class="section-print">
+        ${bandeauSection(n++, "Photos")}
+        <div class="section-body">${photos.acces.length ? `<div class="photos-print">${photos.acces.map(s=>`<img src="${s}">`).join("")}</div>` : "Aucune photo."}</div>
       </div>
       ` : `
       <div class="section-print">
-        <div class="section-title">3. Photos BR acces</div>
+        ${bandeauSection(n++, "Photos BR acces")}
         <div class="section-body">${photos.acces.length ? `<div class="photos-print">${photos.acces.map(s=>`<img src="${s}">`).join("")}</div>` : "Aucune photo."}</div>
       </div>
       <div class="section-print">
-        <div class="section-title">4. Incidents remarques</div>
+        ${bandeauSection(n++, "Incidents remarques")}
         <div class="section-body">${cr.incidents.length ? `<ul style="margin-left:16px">${cr.incidents.map(i=>`<li>${echap(i)}</li>`).join("")}</ul><div style="margin-top:6px">${echap(cr.incidentDesc||"—").replace(/\n/g,"<br>")}</div>${photos.incidents.length ? `<div class="photos-print" style="margin-top:8px">${photos.incidents.map(s=>`<img src="${s}">`).join("")}</div>` : ""}` : "Rien a signaler."}</div>
       </div>
       `}
       <div class="section-print">
-        <div class="section-title">${cr.type==='minutes'?'5':'4'}. Observations & suites</div>
+        ${bandeauSection(n++, "Observations & suites")}
         <div class="section-body">${echap(cr.obs||"—").replace(/\n/g,"<br>")}</div>
       </div>
-      ${cr.signature ? `<div class="section-print signature-print"><div class="section-title">Signature</div><img src="${cr.signature}"></div>` : ''}
+      ${sectionValidation}
+      ${cr.signature ? `<div class="section-print signature-print">${bandeauSection(n++,"Signature")}<img src="${cr.signature}"></div>` : ''}
     </div>
     <div class="footer-print">
       <div>GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid<br>1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr<br>Document genere le ${new Date().toLocaleDateString("fr-FR")} a ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</div>
@@ -1314,7 +1961,7 @@ function rendreEquipe(){
       const p = document.createElement("span"); p.className = "puce";
       p.innerHTML = `${echap(nom)} <button style="border:none;background:none;cursor:pointer;color:var(--alerte);font-weight:700">&#10005;</button>`;
       p.querySelector("button").addEventListener("click", async ()=>{
-        if(!confirm("Retirer "+nom+" ?")) return;
+        if(!(await modalConfirm("Retirer "+nom+" ?"))) return;
         etat.equipe[entite] = etat.equipe[entite].filter(n=>n!==nom);
         await dbDelete('equipe', {col:'nom', val:nom});
         sauverLocal(); rendreEquipe(); rendreFormulaireCR(); rendrePlanning();
@@ -1327,22 +1974,50 @@ function rendreEquipe(){
   renderList("#listeEquipeST", "SOUS-TRAITANT");
 }
 
-function ajouterExec(inputId, entite){
-  const nom = $(inputId).value.trim();
+async function ajouterExec(inputId, entite){
+  const champ = $("#"+inputId);
+  const nom = champ.value.trim();
   if(!nom) return;
   const existeDeja = (etat.equipe["GTA GE"].some(n=>n.toLowerCase()===nom.toLowerCase()) || etat.equipe["GTA ENERGIES"].some(n=>n.toLowerCase()===nom.toLowerCase()) || etat.equipe["SOUS-TRAITANT"].some(n=>n.toLowerCase()===nom.toLowerCase()));
-  if(existeDeja){ alert("Cet executant existe deja dans une entite."); $(inputId).value=""; return; }
-  etat.equipe[entite].push(nom); $(inputId).value = "";
+  if(existeDeja){ await modalAlert("Cet executant existe deja dans une entite."); champ.value=""; return; }
+  etat.equipe[entite].push(nom); champ.value = "";
   dbInsert('equipe', {nom, entite});
   sauverLocal(); rendreEquipe(); rendreFormulaireCR(); rendrePlanning();
 }
 
-$("#btnAjoutExecGTA").addEventListener("click", ()=>ajouterExec("nvExecGTA", "GTA GE"));
-$("#nvExecGTA").addEventListener("keydown", e=>{ if(e.key==="Enter") ajouterExec("nvExecGTA", "GTA GE"); });
-$("#btnAjoutExecEnergies").addEventListener("click", ()=>ajouterExec("nvExecEnergies", "GTA ENERGIES"));
-$("#nvExecEnergies").addEventListener("keydown", e=>{ if(e.key==="Enter") ajouterExec("nvExecEnergies", "GTA ENERGIES"); });
-$("#btnAjoutExecST").addEventListener("click", ()=>ajouterExec("nvExecST", "SOUS-TRAITANT"));
-$("#nvExecST").addEventListener("keydown", e=>{ if(e.key==="Enter") ajouterExec("nvExecST", "SOUS-TRAITANT"); });
+function rendreMoe(){
+  const l = $("#listeMoe");
+  l.innerHTML = etat.moe.length ? "" : `<span style="color:var(--acier)">Aucun contact Maitrise d'oeuvre.</span>`;
+  etat.moe.forEach(m=>{
+    const d = document.createElement("div"); d.className = "moe-carte";
+    d.innerHTML = `<div><div class="nom">${echap(m.nom)}</div>${m.role ? `<div class="role">${echap(m.role)}</div>` : ""}<div class="coord">${[m.tel,m.email].filter(Boolean).map(echap).join(" / ")||"—"}</div></div><button style="border:none;background:none;cursor:pointer;color:var(--alerte);font-weight:700" title="Retirer">&#10005;</button>`;
+    d.querySelector("button").addEventListener("click", async ()=>{
+      if(!(await modalConfirm("Retirer "+m.nom+" ?"))) return;
+      etat.moe = etat.moe.filter(x=>x.id!==m.id);
+      await dbDelete('contacts_moe', {col:'id', val:m.id});
+      sauverLocal(); rendreMoe();
+    });
+    l.appendChild(d);
+  });
+}
+
+async function ajouterMoe(){
+  const nom = $("#nvMoeNom").value.trim();
+  if(!nom){ await modalAlert("Indiquez un nom."); return; }
+  const contact = { id: uid(), nom, role: $("#nvMoeRole").value.trim(), tel: $("#nvMoeTel").value.trim(), email: $("#nvMoeEmail").value.trim() };
+  etat.moe.push(contact);
+  $("#nvMoeNom").value=""; $("#nvMoeRole").value=""; $("#nvMoeTel").value=""; $("#nvMoeEmail").value="";
+  dbInsert('contacts_moe', {id:contact.id, nom:contact.nom, role:contact.role, tel:contact.tel, email:contact.email, cree:Date.now()});
+  sauverLocal(); rendreMoe();
+}
+$("#btnAjoutMoe").addEventListener("click", ajouterMoe);
+
+$("#btnAjoutExecGTA").addEventListener("click", async ()=>{ await ajouterExec("nvExecGTA", "GTA GE"); });
+$("#nvExecGTA").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecGTA", "GTA GE"); });
+$("#btnAjoutExecEnergies").addEventListener("click", async ()=>{ await ajouterExec("nvExecEnergies", "GTA ENERGIES"); });
+$("#nvExecEnergies").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecEnergies", "GTA ENERGIES"); });
+$("#btnAjoutExecST").addEventListener("click", async ()=>{ await ajouterExec("nvExecST", "SOUS-TRAITANT"); });
+$("#nvExecST").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecST", "SOUS-TRAITANT"); });
 
 // === EXPORT / IMPORT ===
 async function exporterDonnees(){
@@ -1356,8 +2031,8 @@ async function exporterDonnees(){
 async function importerDonnees(fichier){
   let paquet;
   try{ paquet = JSON.parse(await fichier.text()); }
-  catch(e){ alert("Fichier invalide."); return; }
-  if(!confirm("L'import remplace toutes les donnees. Continuer ?")) return;
+  catch(e){ await modalAlert("Fichier invalide."); return; }
+  if(!(await modalConfirm("L'import remplace toutes les donnees. Continuer ?"))) return;
   etat.equipe = paquet.equipe || {"GTA GE":[],"GTA ENERGIES":[],"SOUS-TRAITANT":[]};
   etat.semaines = paquet.semaines || []; etat.crs = paquet.crs || [];
   sauverLocal();
@@ -1370,7 +2045,7 @@ async function importerDonnees(fichier){
     }
   }
   rendrePlanning(); rendreFormulaireCR(); rendreHistorique(); rendreEquipe();
-  alert("Import termine.");
+  await modalAlert("Import termine.");
 }
 $("#btnExporter").addEventListener("click", exporterDonnees);
 $("#btnImporter").addEventListener("click", ()=>$("#fichImport").click());
