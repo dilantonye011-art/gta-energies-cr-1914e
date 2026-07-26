@@ -30,6 +30,18 @@
   nav button:hover{color:var(--bitume)}
   nav button.actif{color:var(--bitume);border-bottom-color:var(--rouge)}
   nav button .pastille{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--alerte);margin-left:5px;vertical-align:middle}
+  #navToggle{display:none;appearance:none;border:none;background:none;cursor:pointer;padding:8px;margin-right:auto;flex-shrink:0}
+  #navToggle span{display:block;width:26px;height:3px;background:#fff;border-radius:2px;margin:5px 0;transition:transform .2s ease, opacity .2s ease}
+  #navToggle.ouvert span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+  #navToggle.ouvert span:nth-child(2){opacity:0}
+  #navToggle.ouvert span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+  @media(max-width:760px){
+    #navToggle{display:block}
+    nav{display:none !important;flex-direction:column;padding:6px 8px;overflow-x:visible}
+    nav.ouvert{display:flex !important}
+    nav button{width:100%;text-align:left;padding:12px 10px;border-bottom:1px solid var(--ligne);border-left:3px solid transparent}
+    nav button.actif{border-bottom-color:var(--ligne);border-left-color:var(--rouge)}
+  }
   main{max-width:960px;margin:0 auto;padding:22px 16px 80px}
   .vue{display:none}
   .vue.active{display:block}
@@ -157,6 +169,10 @@
     .page-cr .num-badge{background:#fff;color:var(--rouge);width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
     .page-cr .section-body{border:1px solid var(--ligne);border-top:none;padding:8px 10px;background:#fff}
     .page-cr .info-table{width:100%;border-collapse:collapse}
+    .page-cr .sig-bloc-print{border:1px solid var(--ligne);border-radius:6px;padding:8px 10px;margin-bottom:8px}
+    .page-cr .sig-bloc-titre{font-weight:700;color:var(--rouge);font-size:10.5px;margin-bottom:4px}
+    .page-cr .sig-img-print{max-height:50px;max-width:180px;margin-top:6px;display:block}
+    .page-cr .sig-vide-print{color:var(--gris-label);font-size:10px;font-style:italic;margin-top:4px}
     .page-cr .info-table td,.page-cr .info-table th{border:1px solid var(--ligne);padding:6px 8px;font-size:10.5px;vertical-align:top}
     .page-cr .info-table th{background:#FAFAFA;color:var(--gris-label);width:28%;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:.03em}
     .page-cr .info-table td{font-weight:600;color:var(--bitume)}
@@ -168,6 +184,10 @@
     .page-cr .badge-print-ok{border-color:#1E7A46;color:#1E7A46;background:#EAF4EE}
     .page-cr .footer-print{background:#fff;color:var(--acier);padding:6mm 15mm;font-size:9px;display:flex;justify-content:space-between;align-items:center;margin-top:10mm;border-top:3px solid var(--rouge)}
     .page-cr .signature-print{margin-top:10px;border-top:1px solid #ccc;padding-top:8px}
+    .page-cr .sig-bloc-print{border:1px solid var(--ligne);padding:8px 10px;margin-bottom:8px;background:#fff}
+    .page-cr .sig-bloc-titre{font-weight:700;color:var(--rouge);font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
+    .page-cr .sig-img-print{max-height:60px;max-width:200px;margin-top:6px;display:block}
+    .page-cr .sig-vide-print{color:var(--acier);font-style:italic;font-size:10px;margin-top:6px}
     .page-cr .signature-print img{max-height:60px}
   }
 
@@ -214,6 +234,7 @@
 <div class="hazard"></div>
 
 <div class="user-bar" id="userBar" style="display:none">
+  <button id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span><span></span></button>
   <span class="sync-indicator" id="syncIndicator"><span class="sync-dot"></span> Synchro active</span>
   <span id="userEmail"></span>
   <button id="btnDeconnexion">Deconnexion</button>
@@ -293,8 +314,17 @@
 
     <div class="carte">
       <h3>Informations projet</h3>
-      <label for="crSiteLoc">Site de localisation du projet</label>
-      <input type="text" id="crSiteLoc" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris — angle Malesherbes / coordonnees GPS">
+      <div class="grille2">
+        <div><label for="crNumeroAffaire">N&deg; d'affaire</label><input type="text" id="crNumeroAffaire" placeholder="Ex. : E190482"></div>
+        <div><label for="crSiteLoc">Site de localisation du projet</label><input type="text" id="crSiteLoc" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris — angle Malesherbes / coordonnees GPS"></div>
+      </div>
+      <div class="carte" id="blocPhotosLocalisation" style="margin-top:10px;background:#FBFBFA">
+        <label style="margin-top:0">Photo de localisation du chantier</label>
+        <div class="zone-photos" id="zoneLocalisation">&#128247; Ajouter une photo de localisation — cliquez ou deposez</div>
+        <input type="file" id="fichLocalisation" accept="image/*" multiple hidden>
+        <div class="vignettes" id="vignLocalisation"></div>
+        <div class="photo-geo-info" id="geoInfoLocalisation" style="display:none"></div>
+      </div>
       <div class="grille3">
         <div><label for="crNCite">N&deg; cite / N&deg; de demande</label><input type="text" id="crNCite" placeholder="Ex. : 202500898402 / 934244"></div>
         <div><label for="crNIntervenant">N&deg; intervenant</label><input type="text" id="crNIntervenant" placeholder="Ex. : 19911 — EP-0000003809"></div>
@@ -400,11 +430,20 @@
         <div><label for="crSigMoeNom">Nom du signataire</label><input type="text" id="crSigMoeNom"></div>
         <div><label for="crSigMoeDate">Date</label><input type="date" id="crSigMoeDate"></div>
       </div>
+      <div class="signature-zone">
+      <canvas id="canvasSigMoe" width="600" height="120"></canvas>
+      </div>
+      <div class="actions"><button type="button" class="btn btn-ligne btn-petit" id="btnEffacerSigMoe">Effacer</button></div>
+
       <label style="margin-top:16px">Visa du maitre d'ouvrage</label>
       <div class="grille2">
         <div><label for="crSigMoNom">Nom du signataire</label><input type="text" id="crSigMoNom"></div>
         <div><label for="crSigMoDate">Date</label><input type="date" id="crSigMoDate"></div>
       </div>
+      <div class="signature-zone">
+      <canvas id="canvasSigMo" width="600" height="120"></canvas>
+      </div>
+      <div class="actions"><button type="button" class="btn btn-ligne btn-petit" id="btnEffacerSigMo">Effacer</button></div>
     </div>
     </div>
 
@@ -566,8 +605,8 @@
     <h2>Affaires</h2>
     <p class="sous-titre">Vue par chantier : documents lies et coordonnees client, reconstituees a partir des CR et Minutes enregistres.</p>
     <div class="carte">
-      <label for="rechAffaire">Recherche (secteur / chantier)</label>
-      <input type="text" id="rechAffaire" placeholder="Ex. : Galerie G12, BRT 19911…">
+      <label for="rechAffaire">Selectionner une affaire</label>
+      <select id="rechAffaire"><option value="">— Toutes les affaires —</option></select>
     </div>
     <div id="listeAffaires"></div>
   </section>
@@ -782,6 +821,7 @@ async function deconnexion(){ if(sb) await sb.auth.signOut(); utilisateur = null
 
 function afficherVueAuth(){
   $("#userBar").style.display = "none"; $("#mainNav").style.display = "none";
+  $("#mainNav").classList.remove("ouvert"); $("#navToggle").classList.remove("ouvert");
   document.querySelectorAll(".vue").forEach(v=>v.classList.remove("active"));
   $("#vue-auth").classList.add("active");
   $("#bandeauConnexion").style.display = "none";
@@ -857,19 +897,20 @@ async function uploadPhoto(crId, type, dataUrl, index){
 }
 
 async function getPhotosCR(crId){
-  if(!sb || modeHorsLigne) return lsLire("gta1914e_photos_"+crId) || {acces:[],incidents:[],chantier:[]};
+  if(!sb || modeHorsLigne) return lsLire("gta1914e_photos_"+crId) || {acces:[],incidents:[],chantier:[],localisation:[]};
   try{
     const { data: files } = await sb.storage.from('photos-cr').list('cr_' + crId);
-    if(!files) return {acces:[],incidents:[],chantier:[]};
-    const acces=[], incidents=[], chantier=[];
+    if(!files) return {acces:[],incidents:[],chantier:[],localisation:[]};
+    const acces=[], incidents=[], chantier=[], localisation=[];
     for(const f of files){
       const { data } = sb.storage.from('photos-cr').getPublicUrl('cr_' + crId + '/' + f.name);
       if(f.name.startsWith('acces_')) acces.push(data.publicUrl);
       else if(f.name.startsWith('incident_')) incidents.push(data.publicUrl);
       else if(f.name.startsWith('chantier_')) chantier.push(data.publicUrl);
+      else if(f.name.startsWith('localisation_')) localisation.push(data.publicUrl);
     }
-    return {acces, incidents, chantier};
-  }catch(e){ return {acces:[],incidents:[],chantier:[]}; }
+    return {acces, incidents, chantier, localisation};
+  }catch(e){ return {acces:[],incidents:[],chantier:[],localisation:[]}; }
 }
 
 document.querySelectorAll("nav button").forEach(b=>{
@@ -879,7 +920,22 @@ document.querySelectorAll("nav button").forEach(b=>{
     b.classList.add("actif");
     document.getElementById("vue-"+b.dataset.vue).classList.add("active");
     if(b.dataset.vue === "affaires") rendreAffaires();
+    if(b.dataset.vue === "nouveau") getGeolocation();
+    fermerMenuMobile();
   });
+});
+
+const navToggle = document.getElementById("navToggle");
+const mainNav = document.getElementById("mainNav");
+function fermerMenuMobile(){
+  navToggle.classList.remove("ouvert");
+  navToggle.setAttribute("aria-expanded", "false");
+  mainNav.classList.remove("ouvert");
+}
+navToggle.addEventListener("click", ()=>{
+  const ouvert = mainNav.classList.toggle("ouvert");
+  navToggle.classList.toggle("ouvert", ouvert);
+  navToggle.setAttribute("aria-expanded", ouvert ? "true" : "false");
 });
 
 function cleAffaire(cr){
@@ -887,16 +943,23 @@ function cleAffaire(cr){
 }
 
 function rendreAffaires(){
-  const filtre = ($("#rechAffaire").value || "").toLowerCase().trim();
   const groupes = {};
   etat.crs.forEach(cr=>{
     const cle = cleAffaire(cr);
     if(!groupes[cle]) groupes[cle] = [];
     groupes[cle].push(cr);
   });
+  const toutesLesCles = Object.keys(groupes).sort((a,b)=>a.localeCompare(b));
+
+  const select = $("#rechAffaire");
+  const valeurActuelle = select.value;
+  select.innerHTML = '<option value="">— Toutes les affaires —</option>' + toutesLesCles.map(k=>`<option value="${echap(k)}">${echap(k)}</option>`).join("");
+  if(toutesLesCles.includes(valeurActuelle)) select.value = valeurActuelle;
+
+  const filtre = select.value;
   const cont = $("#listeAffaires");
   cont.innerHTML = "";
-  const cles = Object.keys(groupes).filter(k => !filtre || k.toLowerCase().includes(filtre)).sort((a,b)=>a.localeCompare(b));
+  const cles = toutesLesCles.filter(k => !filtre || k === filtre);
   if(!cles.length){
     cont.innerHTML = `<div class="carte"><p class="sous-titre">Aucune affaire trouvee. Une affaire apparait automatiquement des qu'un CR ou une Minute est enregistre pour ce secteur.</p></div>`;
     return;
@@ -933,7 +996,7 @@ function rendreAffaires(){
     cont.appendChild(div);
   });
 }
-$("#rechAffaire").addEventListener("input", ()=>rendreAffaires());
+$("#rechAffaire").addEventListener("change", ()=>rendreAffaires());
 
 let semaineCourante = null;
 function lundiDe(dateISO){
@@ -1057,30 +1120,38 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
   });
 });
 
-// === SIGNATURE CANVAS ===
-const canvasSig = $("#canvasSignature");
-const ctxSig = canvasSig.getContext("2d");
-let dessinActif = false;
-ctxSig.strokeStyle = "#21262B"; ctxSig.lineWidth = 2; ctxSig.lineCap = "round";
-
-function getPos(e){
-  const rect = canvasSig.getBoundingClientRect();
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  return { x: clientX - rect.left, y: clientY - rect.top };
+// === SIGNATURES CANVAS (generique + reutilisable pour MOE / MO) ===
+function initSignaturePad(canvas){
+  const ctx = canvas.getContext("2d");
+  ctx.strokeStyle = "#21262B"; ctx.lineWidth = 2; ctx.lineCap = "round";
+  const pad = { canvas, ctx, actif: false, data: null };
+  const getPosLocal = (e)=>{
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
+  };
+  canvas.addEventListener("mousedown", e=>{ pad.actif = true; const p = getPosLocal(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener("mousemove", e=>{ if(!pad.actif) return; const p = getPosLocal(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+  canvas.addEventListener("mouseup", ()=>{ pad.actif = false; pad.data = canvas.toDataURL("image/png"); });
+  canvas.addEventListener("mouseleave", ()=>{ pad.actif = false; });
+  canvas.addEventListener("touchstart", e=>{ e.preventDefault(); pad.actif = true; const p = getPosLocal(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive:false});
+  canvas.addEventListener("touchmove", e=>{ e.preventDefault(); if(!pad.actif) return; const p = getPosLocal(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, {passive:false});
+  canvas.addEventListener("touchend", e=>{ e.preventDefault(); pad.actif = false; pad.data = canvas.toDataURL("image/png"); }, {passive:false});
+  pad.clear = ()=>{ ctx.clearRect(0, 0, canvas.width, canvas.height); pad.data = null; };
+  return pad;
 }
 
-canvasSig.addEventListener("mousedown", e=>{ dessinActif = true; const p = getPos(e); ctxSig.beginPath(); ctxSig.moveTo(p.x, p.y); });
-canvasSig.addEventListener("mousemove", e=>{ if(!dessinActif) return; const p = getPos(e); ctxSig.lineTo(p.x, p.y); ctxSig.stroke(); });
-canvasSig.addEventListener("mouseup", ()=>{ dessinActif = false; signatureData = canvasSig.toDataURL("image/png"); });
-canvasSig.addEventListener("mouseleave", ()=>{ dessinActif = false; });
+const padSignature = initSignaturePad($("#canvasSignature"));
+const padSigMoe = initSignaturePad($("#canvasSigMoe"));
+const padSigMo = initSignaturePad($("#canvasSigMo"));
+const canvasSig = padSignature.canvas, ctxSig = padSignature.ctx;
 
-canvasSig.addEventListener("touchstart", e=>{ e.preventDefault(); dessinActif = true; const p = getPos(e); ctxSig.beginPath(); ctxSig.moveTo(p.x, p.y); }, {passive:false});
-canvasSig.addEventListener("touchmove", e=>{ e.preventDefault(); if(!dessinActif) return; const p = getPos(e); ctxSig.lineTo(p.x, p.y); ctxSig.stroke(); }, {passive:false});
-canvasSig.addEventListener("touchend", e=>{ e.preventDefault(); dessinActif = false; signatureData = canvasSig.toDataURL("image/png"); }, {passive:false});
+$("#btnEffacerSigMoe").addEventListener("click", ()=>padSigMoe.clear());
+$("#btnEffacerSigMo").addEventListener("click", ()=>padSigMo.clear());
 
 $("#btnClearSignature").addEventListener("click", ()=>{
-  ctxSig.clearRect(0, 0, canvasSig.width, canvasSig.height);
+  padSignature.clear();
   signatureData = null;
   $("#signaturePreview").style.display = "none";
 });
@@ -1101,8 +1172,8 @@ $("#fichSignature").addEventListener("change", async e=>{
 });
 
 // === PHOTOS AVEC GEOLOCALISATION ===
-let photosAcces = [], photosIncident = [], photosChantier = [];
-let geoAcces = null, geoIncident = null, geoChantier = null;
+let photosAcces = [], photosIncident = [], photosChantier = [], photosLocalisation = [];
+let geoAcces = null, geoIncident = null, geoChantier = null, geoLocalisation = null;
 
 function getGeolocation(){
   return new Promise((resolve)=>{
@@ -1165,6 +1236,7 @@ async function processPhotoAvecGeo(file, type){
   if(geo) result = incrusterExifGps(result, geo);
   if(type === 'acces'){ geoAcces = geo; }
   else if(type === 'chantier'){ geoChantier = geo; }
+  else if(type === 'localisation'){ geoLocalisation = geo; }
   else { geoIncident = geo; }
   return result;
 }
@@ -1189,22 +1261,39 @@ function rendreVignettes(idVign, tableau, type){
     d.querySelector("button").addEventListener("click", ()=>{ tableau.splice(i,1); rendreVignettes(idVign,tableau,type); });
     v.appendChild(d);
   });
-  const geo = type === 'acces' ? geoAcces : (type === 'chantier' ? geoChantier : geoIncident);
-  const infoId = type === 'acces' ? '#geoInfoAcces' : (type === 'chantier' ? '#geoInfoChantier' : '#geoInfoIncident');
+  const geo = type === 'acces' ? geoAcces : (type === 'chantier' ? geoChantier : (type === 'localisation' ? geoLocalisation : geoIncident));
+  const infoId = type === 'acces' ? '#geoInfoAcces' : (type === 'chantier' ? '#geoInfoChantier' : (type === 'localisation' ? '#geoInfoLocalisation' : '#geoInfoIncident'));
   if(geo){
     $(infoId).innerHTML = String.fromCharCode(128205) + " " + geo.lat.toFixed(5) + ", " + geo.lon.toFixed(5) + " (precision : " + Math.round(geo.accuracy) + " m) — "
       + `<a href="https://maps.google.com/?q=${geo.lat},${geo.lon}" target="_blank" rel="noopener" style="color:var(--rouge);font-weight:700">voir sur la carte</a>`
       + " — coordonnees GPS incrustees dans la photo (EXIF).";
     $(infoId).style.display = "block";
   } else if(tableau.length){
-    $(infoId).innerHTML = String.fromCharCode(9888) + " Localisation indisponible pour la derniere photo (verifiez que la localisation est autorisee pour ce navigateur/appareil).";
+    $(infoId).innerHTML = String.fromCharCode(9888) + " Localisation indisponible pour la derniere photo. Autorisez la localisation pour ce site (Safari : Reglages > Confidentialite et securite > Service de localisation ; Chrome : icone cadenas/info pres de l'adresse du site > Autorisations > Position) puis "
+      + `<button type="button" class="btn btn-ligne btn-petit" onclick="reessayerGeoloc('${type}')">Reessayer la localisation</button>`
+      + " — la position sera appliquee a la prochaine photo ajoutee dans cette zone.";
     $(infoId).style.display = "block";
   }
+}
+
+async function reessayerGeoloc(type){
+  const geo = await getGeolocation();
+  if(type === 'acces'){ geoAcces = geo; }
+  else if(type === 'chantier'){ geoChantier = geo; }
+  else if(type === 'localisation'){ geoLocalisation = geo; }
+  else { geoIncident = geo; }
+  const idVign = type === 'acces' ? '#vignAcces' : (type === 'chantier' ? '#vignChantier' : (type === 'localisation' ? '#vignLocalisation' : '#vignIncident'));
+  const tableau = type === 'acces' ? photosAcces : (type === 'chantier' ? photosChantier : (type === 'localisation' ? photosLocalisation : photosIncident));
+  if(!geo){
+    await modalAlert("La localisation reste indisponible. Verifiez que le service de localisation est active sur l'appareil et autorise pour ce site, puis reessayez.");
+  }
+  rendreVignettes(idVign, tableau, type);
 }
 
 brancherPhotos("#zoneAcces","#fichAcces","#vignAcces",photosAcces,'acces');
 brancherPhotos("#zoneIncident","#fichIncident","#vignIncident",photosIncident,'incident');
 brancherPhotos("#zoneChantier","#fichChantier","#vignChantier",photosChantier,'chantier');
+brancherPhotos("#zoneLocalisation","#fichLocalisation","#vignLocalisation",photosLocalisation,'localisation');
 
 function rendreSynthese(){
   const cont = $("#crSynthese");
@@ -1307,6 +1396,7 @@ async function chargerCRPourEdition(cr){
   $("#crProchainesEtapes").value = cr.prochainesEtapes || "";
   const ip = cr.infoProjet || {};
   $("#crSiteLoc").value = ip.siteLoc || "";
+  $("#crNumeroAffaire").value = ip.numeroAffaire || "";
   $("#crNCite").value = ip.nCite || "";
   $("#crNIntervenant").value = ip.nIntervenant || "";
   $("#crAdresseChantier").value = ip.adresseChantier || "";
@@ -1339,6 +1429,9 @@ async function chargerCRPourEdition(cr){
   $("#crSigMoeDate").value = ip.signatureMoeDate || "";
   $("#crSigMoNom").value = ip.signatureMoNom || "";
   $("#crSigMoDate").value = ip.signatureMoDate || "";
+  padSigMoe.clear(); padSigMo.clear();
+  if(ip.signatureMoeImage){ const img = new Image(); img.onload = ()=>{ padSigMoe.ctx.drawImage(img,0,0,padSigMoe.canvas.width,padSigMoe.canvas.height); padSigMoe.data = ip.signatureMoeImage; }; img.src = ip.signatureMoeImage; }
+  if(ip.signatureMoImage){ const img = new Image(); img.onload = ()=>{ padSigMo.ctx.drawImage(img,0,0,padSigMo.canvas.width,padSigMo.canvas.height); padSigMo.data = ip.signatureMoImage; }; img.src = ip.signatureMoImage; }
 
   const entiteRadio = document.querySelector(`input[name="entite"][value="${cr.entite || 'GTA GE'}"]`);
   if(entiteRadio) entiteRadio.checked = true;
@@ -1361,9 +1454,11 @@ async function chargerCRPourEdition(cr){
   photosAcces.length = 0; photosAcces.push(...photos.acces);
   photosIncident.length = 0; photosIncident.push(...photos.incidents);
   photosChantier.length = 0; photosChantier.push(...(photos.chantier||[]));
+  photosLocalisation.length = 0; photosLocalisation.push(...(photos.localisation||[]));
   rendreVignettes("#vignAcces", photosAcces, 'acces');
   rendreVignettes("#vignIncident", photosIncident, 'incident');
   rendreVignettes("#vignChantier", photosChantier, 'chantier');
+  rendreVignettes("#vignLocalisation", photosLocalisation, 'localisation');
 
   if(cr.signature){
     signatureData = cr.signature;
@@ -1388,13 +1483,14 @@ function viderFormulaire(){
   $("#crRemiseVoie").value = ""; $("#crRemiseCirculation").value = "";
   const codeRadioDefaut = document.querySelector('input[name="codeCouleur"][value="S"]');
   if(codeRadioDefaut) codeRadioDefaut.checked = true;
-  photosAcces.length = 0; photosIncident.length = 0; photosChantier.length = 0;
-  geoAcces = null; geoIncident = null; geoChantier = null;
+  photosAcces.length = 0; photosIncident.length = 0; photosChantier.length = 0; photosLocalisation.length = 0;
+  geoAcces = null; geoIncident = null; geoChantier = null; geoLocalisation = null;
   rendreVignettes("#vignAcces",photosAcces,'acces'); rendreVignettes("#vignIncident",photosIncident,'incident');
-  rendreVignettes("#vignChantier",photosChantier,'chantier');
-  $("#geoInfoAcces").style.display = "none"; $("#geoInfoIncident").style.display = "none"; $("#geoInfoChantier").style.display = "none";
-  ctxSig.clearRect(0, 0, canvasSig.width, canvasSig.height);
+  rendreVignettes("#vignChantier",photosChantier,'chantier'); rendreVignettes("#vignLocalisation",photosLocalisation,'localisation');
+  $("#geoInfoAcces").style.display = "none"; $("#geoInfoIncident").style.display = "none"; $("#geoInfoChantier").style.display = "none"; $("#geoInfoLocalisation").style.display = "none";
+  padSignature.clear(); padSigMoe.clear(); padSigMo.clear();
   $("#signaturePreview").style.display = "none";
+  $("#crNumeroAffaire").value = "";
   $("#crMaitreOuvrage").value = ""; $("#crReferentClient").value = ""; $("#crReferentTel").value = ""; $("#crReferentEmail").value = "";
   $("#crEntTravauxNom").value = ""; $("#crEntTravauxContact").value = ""; $("#crEntTravauxTel").value = "";
   $("#crVilleVoirieNom").value = ""; $("#crVilleVoirieContact").value = ""; $("#crVilleVoirieTel").value = "";
@@ -1426,6 +1522,7 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
     remiseVoie: $("#crRemiseVoie").value,
     remiseCirculation: $("#crRemiseCirculation").value,
     codeCouleur: (document.querySelector('input[name="codeCouleur"]:checked')||{}).value || "S",
+    numeroAffaire: $("#crNumeroAffaire").value.trim(),
     ...(typeDocumentActuel === 'minutes' ? {
       maitreOuvrageSociete: $("#crMaitreOuvrage").value.trim(),
       referentClient: $("#crReferentClient").value.trim(),
@@ -1447,7 +1544,9 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
       signatureMoeNom: $("#crSigMoeNom").value.trim(),
       signatureMoeDate: $("#crSigMoeDate").value,
       signatureMoNom: $("#crSigMoNom").value.trim(),
-      signatureMoDate: $("#crSigMoDate").value
+      signatureMoDate: $("#crSigMoDate").value,
+      signatureMoeImage: padSigMoe.data || null,
+      signatureMoImage: padSigMo.data || null
     } : {})
   };
 
@@ -1502,8 +1601,9 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
     for(let i=0; i<photosAcces.length; i++) if(photosAcces[i].startsWith('data:')) await uploadPhoto(crId, 'acces', photosAcces[i], i);
     for(let i=0; i<photosIncident.length; i++) if(photosIncident[i].startsWith('data:')) await uploadPhoto(crId, 'incident', photosIncident[i], i);
     for(let i=0; i<photosChantier.length; i++) if(photosChantier[i].startsWith('data:')) await uploadPhoto(crId, 'chantier', photosChantier[i], i);
+    for(let i=0; i<photosLocalisation.length; i++) if(photosLocalisation[i].startsWith('data:')) await uploadPhoto(crId, 'localisation', photosLocalisation[i], i);
   } else {
-    lsEcrire("gta1914e_photos_"+crId, {acces:[...photosAcces], incidents:[...photosIncident], chantier:[...photosChantier]});
+    lsEcrire("gta1914e_photos_"+crId, {acces:[...photosAcces], incidents:[...photosIncident], chantier:[...photosChantier], localisation:[...photosLocalisation]});
   }
 
   viderFormulaire(); sauverLocal(); rendreHistorique();
@@ -1625,8 +1725,10 @@ async function exporterPDF(cr){
   // Header charte GTA Energies by Vulcain
   doc.setFillColor(26,26,26); doc.rect(0,0,210,32,"F");
   try{ doc.addImage(LOGO_GTA_DATAURL, "PNG", 14, 3, 21, 23); }catch(e){}
-  doc.setTextColor(200,200,200); doc.setFontSize(9); doc.setFont("helvetica","normal");
-  doc.text("Mission 1914_E — Releve des galeries & egouts", 40, 18);
+  if(cr.type !== 'minutes'){
+    doc.setTextColor(200,200,200); doc.setFontSize(9); doc.setFont("helvetica","normal");
+    doc.text("Mission 1914_E — Releve des galeries & egouts", 40, 18);
+  }
 
   // Bande degradee
   for(let x=0; x<210; x+=0.5){
@@ -1643,53 +1745,48 @@ async function exporterPDF(cr){
   doc.text(cr.type === 'minutes' ? "MINUTES DE CHANTIER" : "COMPTE-RENDU D'INTERVENTION", 14, y);
   doc.setFontSize(9); doc.setFont("helvetica","normal");
   doc.text("Document du " + frDate(cr.date), 14, y+6);
+  if(ip.numeroAffaire){
+    doc.setTextColor(227,30,36); doc.setFont("helvetica","bold");
+    doc.text("N° d'affaire : " + ip.numeroAffaire, 14, y+11);
+    doc.setTextColor(26,26,26); doc.setFont("helvetica","normal");
+    y += 5;
+  }
   y += 14;
 
-  const infos = [
-    ["Mission","1914_E — Releve des galeries et egouts"],
-    ["Date",frDate(cr.date)],["Secteur",cr.secteur],
-    ["Entite",cr.entite || "GTA GE"],
-    ["Executants",cr.execs.join(", ") || "—"],
-    ["Auteur",cr.auteur || "—"],
-    ["Statut",cr.incidents.length ? cr.incidents.length + " incident(s)" : "RAS"]
-  ];
-  infos.forEach(([label, val])=>{
-    doc.setFillColor(245,245,245); doc.rect(14, y, 60, 7, "F");
-    doc.setTextColor(26,26,26); doc.setFont("helvetica","bold"); doc.setFontSize(8);
-    doc.text(label, 16, y+5);
-    doc.setFont("helvetica","normal");
-    doc.text(String(val).substring(0, 80), 76, y+5);
-    y += 8;
-  });
-
-  y += 3;
-  doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
-  doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(9);
-  doc.text(cr.type === 'minutes' ? "2. POINTS ABORDES" : "2. TRAVAUX REALISES", 16, y+4.5);
-  y += 9;
-  doc.setTextColor(26,26,26); doc.setFont("helvetica","normal");
-  const travaux = doc.splitTextToSize(cr.travaux || "—", 170);
-  doc.text(travaux, 16, y); y += travaux.length * 4.5 + 4;
-
-  if(cr.type === 'minutes'){
+  const ip = cr.infoProjet || {};
+  let numSection = 1;
+  const bandeauNum = (titre)=>{
     doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold");
-    doc.text("3. DECISIONS PRISES", 16, y+4.5); y += 9;
+    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(9);
+    doc.text(numSection + ". " + titre, 16, y+4.5); numSection++;
+    y += 9;
     doc.setTextColor(26,26,26); doc.setFont("helvetica","normal");
-    const dec = doc.splitTextToSize(cr.decisions || "—", 170);
-    doc.text(dec, 16, y); y += dec.length * 4.5 + 4;
+  };
 
-    doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold");
-    doc.text("4. PROCHAINES ETAPES", 16, y+4.5); y += 9;
-    doc.setTextColor(26,26,26);
-    const etp = doc.splitTextToSize(cr.prochainesEtapes || "—", 170);
-    doc.text(etp, 16, y); y += etp.length * 4.5 + 4;
-  } else {
-    doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold");
-    doc.text("3. INCIDENTS REMARQUES", 16, y+4.5); y += 9;
-    doc.setTextColor(26,26,26); doc.setFont("helvetica","normal");
+  if(cr.type !== 'minutes'){
+    const infos = [
+      ["Mission","1914_E — Releve des galeries et egouts"],
+      ["Date",frDate(cr.date)],["Secteur",cr.secteur],
+      ["Entite",cr.entite || "GTA GE"],
+      ["Executants",cr.execs.join(", ") || "—"],
+      ["Auteur",cr.auteur || "—"],
+      ["Statut",cr.incidents.length ? cr.incidents.length + " incident(s)" : "RAS"]
+    ];
+    infos.forEach(([label, val])=>{
+      doc.setFillColor(245,245,245); doc.rect(14, y, 60, 7, "F");
+      doc.setTextColor(26,26,26); doc.setFont("helvetica","bold"); doc.setFontSize(8);
+      doc.text(label, 16, y+5);
+      doc.setFont("helvetica","normal");
+      doc.text(String(val).substring(0, 80), 76, y+5);
+      y += 8;
+    });
+    y += 3;
+
+    bandeauNum("TRAVAUX REALISES");
+    const travaux = doc.splitTextToSize(cr.travaux || "—", 170);
+    doc.text(travaux, 16, y); y += travaux.length * 4.5 + 4;
+
+    bandeauNum("INCIDENTS REMARQUES");
     if(cr.incidents.length){
       cr.incidents.forEach(inc=>{ doc.text("• " + inc, 16, y); y += 4; });
       const desc = doc.splitTextToSize(cr.incidentDesc || "—", 170);
@@ -1697,19 +1794,14 @@ async function exporterPDF(cr){
     } else { doc.text("Rien a signaler.", 16, y); y += 6; }
   }
 
-  doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
-  doc.setTextColor(255,255,255); doc.setFont("helvetica","bold");
-  doc.text(cr.type === 'minutes' ? "5. OBSERVATIONS" : "4. OBSERVATIONS & SUITES", 16, y+4.5);
-  y += 9;
-  doc.setTextColor(26,26,26); doc.setFont("helvetica","normal");
+  bandeauNum(cr.type === 'minutes' ? "OBSERVATIONS" : "OBSERVATIONS & SUITES");
   const obs = doc.splitTextToSize(cr.obs || "—", 170);
   doc.text(obs, 16, y);
   y += obs.length * 4.5 + 6;
 
   // === Sections issues du referentiel VIGIE Chantiers (Client, Prescriptions, Avancement, Personnels, Photos chantier, Synthese, Validation) — Minutes de chantier uniquement ===
-  const ip = cr.infoProjet || {};
   if(cr.type === 'minutes'){
-  let numSuite = 6;
+  let numSuite = numSection;
 
   const dessinerBandeau = (titre)=>{
     doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
@@ -1788,19 +1880,31 @@ async function exporterPDF(cr){
   y += 4;
 
   // Validation & signatures
-  y = pdfSautPage(doc, y, 25);
+  y = pdfSautPage(doc, y, 55);
   dessinerBandeau("VALIDATION & SIGNATURES");
   doc.setFillColor(245,245,245); doc.rect(14, y, 182, 7, "F");
   doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.text("Pour le maitre d'oeuvre — GTA Energies", 16, y+5);
   doc.setFont("helvetica","normal");
   doc.text((ip.signatureMoeNom || "Nom du signataire") + " — " + (ip.signatureMoeDate ? frDate(ip.signatureMoeDate) : "—"), 105, y+5);
-  y += 8;
+  y += 9;
+  if(ip.signatureMoeImage){
+    try{ doc.addImage(ip.signatureMoeImage, "PNG", 16, y, 45, 9); }catch(e){}
+  } else {
+    doc.setFont("helvetica","italic"); doc.setFontSize(8); doc.text("Non signe", 16, y+6); doc.setFont("helvetica","normal");
+  }
+  y += 13;
   doc.setFillColor(245,245,245); doc.rect(14, y, 182, 7, "F");
   doc.setFont("helvetica","bold");
   doc.text("Visa du maitre d'ouvrage" + (ip.maitreOuvrageSociete ? " — " + ip.maitreOuvrageSociete : ""), 16, y+5);
   doc.setFont("helvetica","normal");
   doc.text((ip.signatureMoNom || "Nom du signataire") + " — " + (ip.signatureMoDate ? frDate(ip.signatureMoDate) : "—"), 105, y+5);
-  y += 10;
+  y += 9;
+  if(ip.signatureMoImage){
+    try{ doc.addImage(ip.signatureMoImage, "PNG", 16, y, 45, 9); }catch(e){}
+  } else {
+    doc.setFont("helvetica","italic"); doc.setFontSize(8); doc.text("Non signe", 16, y+6); doc.setFont("helvetica","normal");
+  }
+  y += 13;
   }
 
   // Signature
@@ -1833,7 +1937,7 @@ async function exporterPDF(cr){
   doc.text("GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid", 14, 285);
   doc.text("1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr", 14, 289);
   doc.text("Document genere le " + new Date().toLocaleDateString("fr-FR") + " a " + new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}), 14, 293);
-  doc.setTextColor(227,30,36); doc.text("Mission 1914_E", 180, 285, {align:"right"});
+  doc.setTextColor(227,30,36); doc.text(ip.numeroAffaire || "Mission 1914_E", 180, 285, {align:"right"});
 
   const prefix = cr.type === 'minutes' ? 'MINUTES' : 'CR';
   doc.save(prefix + "_"+cr.date+"_"+cr.secteur.replace(/\s+/g,"_").substring(0,30)+".pdf");
@@ -1889,8 +1993,10 @@ async function imprimerCR(cr){
       <div class="section-print">
         ${bandeauSection(n++, "Informations projet")}
         <div class="section-body">
+          ${ip.numeroAffaire ? `<div style="font-size:10.5px;color:var(--gris-label);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px">N&deg; d'affaire</div><div style="font-weight:700;color:var(--rouge);margin-bottom:8px">${echap(ip.numeroAffaire)}</div>` : ''}
           <div style="font-size:10.5px;color:var(--gris-label);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px">Site de localisation du projet</div>
           <div style="font-weight:600;margin-bottom:8px">${echap(ip.siteLoc || "—")}</div>
+          ${(photos.localisation && photos.localisation.length) ? `<div class="photos-print">${photos.localisation.map(s=>`<img src="${s}">`).join("")}</div>` : ''}
         </div>
         <table class="info-table info-table-projet">
           <tr><th>N&deg; cite / N&deg; de demande</th><td>${echap(ip.nCite||"—")}</td><th>N&deg; intervenant</th><td>${echap(ip.nIntervenant||"—")}</td></tr>
@@ -1976,10 +2082,16 @@ async function imprimerCR(cr){
   const sectionValidation = estMinutes ? `
       <div class="section-print">
         ${bandeauSection(n++, "Validation & signatures")}
-        <table class="info-table">
-          <tr><th>Pour le maitre d'oeuvre — GTA Energies</th><td>${echap(ip.signatureMoeNom||"Nom du signataire")} — ${ip.signatureMoeDate?frDate(ip.signatureMoeDate):"—"}</td></tr>
-          <tr><th>Visa du maitre d'ouvrage${ip.maitreOuvrageSociete?" — "+echap(ip.maitreOuvrageSociete):""}</th><td>${echap(ip.signatureMoNom||"Nom du signataire")} — ${ip.signatureMoDate?frDate(ip.signatureMoDate):"—"}</td></tr>
-        </table>
+        <div class="sig-bloc-print">
+          <div class="sig-bloc-titre">Pour le maitre d'oeuvre — GTA Energies</div>
+          <div>${echap(ip.signatureMoeNom||"Nom du signataire")} — ${ip.signatureMoeDate?frDate(ip.signatureMoeDate):"—"}</div>
+          ${ip.signatureMoeImage ? `<img class="sig-img-print" src="${ip.signatureMoeImage}">` : `<div class="sig-vide-print">Non signe</div>`}
+        </div>
+        <div class="sig-bloc-print">
+          <div class="sig-bloc-titre">Visa du maitre d'ouvrage${ip.maitreOuvrageSociete?" — "+echap(ip.maitreOuvrageSociete):""}</div>
+          <div>${echap(ip.signatureMoNom||"Nom du signataire")} — ${ip.signatureMoDate?frDate(ip.signatureMoDate):"—"}</div>
+          ${ip.signatureMoImage ? `<img class="sig-img-print" src="${ip.signatureMoImage}">` : `<div class="sig-vide-print">Non signe</div>`}
+        </div>
       </div>` : '';
 
   z.innerHTML = `<div class="page-cr">
@@ -1988,7 +2100,7 @@ async function imprimerCR(cr){
         <img class="logo-placeholder" src="${LOGO_GTA_DATAURL}" alt="GTA Energies by Vulcain">
         <div>
           <h1>GTA <span style="color:var(--rouge)">Energies</span></h1>
-          <div class="subtitle">by Vulcain · Mission 1914_E — Releve des galeries & egouts</div>
+          <div class="subtitle">by Vulcain${estMinutes ? '' : ' · Mission 1914_E — Releve des galeries & egouts'}</div>
         </div>
       </div>
       <div class="app-tag-print">VIGIE Chantiers<br>GTA Energies</div>
@@ -2009,6 +2121,7 @@ async function imprimerCR(cr){
       ${sectionPersonnels}
       ${sectionPhotosChantier}
       ${sectionSynthese}
+      ${!estMinutes ? `
       <div class="section-print">
         ${bandeauSection(n++, "Informations generales")}
         <table class="info-table">
@@ -2022,23 +2135,10 @@ async function imprimerCR(cr){
         </table>
       </div>
       <div class="section-print">
-        ${bandeauSection(n++, cr.type==='minutes'?'Points abordes':'Travaux realises')}
+        ${bandeauSection(n++, "Travaux realises")}
         <div class="section-body">${echap(cr.travaux||"—").replace(/\n/g,"<br>")}</div>
-      </div>
-      ${cr.type==='minutes' ? `
-      <div class="section-print">
-        ${bandeauSection(n++, "Decisions prises")}
-        <div class="section-body">${echap(cr.decisions||"—").replace(/\n/g,"<br>")}</div>
-      </div>
-      <div class="section-print">
-        ${bandeauSection(n++, "Prochaines etapes")}
-        <div class="section-body">${echap(cr.prochainesEtapes||"—").replace(/\n/g,"<br>")}</div>
-      </div>
-      <div class="section-print">
-        ${bandeauSection(n++, "Photos")}
-        <div class="section-body">${photos.acces.length ? `<div class="photos-print">${photos.acces.map(s=>`<img src="${s}">`).join("")}</div>` : "Aucune photo."}</div>
-      </div>
-      ` : `
+      </div>` : ''}
+      ${!estMinutes ? `
       <div class="section-print">
         ${bandeauSection(n++, "Photos BR acces")}
         <div class="section-body">${photos.acces.length ? `<div class="photos-print">${photos.acces.map(s=>`<img src="${s}">`).join("")}</div>` : "Aucune photo."}</div>
@@ -2047,7 +2147,7 @@ async function imprimerCR(cr){
         ${bandeauSection(n++, "Incidents remarques")}
         <div class="section-body">${cr.incidents.length ? `<ul style="margin-left:16px">${cr.incidents.map(i=>`<li>${echap(i)}</li>`).join("")}</ul><div style="margin-top:6px">${echap(cr.incidentDesc||"—").replace(/\n/g,"<br>")}</div>${photos.incidents.length ? `<div class="photos-print" style="margin-top:8px">${photos.incidents.map(s=>`<img src="${s}">`).join("")}</div>` : ""}` : "Rien a signaler."}</div>
       </div>
-      `}
+      ` : ''}
       <div class="section-print">
         ${bandeauSection(n++, "Observations & suites")}
         <div class="section-body">${echap(cr.obs||"—").replace(/\n/g,"<br>")}</div>
@@ -2057,7 +2157,7 @@ async function imprimerCR(cr){
     </div>
     <div class="footer-print">
       <div>GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid<br>1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr<br>Document genere le ${new Date().toLocaleDateString("fr-FR")} a ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</div>
-      <div style="color:var(--rouge);font-family:var(--display);font-size:14px">Mission 1914_E</div>
+      <div style="color:var(--rouge);font-family:var(--display);font-size:14px">${ip.numeroAffaire ? echap(ip.numeroAffaire) : 'Mission 1914_E'}</div>
     </div>
   </div>`;
   window.print();
