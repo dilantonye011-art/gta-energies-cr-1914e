@@ -150,6 +150,20 @@
   .entite-selector label.coche{background:var(--bitume);color:#fff;border-color:var(--bitume)}
   .entite-selector input{accent-color:var(--bitume);width:16px;height:16px}
 
+  .code-couleur-selector{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .code-couleur-selector label{display:flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid var(--ligne);border-radius:999px;cursor:pointer;background:#FBFBFA;font-size:14px;font-weight:600;margin:0}
+  .code-couleur-selector input{width:16px;height:16px;flex-shrink:0}
+  .code-couleur-selector label[data-code="S"]{border-color:#F5C518}
+  .code-couleur-selector label[data-code="S"].coche{background:#F5C518;border-color:#F5C518;color:var(--bitume)}
+  .code-couleur-selector label[data-code="P"]{border-color:#17A2B8}
+  .code-couleur-selector label[data-code="P"].coche{background:#17A2B8;border-color:#17A2B8;color:#fff}
+  .code-couleur-selector label[data-code="A"],.code-couleur-selector label[data-code="action-rapide"]{border-color:var(--rouge)}
+  .code-couleur-selector label[data-code="A"].coche,.code-couleur-selector label[data-code="action-rapide"].coche{background:var(--rouge);border-color:var(--rouge);color:#fff}
+  .code-couleur-selector label[data-code="conforme"]{border-color:var(--securite)}
+  .code-couleur-selector label[data-code="conforme"].coche{background:var(--securite);border-color:var(--securite);color:#fff}
+  .code-couleur-selector label[data-code="non-applicable"]{border-color:var(--acier)}
+  .code-couleur-selector label[data-code="non-applicable"].coche{background:var(--acier);border-color:var(--acier);color:#fff}
+
   #zoneImpression{display:none}
   @media print{
     body>*{display:none !important}
@@ -162,16 +176,17 @@
     .page-cr .header-print .logo-placeholder{height:42px;width:auto;object-fit:contain}
     .page-cr .header-print .app-tag-print{font-size:9.5px;color:var(--acier);text-transform:uppercase;letter-spacing:.03em;text-align:right;padding-top:4px}
     .page-cr .titre-doc-print{background:var(--rouge);color:#fff;padding:9px 15mm;display:flex;justify-content:space-between;align-items:center}
-    .page-cr .titre-doc-print .titre{font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.04em}
+    .page-cr .titre-doc-print .titre-bloc{flex:1;text-align:center}
+    .page-cr .titre-doc-print .titre{font-family:var(--display);font-size:23px;text-transform:uppercase;letter-spacing:.04em}
     .page-cr .titre-doc-print .sous{font-size:9.5px;font-family:var(--mono);opacity:.9;margin-top:2px}
-    .page-cr .ref-badge{background:#fff;color:var(--rouge);font-family:var(--display);font-size:15px;font-weight:700;border-radius:4px;padding:3px 10px;letter-spacing:.03em;white-space:nowrap}
+    .page-cr .ref-badge{background:#fff;color:var(--rouge);font-family:var(--display);font-size:19px;font-weight:700;border-radius:4px;padding:3px 10px;letter-spacing:.03em;white-space:nowrap}
     .page-cr .content-print{padding:10mm 15mm}
-    .page-cr .section-print{margin-bottom:14px}
+    .page-cr .section-print{margin-bottom:14px;break-inside:avoid;page-break-inside:avoid}
     .page-cr .section-title{background:var(--rouge);color:#fff;font-family:var(--display);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;padding:6px 10px;margin:0;display:flex;align-items:center;gap:8px}
     .page-cr .num-badge{background:#fff;color:var(--rouge);width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
     .page-cr .section-body{border:1px solid var(--ligne);border-top:none;padding:8px 10px;background:#fff}
     .page-cr .info-table{width:100%;border-collapse:collapse}
-    .page-cr .sig-bloc-print{border:1px solid var(--ligne);border-radius:6px;padding:8px 10px;margin-bottom:8px}
+    .page-cr .sig-bloc-print{border:1px solid var(--ligne);border-radius:6px;padding:8px 10px;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid}
     .page-cr .sig-bloc-titre{font-weight:700;color:var(--rouge);font-size:10.5px;margin-bottom:4px}
     .page-cr .sig-img-print{max-height:50px;max-width:180px;margin-top:6px;display:block}
     .page-cr .sig-vide-print{color:var(--gris-label);font-size:10px;font-style:italic;margin-top:4px}
@@ -180,7 +195,7 @@
     .page-cr .info-table td{font-weight:600;color:var(--bitume)}
     .page-cr .info-table-projet th{width:19%}
     .page-cr .info-table-projet td{width:31%}
-    .page-cr .photos-print{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .page-cr .photos-print{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:6px}
     .page-cr .photos-print img{width:100%;max-height:180px;object-fit:contain;border:1px solid #ccc;display:block}
     .page-cr .photos-print figure.photo-print-item{width:46%;margin:0}
     .page-cr .photos-print .commentaire-print{font-size:10px;color:#333;margin-top:3px;font-style:italic}
@@ -318,6 +333,24 @@
     </div>
 
     <div class="carte">
+      <h3>Informations generales</h3>
+      <div class="grille2">
+        <div><label for="crDate">Date</label><input type="date" id="crDate"></div>
+        <div><label for="crSecteur">Secteur / galerie / ouvrage</label><input type="text" id="crSecteur" placeholder="Ex. : Galerie G12 — troncon BR 45 a BR 52"></div>
+      </div>
+      <label>Entite</label>
+      <div class="entite-selector" id="crEntite">
+        <label><input type="radio" name="entite" value="GTA GE" checked> GTA GE</label>
+        <label><input type="radio" name="entite" value="GTA ENERGIES"> GTA ENERGIES</label>
+        <label><input type="radio" name="entite" value="SOUS-TRAITANT"> SOUS-TRAITANT</label>
+      </div>
+      <label>Executants presents</label>
+      <div class="puces" id="crExecutants"></div>
+      <label for="crTravaux" id="labelTravaux">Travaux realises</label>
+      <textarea id="crTravaux" placeholder="Ex. : aide a l'installation de la lumiere, deplacement du materiel des geometres (spheres), accompagnement du releve…"></textarea>
+    </div>
+
+    <div class="carte">
       <h3>Informations projet</h3>
       <div class="grille2">
         <div>
@@ -364,13 +397,13 @@
         <div><label for="crRemiseCirculation">Remise a la circulation</label><input type="date" id="crRemiseCirculation"></div>
       </div>
       <label>Code couleur du document</label>
-      <div class="entite-selector" id="crCodeCouleur">
-        <label><input type="radio" name="codeCouleur" value="S" checked> [S] Securite / procedure</label>
-        <label><input type="radio" name="codeCouleur" value="P"> [P] Projection travaux</label>
-        <label><input type="radio" name="codeCouleur" value="A"> [A] Action rapide demandee</label>
-        <label><input type="radio" name="codeCouleur" value="conforme"> Conforme — RAS</label>
-        <label><input type="radio" name="codeCouleur" value="action-rapide"> Action rapide</label>
-        <label><input type="radio" name="codeCouleur" value="non-applicable"> Non applicable</label>
+      <div class="code-couleur-selector" id="crCodeCouleur">
+        <label data-code="S" class="coche"><input type="radio" name="codeCouleur" value="S" checked> [S] Securite / procedure</label>
+        <label data-code="P"><input type="radio" name="codeCouleur" value="P"> [P] Projection travaux</label>
+        <label data-code="A"><input type="radio" name="codeCouleur" value="A"> [A] Action rapide demandee</label>
+        <label data-code="conforme"><input type="radio" name="codeCouleur" value="conforme"> Conforme — RAS</label>
+        <label data-code="action-rapide"><input type="radio" name="codeCouleur" value="action-rapide"> Action rapide</label>
+        <label data-code="non-applicable"><input type="radio" name="codeCouleur" value="non-applicable"> Non applicable</label>
       </div>
     </div>
 
@@ -378,7 +411,22 @@
     <div class="carte">
       <h3>Client &amp; intervenants du projet</h3>
       <div class="grille2">
-        <div><label for="crMaitreOuvrage">Maitre d'ouvrage (societe)</label><input type="text" id="crMaitreOuvrage" placeholder="Ex. : CPCU"></div>
+        <div>
+          <label for="crMaitreOuvrage">Maitre d'ouvrage (societe)</label>
+          <select id="crMaitreOuvrage">
+            <option value="">— Selectionner —</option>
+            <option value="CPCU">CPCU</option>
+            <option value="IDEX">IDEX</option>
+            <option value="FrdP">FrdP</option>
+            <option value="DARRAS">DARRAS</option>
+            <option value="ERITHERM">ERITHERM</option>
+            <option value="ENGIE">ENGIE</option>
+            <option value="CLIMATELEC">CLIMATELEC</option>
+            <option value="DALKIA">DALKIA</option>
+            <option value="__autre__">+ Autre (saisie manuelle)</option>
+          </select>
+          <input type="text" id="crMaitreOuvrageAutre" placeholder="Nom du maitre d'ouvrage" style="margin-top:6px;display:none">
+        </div>
         <div><label for="crReferentClient">Referent client</label><input type="text" id="crReferentClient" placeholder="Nom du referent"></div>
       </div>
       <div class="grille2">
@@ -416,12 +464,17 @@
         <li style="padding:7px 10px;border:1px solid var(--ligne);border-radius:6px;background:#FBFBFA">Respect du protocole de bonne tenue de chantier</li>
         <li style="padding:7px 10px;border:1px solid var(--ligne);border-radius:6px;background:#FBFBFA">Respect du reglement de voirie</li>
       </ul>
+      <ul id="crPrescriptionsPerso" style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px"></ul>
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:flex-end">
+        <div style="flex:1"><label for="crNouvellePrescription" style="margin-top:0">Ajouter une prescription</label><input type="text" id="crNouvellePrescription" placeholder="Ex. : Balisage renforce en sortie de fouille"></div>
+        <button type="button" class="btn btn-sombre" id="btnAjoutPrescription">Ajouter</button>
+      </div>
     </div>
 
     <div class="carte">
       <h3>Avancement &amp; points releves</h3>
-      <label for="crAvancementPhase">Avancement des travaux (phase en cours)</label>
-      <textarea id="crAvancementPhase" placeholder="Ex. : Phase 1 — Terrassements a la pelle, fouille blindee et etayee…"></textarea>
+      <div id="crPhasesListe"></div>
+      <div class="actions" style="margin-top:6px"><button type="button" class="btn btn-ligne btn-petit" id="btnAjouterPhase">+ Ajouter une phase</button></div>
     </div>
 
     <div class="carte">
@@ -460,16 +513,6 @@
       </div>
       <div class="actions"><button type="button" class="btn btn-ligne btn-petit" id="btnEffacerSigMoe">Effacer</button></div>
 
-      <label style="margin-top:16px">Visa du maitre d'ouvrage</label>
-      <div class="grille2">
-        <div><label for="crSigMoNom">Nom du signataire</label><input type="text" id="crSigMoNom"></div>
-        <div><label for="crSigMoDate">Date</label><input type="date" id="crSigMoDate"></div>
-      </div>
-      <div class="signature-zone">
-      <canvas id="canvasSigMo" width="600" height="120"></canvas>
-      </div>
-      <div class="actions"><button type="button" class="btn btn-ligne btn-petit" id="btnEffacerSigMo">Effacer</button></div>
-
       <label style="margin-top:16px">Visa du chef de chantier</label>
       <div class="grille2">
         <div><label for="crSigChefNom">Nom du signataire</label><input type="text" id="crSigChefNom"></div>
@@ -480,24 +523,6 @@
       </div>
       <div class="actions"><button type="button" class="btn btn-ligne btn-petit" id="btnEffacerSigChef">Effacer</button></div>
     </div>
-    </div>
-
-    <div class="carte">
-      <h3>Informations generales</h3>
-      <div class="grille2">
-        <div><label for="crDate">Date</label><input type="date" id="crDate"></div>
-        <div><label for="crSecteur">Secteur / galerie / ouvrage</label><input type="text" id="crSecteur" placeholder="Ex. : Galerie G12 — troncon BR 45 a BR 52"></div>
-      </div>
-      <label>Entite</label>
-      <div class="entite-selector" id="crEntite">
-        <label><input type="radio" name="entite" value="GTA GE" checked> GTA GE</label>
-        <label><input type="radio" name="entite" value="GTA ENERGIES"> GTA ENERGIES</label>
-        <label><input type="radio" name="entite" value="SOUS-TRAITANT"> SOUS-TRAITANT</label>
-      </div>
-      <label>Executants presents</label>
-      <div class="puces" id="crExecutants"></div>
-      <label for="crTravaux" id="labelTravaux">Travaux realises</label>
-      <textarea id="crTravaux" placeholder="Ex. : aide a l'installation de la lumiere, deplacement du materiel des geometres (spheres), accompagnement du releve…"></textarea>
     </div>
 
     <div class="carte" id="blocPhotosAcces">
@@ -530,7 +555,7 @@
       <textarea id="crProchainesEtapes" placeholder="Actions a realiser, delais, responsables…"></textarea>
     </div>
 
-    <div class="carte">
+    <div class="carte" id="blocObservations">
       <h3>Observations & suites a donner</h3>
       <textarea id="crObs" placeholder="Remarques diverses, points de vigilance, materiel a prevoir…"></textarea>
     </div>
@@ -1199,9 +1224,9 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
       $("#sousTitreNouveau").textContent = "Compte-rendu de reunion de chantier avec les parties prenantes.";
       $("#rappelDelai").style.display = "none";
       $("#blocIncidents").style.display = "none";
-      $("#blocPhotosAcces").style.display = "block";
-      $("#titrePhotosAcces").textContent = "Photos";
-      $("#blocMinutesOnly").style.display = "block";
+      $("#blocPhotosAcces").style.display = "none";
+      $("#blocMinutesOnly").style.display = "none";
+      $("#blocObservations").style.display = "none";
       $("#blocVigieMinutes").style.display = "block";
       $("#blocSignatureGenerique").style.display = "none";
       $("#labelTravaux").textContent = "Travaux en cours / a venir";
@@ -1213,6 +1238,7 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
       $("#blocPhotosAcces").style.display = "block";
       $("#titrePhotosAcces").textContent = "Photos BR acces (vue panoramique)";
       $("#blocMinutesOnly").style.display = "none";
+      $("#blocObservations").style.display = "block";
       $("#blocVigieMinutes").style.display = "none";
       $("#blocSignatureGenerique").style.display = "block";
       $("#labelTravaux").textContent = "Travaux realises";
@@ -1244,12 +1270,10 @@ function initSignaturePad(canvas){
 
 const padSignature = initSignaturePad($("#canvasSignature"));
 const padSigMoe = initSignaturePad($("#canvasSigMoe"));
-const padSigMo = initSignaturePad($("#canvasSigMo"));
 const padSigChef = initSignaturePad($("#canvasSigChef"));
 const canvasSig = padSignature.canvas, ctxSig = padSignature.ctx;
 
 $("#btnEffacerSigMoe").addEventListener("click", ()=>padSigMoe.clear());
-$("#btnEffacerSigMo").addEventListener("click", ()=>padSigMo.clear());
 $("#btnEffacerSigChef").addEventListener("click", ()=>padSigChef.clear());
 
 $("#btnClearSignature").addEventListener("click", ()=>{
@@ -1447,10 +1471,60 @@ const PRESCRIPTIONS_FIXES = [
   "Respect du reglement de voirie"
 ];
 // Enumeration reglementaire fixe, non modifiable par l'utilisateur — toujours integralement incluse au document.
-function getPrescriptionsCochees(){
-  return PRESCRIPTIONS_FIXES.slice();
+let prescriptionsPerso = [];
+function rendrePrescriptionsPerso(){
+  const ul = $("#crPrescriptionsPerso");
+  ul.innerHTML = "";
+  prescriptionsPerso.forEach((texte, idx)=>{
+    const li = document.createElement("li");
+    li.setAttribute("style","padding:7px 10px;border:1px solid var(--ligne);border-radius:6px;background:#FBFBFA;display:flex;justify-content:space-between;align-items:center;gap:8px");
+    li.innerHTML = `<span>${echap(texte)}</span><button type="button" class="btn btn-danger btn-petit" style="padding:2px 8px">&#10005;</button>`;
+    li.querySelector("button").addEventListener("click", ()=>{ prescriptionsPerso.splice(idx,1); rendrePrescriptionsPerso(); });
+    ul.appendChild(li);
+  });
 }
-function cocherPrescriptions(){ /* liste fixe, rien a cocher */ }
+$("#btnAjoutPrescription").addEventListener("click", ()=>{
+  const val = $("#crNouvellePrescription").value.trim();
+  if(!val) return;
+  prescriptionsPerso.push(val);
+  $("#crNouvellePrescription").value = "";
+  rendrePrescriptionsPerso();
+});
+$("#crNouvellePrescription").addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); $("#btnAjoutPrescription").click(); } });
+function getPrescriptionsCochees(){
+  return PRESCRIPTIONS_FIXES.concat(prescriptionsPerso);
+}
+function cocherPrescriptions(sauvegardees){
+  prescriptionsPerso = (sauvegardees || []).filter(p=>!PRESCRIPTIONS_FIXES.includes(p));
+  rendrePrescriptionsPerso();
+}
+
+let phasesAvancement = [""];
+function rendrePhasesAvancement(){
+  const zone = $("#crPhasesListe");
+  zone.innerHTML = "";
+  phasesAvancement.forEach((texte, idx)=>{
+    const bloc = document.createElement("div");
+    bloc.style.marginTop = idx>0 ? "12px" : "0";
+    bloc.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><label style="margin:0 0 5px">Phase ${idx+1}</label>${phasesAvancement.length>1 ? `<button type="button" class="btn btn-danger btn-petit" style="padding:2px 8px;margin-bottom:5px">&#10005; Retirer</button>` : ''}</div><textarea placeholder="Ex. : Phase ${idx+1} — Terrassements a la pelle, fouille blindee et etayee…">${echap(texte)}</textarea>`;
+    const ta = bloc.querySelector("textarea");
+    ta.addEventListener("input", ()=>{ phasesAvancement[idx] = ta.value; });
+    const btnDel = bloc.querySelector("button");
+    if(btnDel) btnDel.addEventListener("click", ()=>{ phasesAvancement.splice(idx,1); rendrePhasesAvancement(); });
+    zone.appendChild(bloc);
+  });
+}
+$("#btnAjouterPhase").addEventListener("click", ()=>{ phasesAvancement.push(""); rendrePhasesAvancement(); });
+function chargerPhasesAvancement(avancementPhase){
+  const texte = avancementPhase || "";
+  phasesAvancement = texte ? texte.split("\n\n") : [""];
+  if(!phasesAvancement.length) phasesAvancement = [""];
+  rendrePhasesAvancement();
+}
+function getAvancementPhaseTexte(){
+  return phasesAvancement.map(p=>p.trim()).filter(Boolean).join("\n\n");
+}
+rendrePhasesAvancement();
 function getSynthese(){
   const res = {};
   SYNTHESE_ITEMS.forEach(item=>{
@@ -1509,6 +1583,39 @@ document.querySelectorAll('input[name="entite"]').forEach(radio=>{
   radio.addEventListener("change", rendreFormulaireCR);
 });
 
+function majPilleCodeCouleur(){
+  document.querySelectorAll('#crCodeCouleur label').forEach(lab=>{
+    lab.classList.toggle("coche", lab.querySelector("input").checked);
+  });
+}
+document.querySelectorAll('input[name="codeCouleur"]').forEach(radio=>{
+  radio.addEventListener("change", majPilleCodeCouleur);
+});
+
+const CLIENTS_CONNUS = ["CPCU","IDEX","FrdP","DARRAS","ERITHERM","ENGIE","CLIMATELEC","DALKIA"];
+$("#crMaitreOuvrage").addEventListener("change", ()=>{
+  $("#crMaitreOuvrageAutre").style.display = $("#crMaitreOuvrage").value === "__autre__" ? "block" : "none";
+});
+function valeurMaitreOuvrage(){
+  const sel = $("#crMaitreOuvrage").value;
+  return sel === "__autre__" ? $("#crMaitreOuvrageAutre").value.trim() : sel;
+}
+function definirMaitreOuvrage(nom){
+  if(nom && CLIENTS_CONNUS.includes(nom)){
+    $("#crMaitreOuvrage").value = nom;
+    $("#crMaitreOuvrageAutre").style.display = "none";
+    $("#crMaitreOuvrageAutre").value = "";
+  } else if(nom){
+    $("#crMaitreOuvrage").value = "__autre__";
+    $("#crMaitreOuvrageAutre").style.display = "block";
+    $("#crMaitreOuvrageAutre").value = nom;
+  } else {
+    $("#crMaitreOuvrage").value = "";
+    $("#crMaitreOuvrageAutre").style.display = "none";
+    $("#crMaitreOuvrageAutre").value = "";
+  }
+}
+
 async function chargerCRPourEdition(cr){
   idCREnEdition = cr.id;
   $("#crDate").value = cr.date;
@@ -1537,7 +1644,7 @@ async function chargerCRPourEdition(cr){
   const codeRadio = document.querySelector(`input[name="codeCouleur"][value="${ip.codeCouleur || 'S'}"]`);
   if(codeRadio) codeRadio.checked = true;
 
-  $("#crMaitreOuvrage").value = ip.maitreOuvrageSociete || "";
+  definirMaitreOuvrage(ip.maitreOuvrageSociete || "");
   $("#crReferentClient").value = ip.referentClient || "";
   $("#crReferentTel").value = ip.referentTel || "";
   $("#crReferentEmail").value = ip.referentEmail || "";
@@ -1548,7 +1655,7 @@ async function chargerCRPourEdition(cr){
   $("#crVilleVoirieContact").value = ip.villeVoirieContact || "";
   $("#crVilleVoirieTel").value = ip.villeVoirieTel || "";
   cocherPrescriptions(ip.prescriptions);
-  $("#crAvancementPhase").value = ip.avancementPhase || "";
+  chargerPhasesAvancement(ip.avancementPhase);
   $("#crPersoCompagnons").value = ip.personnelCompagnons ?? 0;
   $("#crPersoPelles").value = ip.personnelPelles ?? 0;
   $("#crPersoCamions").value = ip.personnelCamions ?? 0;
@@ -1556,13 +1663,10 @@ async function chargerCRPourEdition(cr){
   chargerSynthese(ip.synthese);
   $("#crSigMoeNom").value = ip.signatureMoeNom || "";
   $("#crSigMoeDate").value = ip.signatureMoeDate || "";
-  $("#crSigMoNom").value = ip.signatureMoNom || "";
-  $("#crSigMoDate").value = ip.signatureMoDate || "";
   $("#crSigChefNom").value = ip.signatureChefNom || "";
   $("#crSigChefDate").value = ip.signatureChefDate || "";
-  padSigMoe.clear(); padSigMo.clear(); padSigChef.clear();
+  padSigMoe.clear(); padSigChef.clear();
   if(ip.signatureMoeImage){ const img = new Image(); img.onload = ()=>{ padSigMoe.ctx.drawImage(img,0,0,padSigMoe.canvas.width,padSigMoe.canvas.height); padSigMoe.data = ip.signatureMoeImage; }; img.src = ip.signatureMoeImage; }
-  if(ip.signatureMoImage){ const img = new Image(); img.onload = ()=>{ padSigMo.ctx.drawImage(img,0,0,padSigMo.canvas.width,padSigMo.canvas.height); padSigMo.data = ip.signatureMoImage; }; img.src = ip.signatureMoImage; }
   if(ip.signatureChefImage){ const img = new Image(); img.onload = ()=>{ padSigChef.ctx.drawImage(img,0,0,padSigChef.canvas.width,padSigChef.canvas.height); padSigChef.data = ip.signatureChefImage; }; img.src = ip.signatureChefImage; }
 
   const entiteRadio = document.querySelector(`input[name="entite"][value="${cr.entite || 'GTA GE'}"]`);
@@ -1626,18 +1730,18 @@ function viderFormulaire(){
   rendreVignettes("#vignAcces",photosAcces,'acces'); rendreVignettes("#vignIncident",photosIncident,'incident');
   rendreVignettes("#vignChantier",photosChantier,'chantier'); rendreVignettes("#vignLocalisation",photosLocalisation,'localisation');
   $("#geoInfoAcces").style.display = "none"; $("#geoInfoIncident").style.display = "none"; $("#geoInfoChantier").style.display = "none"; $("#geoInfoLocalisation").style.display = "none";
-  padSignature.clear(); padSigMoe.clear(); padSigMo.clear(); padSigChef.clear();
+  padSignature.clear(); padSigMoe.clear(); padSigChef.clear();
   $("#signaturePreview").style.display = "none";
   $("#crTypeTravaux").value = "";
   $("#crNumeroAffaire").value = "";
-  $("#crMaitreOuvrage").value = ""; $("#crReferentClient").value = ""; $("#crReferentTel").value = ""; $("#crReferentEmail").value = "";
+  definirMaitreOuvrage(""); $("#crReferentClient").value = ""; $("#crReferentTel").value = ""; $("#crReferentEmail").value = "";
   $("#crEntTravauxNom").value = ""; $("#crEntTravauxContact").value = ""; $("#crEntTravauxTel").value = "";
   $("#crVilleVoirieNom").value = ""; $("#crVilleVoirieContact").value = ""; $("#crVilleVoirieTel").value = "";
   cocherPrescriptions([]);
-  $("#crAvancementPhase").value = "";
+  chargerPhasesAvancement("");
   $("#crPersoCompagnons").value = 0; $("#crPersoPelles").value = 0; $("#crPersoCamions").value = 0; $("#crPersoNote").value = "";
   chargerSynthese({});
-  $("#crSigMoeNom").value = ""; $("#crSigMoeDate").value = ""; $("#crSigMoNom").value = ""; $("#crSigMoDate").value = "";
+  $("#crSigMoeNom").value = ""; $("#crSigMoeDate").value = "";
   $("#crSigChefNom").value = ""; $("#crSigChefDate").value = "";
   rendreFormulaireCR();
 }
@@ -1665,7 +1769,7 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
     typeTravaux: $("#crTypeTravaux").value,
     numeroAffaire: $("#crNumeroAffaire").value.trim(),
     ...(typeDocumentActuel === 'minutes' ? {
-      maitreOuvrageSociete: $("#crMaitreOuvrage").value.trim(),
+      maitreOuvrageSociete: valeurMaitreOuvrage(),
       referentClient: $("#crReferentClient").value.trim(),
       referentTel: $("#crReferentTel").value.trim(),
       referentEmail: $("#crReferentEmail").value.trim(),
@@ -1676,7 +1780,7 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
       villeVoirieContact: $("#crVilleVoirieContact").value.trim(),
       villeVoirieTel: $("#crVilleVoirieTel").value.trim(),
       prescriptions: getPrescriptionsCochees(),
-      avancementPhase: $("#crAvancementPhase").value.trim(),
+      avancementPhase: getAvancementPhaseTexte(),
       personnelCompagnons: parseInt($("#crPersoCompagnons").value, 10) || 0,
       personnelPelles: parseInt($("#crPersoPelles").value, 10) || 0,
       personnelCamions: parseInt($("#crPersoCamions").value, 10) || 0,
@@ -1684,10 +1788,7 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
       synthese: getSynthese(),
       signatureMoeNom: $("#crSigMoeNom").value.trim(),
       signatureMoeDate: $("#crSigMoeDate").value,
-      signatureMoNom: $("#crSigMoNom").value.trim(),
-      signatureMoDate: $("#crSigMoDate").value,
       signatureMoeImage: padSigMoe.data || null,
-      signatureMoImage: padSigMo.data || null,
       signatureChefNom: $("#crSigChefNom").value.trim(),
       signatureChefDate: $("#crSigChefDate").value,
       signatureChefImage: padSigChef.data || null
@@ -1809,13 +1910,13 @@ function rendreHistorique(){
       </div>
       <div class="actions" style="margin-top:0">
         <button class="btn btn-sombre btn-petit" data-a="imprimer">Apercu / PDF</button>
-        <button class="btn btn-hv btn-petit" data-a="email">Envoyer (Outlook)</button>
+        <button class="btn btn-hv btn-petit" data-a="email">&#128228; Partager</button>
         <button class="btn btn-ligne btn-petit" data-a="modifier">Modifier</button>
         ${cr.statut==="envoye" ? `<button class="btn btn-ligne btn-petit" data-a="annuler-envoi">Annuler envoi</button>` : `<button class="btn btn-ligne btn-petit" data-a="envoye">Marquer envoye</button>`}
         <button class="btn btn-danger btn-petit" data-a="supprimer">Supprimer</button>
       </div>`;
     div.querySelector('[data-a="imprimer"]').addEventListener("click", ()=>imprimerCR(cr));
-    div.querySelector('[data-a="email"]').addEventListener("click", async ()=>{ await preparerEmail(cr); });
+    div.querySelector('[data-a="email"]').addEventListener("click", async ()=>{ await partagerCR(cr); });
     div.querySelector('[data-a="modifier"]').addEventListener("click", ()=>chargerCRPourEdition(cr));
     const bE = div.querySelector('[data-a="envoye"]');
     if(bE) bE.addEventListener("click", async ()=>{ cr.statut="envoye"; cr.envoye=Date.now(); await dbUpdate('comptes_rendus',{statut:"envoye",envoye:cr.envoye},{col:'id',val:cr.id}); sauverLocal(); rendreHistorique(); });
@@ -1865,7 +1966,7 @@ function pdfSautPage(doc, y, hauteurNecessaire){
   return y;
 }
 
-async function exporterPDF(cr){
+async function exporterPDF(cr, retournerBlob){
   const photos = await getPhotosCR(cr.id);
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -1877,6 +1978,9 @@ async function exporterPDF(cr){
     doc.setTextColor(200,200,200); doc.setFontSize(9); doc.setFont("helvetica","normal");
     doc.text("Mission 1914_E — Releve des galeries & egouts", 40, 18);
   }
+  doc.setTextColor(255,255,255); doc.setFontSize(14); doc.setFont("helvetica","bold");
+  doc.text(refDocument(cr), 196, 18, {align:"right"});
+  doc.setFont("helvetica","normal");
 
   // Bande degradee
   for(let x=0; x<210; x+=0.5){
@@ -1948,12 +2052,12 @@ async function exporterPDF(cr){
       const desc = doc.splitTextToSize(cr.incidentDesc || "—", 170);
       doc.text(desc, 16, y); y += desc.length * 4.5 + 3;
     } else { doc.text("Rien a signaler.", 16, y); y += 6; }
-  }
 
-  bandeauNum(cr.type === 'minutes' ? "OBSERVATIONS" : "OBSERVATIONS & SUITES");
-  const obs = doc.splitTextToSize(cr.obs || "—", 170);
-  doc.text(obs, 16, y);
-  y += obs.length * 4.5 + 6;
+    bandeauNum("OBSERVATIONS & SUITES");
+    const obs = doc.splitTextToSize(cr.obs || "—", 170);
+    doc.text(obs, 16, y);
+    y += obs.length * 4.5 + 6;
+  }
 
   // === Sections issues du referentiel VIGIE Chantiers (Client, Prescriptions, Avancement, Personnels, Photos chantier, Synthese, Validation) — Minutes de chantier uniquement ===
   if(cr.type === 'minutes'){
@@ -2049,18 +2153,6 @@ async function exporterPDF(cr){
     doc.setFont("helvetica","italic"); doc.setFontSize(8); doc.text("Non signe", 16, y+6); doc.setFont("helvetica","normal");
   }
   y += 13;
-  doc.setFillColor(245,245,245); doc.rect(14, y, 182, 7, "F");
-  doc.setFont("helvetica","bold");
-  doc.text("Visa du maitre d'ouvrage" + (ip.maitreOuvrageSociete ? " — " + ip.maitreOuvrageSociete : ""), 16, y+5);
-  doc.setFont("helvetica","normal");
-  doc.text((ip.signatureMoNom || "Nom du signataire") + " — " + (ip.signatureMoDate ? frDate(ip.signatureMoDate) : "—"), 105, y+5);
-  y += 9;
-  if(ip.signatureMoImage){
-    try{ doc.addImage(ip.signatureMoImage, "PNG", 16, y, 45, 9); }catch(e){}
-  } else {
-    doc.setFont("helvetica","italic"); doc.setFontSize(8); doc.text("Non signe", 16, y+6); doc.setFont("helvetica","normal");
-  }
-  y += 13;
   y = pdfSautPage(doc, y, 22);
   doc.setFillColor(245,245,245); doc.rect(14, y, 182, 7, "F");
   doc.setFont("helvetica","bold");
@@ -2115,8 +2207,8 @@ async function exporterPDF(cr){
   const nbPages = doc.internal.getNumberOfPages();
   for(let p=1; p<=nbPages; p++){ doc.setPage(p); dessinerPiedDePage(); }
 
-  const prefix = cr.type === 'minutes' ? 'MINUTES' : 'CR';
-  doc.save(prefix + "_"+cr.date+"_"+cr.secteur.replace(/\s+/g,"_").substring(0,30)+".pdf");
+  if(retournerBlob) return doc.output('blob');
+  doc.save(refDocument(cr) + "_"+cr.date+"_"+cr.secteur.replace(/\s+/g,"_").substring(0,30)+".pdf");
 }
 
 $("#btnExporterPDF").addEventListener("click", async ()=>{
@@ -2131,19 +2223,56 @@ $("#btnExporterPDF").addEventListener("click", async ()=>{
   }
 });
 
-async function preparerEmail(cr){
+async function dataUrlVersFile(dataUrl, nomFichier){
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  return new File([blob], nomFichier, {type: blob.type || 'image/jpeg'});
+}
+
+function construireSujetCorps(cr){
   const typeLabel = cr.type === 'minutes' ? 'Minutes de chantier' : 'Compte-rendu';
   const sujet = typeLabel + " " + cr.date + " — " + cr.secteur + " — Mission 1914_E";
   const entete = cr.type === 'minutes' ? "Bonjour," : ("Bonjour " + CONTACT_DESTINATAIRE.civilite + ",");
-  const corps = entete + String.fromCharCode(10,10) + "Veuillez trouver ci-joint le " + typeLabel.toLowerCase() + " du " + frDate(cr.date) + " (secteur : " + cr.secteur + ")." + String.fromCharCode(10,10) + "Entite : " + (cr.entite || "GTA GE") + String.fromCharCode(10) + "Executants : " + (cr.execs.join(", ") || "—") + String.fromCharCode(10) + (cr.type === 'cr' ? "Incidents : " + (cr.incidents.length ? cr.incidents.join(" ; ") : "RAS") : "Points abordes : " + (cr.pointsAbordes || "—")) + String.fromCharCode(10,10) + "Le document au format PDF ainsi que les photos sont joints." + String.fromCharCode(10,10) + "Cordialement,";
+  const corps = entete + String.fromCharCode(10,10) + "Veuillez trouver ci-joint le " + typeLabel.toLowerCase() + " du " + frDate(cr.date) + " (secteur : " + cr.secteur + ")." + String.fromCharCode(10,10) + "Entite : " + (cr.entite || "GTA GE") + String.fromCharCode(10) + "Executants : " + (cr.execs.join(", ") || "—") + String.fromCharCode(10) + (cr.type === 'cr' ? "Incidents : " + (cr.incidents.length ? cr.incidents.join(" ; ") : "RAS") : "Points abordes : " + (cr.pointsAbordes || "—")) + String.fromCharCode(10,10) + "Cordialement,";
+  return {sujet, corps};
+}
+
+async function preparerEmailOutlook(cr, sujet, corps){
   const params = new URLSearchParams();
   if(cr.type !== 'minutes') params.set("to", CONTACT_DESTINATAIRE.email);
   params.set("subject", sujet);
-  params.set("body", corps);
+  params.set("body", corps + String.fromCharCode(10,10) + "Le document au format PDF ainsi que les photos sont joints.");
   window.open("https://outlook.office.com/mail/deeplink/compose?" + params.toString(), "_blank");
   await modalAlert(cr.type === 'minutes'
     ? "Outlook s'ouvre dans un nouvel onglet. Choisissez le ou les destinataires dans vos contacts, puis n'oubliez pas de joindre le PDF et les photos."
     : "Outlook s'ouvre dans un nouvel onglet, pre-rempli pour Mario DE JESUS. N'oubliez pas de joindre le PDF et les photos.");
+}
+
+async function partagerCR(cr){
+  const {sujet, corps} = construireSujetCorps(cr);
+  try{
+    if(navigator.share && navigator.canShare){
+      const pdfBlob = await exporterPDF(cr, true);
+      const nomPdf = refDocument(cr) + "_" + cr.date + "_" + cr.secteur.replace(/\s+/g,"_").substring(0,30) + ".pdf";
+      const fichiers = [new File([pdfBlob], nomPdf, {type:'application/pdf'})];
+      const photos = await getPhotosCR(cr.id);
+      const sourcesPhotos = cr.type === 'minutes'
+        ? [...(photos.localisation||[]), ...(photos.chantier||[])]
+        : [...(photos.acces||[]), ...(photos.incidents||[])];
+      for(let i=0; i<sourcesPhotos.length; i++){
+        try{ fichiers.push(await dataUrlVersFile(sourcesPhotos[i], "photo_"+(i+1)+".jpg")); }catch(e){}
+      }
+      const donneesPartage = { title: sujet, text: corps, files: fichiers };
+      if(navigator.canShare(donneesPartage)){
+        await navigator.share(donneesPartage);
+        return;
+      }
+    }
+  }catch(e){
+    if(e && e.name === 'AbortError') return; // partage annule par l'utilisateur
+  }
+  // Repli (ordinateur ou navigateur sans partage natif) : Outlook Web pre-rempli
+  await preparerEmailOutlook(cr, sujet, corps);
 }
 
 function refDocument(cr){
@@ -2170,6 +2299,7 @@ async function imprimerCR(cr){
   const typeLabel = cr.type === 'minutes' ? 'MINUTES DE CHANTIER' : "COMPTE-RENDU D'INTERVENTION";
   const ip = cr.infoProjet || {};
   let n = 1;
+  const estMinutes = cr.type === 'minutes';
 
   const sectionInfoProjet = `
       <div class="section-print">
@@ -2182,11 +2312,11 @@ async function imprimerCR(cr){
           ${galeriePhotosImprimee(photos.localisation, commentaires.localisation)}
         </div>
         <table class="info-table info-table-projet">
-          <tr><th>N&deg; cite / N&deg; de demande</th><td>${echap(ip.nCite||"—")}</td><th>N&deg; intervenant</th><td>${echap(ip.nIntervenant||"—")}</td></tr>
-          <tr><th>Adresse du chantier</th><td colspan="3">${echap(ip.adresseChantier||"—")}</td></tr>
+          ${estMinutes ? '' : `<tr><th>N&deg; cite / N&deg; de demande</th><td>${echap(ip.nCite||"—")}</td><th>N&deg; intervenant</th><td>${echap(ip.nIntervenant||"—")}</td></tr>
+          <tr><th>Adresse du chantier</th><td colspan="3">${echap(ip.adresseChantier||"—")}</td></tr>`}
           <tr><th>Emprise(s) / Parite</th><td>${echap(ip.emprises||"—")}</td><th>Debut des travaux</th><td>${ip.debutTravaux?frDate(ip.debutTravaux):"—"}</td></tr>
           <tr><th>Fin des travaux</th><td>${ip.finTravaux?frDate(ip.finTravaux):"—"}</td><th>Remise en etat de la voie</th><td>${ip.remiseVoie?frDate(ip.remiseVoie):"—"}</td></tr>
-          <tr><th>Remise a la circulation</th><td colspan="3">${ip.remiseCirculation?frDate(ip.remiseCirculation):"—"}</td></tr>
+          ${estMinutes ? '' : `<tr><th>Remise a la circulation</th><td colspan="3">${ip.remiseCirculation?frDate(ip.remiseCirculation):"—"}</td></tr>`}
         </table>
         <div style="margin-top:8px;padding:6px 10px;background:#FAFAFA;border:1px solid var(--ligne);font-size:10px"><b>Code couleur :</b> ${echap(LABELS_CODE_COULEUR[ip.codeCouleur] || "—")}</div>
       </div>`;
@@ -2198,8 +2328,6 @@ async function imprimerCR(cr){
           ${etat.moe.map(m=>`<div style="margin-bottom:8px"><div style="font-weight:700">${echap(m.nom)}</div><div style="color:var(--rouge);font-style:italic;font-size:10.5px">${echap(m.role||"—")}</div><div style="color:var(--acier);font-size:10px">${echap([m.tel,m.email].filter(Boolean).join(" / ")||"—")}</div></div>`).join("")}
         </div>
       </div>` : '';
-
-  const estMinutes = cr.type === 'minutes';
 
   const sectionClient = estMinutes ? `
       <div class="section-print">
@@ -2271,11 +2399,6 @@ async function imprimerCR(cr){
           ${ip.signatureMoeImage ? `<img class="sig-img-print" src="${ip.signatureMoeImage}">` : `<div class="sig-vide-print">Non signe</div>`}
         </div>
         <div class="sig-bloc-print">
-          <div class="sig-bloc-titre">Visa du maitre d'ouvrage${ip.maitreOuvrageSociete?" — "+echap(ip.maitreOuvrageSociete):""}</div>
-          <div>${echap(ip.signatureMoNom||"Nom du signataire")} — ${ip.signatureMoDate?frDate(ip.signatureMoDate):"—"}</div>
-          ${ip.signatureMoImage ? `<img class="sig-img-print" src="${ip.signatureMoImage}">` : `<div class="sig-vide-print">Non signe</div>`}
-        </div>
-        <div class="sig-bloc-print">
           <div class="sig-bloc-titre">Visa du chef de chantier</div>
           <div>${echap(ip.signatureChefNom||"Nom du signataire")} — ${ip.signatureChefDate?frDate(ip.signatureChefDate):"—"}</div>
           ${ip.signatureChefImage ? `<img class="sig-img-print" src="${ip.signatureChefImage}">` : `<div class="sig-vide-print">Non signe</div>`}
@@ -2294,7 +2417,7 @@ async function imprimerCR(cr){
       <div class="app-tag-print">VIGIE Chantiers<br>GTA Energies</div>
     </div>
     <div class="titre-doc-print">
-      <div>
+      <div class="titre-bloc">
         <div class="titre">${typeLabel}</div>
         <div class="sous">${echap(cr.secteur)} · ${frDate(cr.date)}</div>
       </div>
@@ -2336,10 +2459,11 @@ async function imprimerCR(cr){
         <div class="section-body">${cr.incidents.length ? `<ul style="margin-left:16px">${cr.incidents.map(i=>`<li>${echap(i)}</li>`).join("")}</ul><div style="margin-top:6px">${echap(cr.incidentDesc||"—").replace(/\n/g,"<br>")}</div>${photos.incidents.length ? galeriePhotosImprimee(photos.incidents, commentaires.incidents) : ""}` : "Rien a signaler."}</div>
       </div>
       ` : ''}
+      ${!estMinutes ? `
       <div class="section-print">
         ${bandeauSection(n++, "Observations & suites")}
         <div class="section-body">${echap(cr.obs||"—").replace(/\n/g,"<br>")}</div>
-      </div>
+      </div>` : ''}
       ${sectionValidation}
       ${(cr.signature && !estMinutes) ? `<div class="section-print signature-print">${bandeauSection(n++,"Signature")}<img src="${cr.signature}"></div>` : ''}
     </div>
