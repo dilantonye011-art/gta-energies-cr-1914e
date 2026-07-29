@@ -339,11 +339,11 @@
           <label for="crTypeTravaux">Travaux de realisation de</label>
           <select id="crTypeTravaux">
             <option value="">— Selectionner —</option>
-            <option value="Renouvellement de reseau de chaleur urbain (RCU)">RENOUVELLEMENT DE RESEAU DE CHALEUR URBAIN (RCU)</option>
+            <option value="Renouvellement de reseau de chaleur urbain (RCU)">Renouvellement de reseau de chaleur urbain (RCU)</option>
             <option value="Branchement client">Branchement client</option>
-            <option value="Construction de reseau de chaleur urbain (RCU)">CONSTRUCTION DE RESEAU DE CHALEUR URBAIN (RCU)</option>
-            <option value="Renouvellement de reseau de froid urbain (RFU)">RENOUVELLEMENT DE RESEAU DE FROID URBAIN(RFU)</option>
-            <option value="Construction de reseau de froid urbain (RFU)">CONSTRUCTION DE RESEAU DE FROID URBAIN(RFU)</option>
+            <option value="Construction de reseau de chaleur urbain (RCU)">Construction de reseau de chaleur urbain (RCU)</option>
+            <option value="Renouvellement de reseau de froid urbain (RFU)">Renouvellement de reseau de froid urbain (RFU)</option>
+            <option value="Construction de reseau de froid urbain (RFU)">Construction de reseau de froid urbain (RFU)</option>
           </select>
         </div>
         <div>
@@ -356,6 +356,7 @@
       </div>
       <div class="grille2">
         <div><label for="crSiteLoc">Site de localisation du projet</label><input type="text" id="crSiteLoc" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris — angle Malesherbes / coordonnees GPS"></div>
+        <div><label for="crIndice">Indice du document (revision)</label><input type="text" id="crIndice" placeholder="Ex. : Ind0"></div>
       </div>
       <div class="carte" id="blocPhotosLocalisation" style="margin-top:10px;background:#FBFBFA">
         <label style="margin-top:0">Photo de localisation du chantier</label>
@@ -1269,9 +1270,9 @@ let commentairesAcces = [], commentairesIncident = [], commentairesChantier = []
 function commentairesDuType(type){
   return type === 'acces' ? commentairesAcces : (type === 'chantier' ? commentairesChantier : (type === 'localisation' ? commentairesLocalisation : commentairesIncident));
 }
-function chargerCommentairesCR(crId){ return lsLire("gta1914e_commentaires_"+crId) || {acces:[],incidents:[],chantier:[],localisation:[]}; }
+function chargerCommentairesCR(crId){ return lsLire("gta1914e_commentaires_"+crId) || {acces:[],incidents:[],chantier:[],localisation:[],phases:[]}; }
 function sauverCommentairesCR(crId){
-  lsEcrire("gta1914e_commentaires_"+crId, {acces:[...commentairesAcces], incidents:[...commentairesIncident], chantier:[...commentairesChantier], localisation:[...commentairesLocalisation]});
+  lsEcrire("gta1914e_commentaires_"+crId, {acces:[...commentairesAcces], incidents:[...commentairesIncident], chantier:[...commentairesChantier], localisation:[...commentairesLocalisation], phases: phasesAvancement.map(p=>[...(p.commentaires||[])])});
 }
 let geoAcces = null, geoIncident = null, geoChantier = null, geoLocalisation = null;
 
@@ -1464,7 +1465,7 @@ function cocherPrescriptions(sauvegardees){
   rendrePrescriptionsPerso();
 }
 
-let phasesAvancement = [{texte:"", photos:[], codeCouleur:""}];
+let phasesAvancement = [{texte:"", photos:[], codeCouleur:"", commentaires:[]}];
 function rendrePhasesAvancement(){
   const zone = $("#crPhasesListe");
   zone.innerHTML = "";
@@ -1477,44 +1478,42 @@ function rendrePhasesAvancement(){
       </div>
       <textarea placeholder="Ex. : Phase ${idx+1} — Terrassements a la pelle, fouille blindee et etayee…">${echap(phase.texte)}</textarea>
       <label style="margin-top:10px;font-size:13px">Code couleur de cette remarque (si besoin)</label>
-      <div class="code-couleur-selector code-couleur-phase">
-        <label data-code="S" class="${phase.codeCouleur==='S'?'coche':''}"><input type="radio" name="codeCouleurPhase${idx}" value="S" ${phase.codeCouleur==='S'?'checked':''}> [S] Securite / procedure</label>
-        <label data-code="P" class="${phase.codeCouleur==='P'?'coche':''}"><input type="radio" name="codeCouleurPhase${idx}" value="P" ${phase.codeCouleur==='P'?'checked':''}> [P] Projection travaux</label>
-        <label data-code="A" class="${phase.codeCouleur==='A'?'coche':''}"><input type="radio" name="codeCouleurPhase${idx}" value="A" ${phase.codeCouleur==='A'?'checked':''}> [A] Action rapide demandee</label>
-        <label data-code="conforme" class="${phase.codeCouleur==='conforme'?'coche':''}"><input type="radio" name="codeCouleurPhase${idx}" value="conforme" ${phase.codeCouleur==='conforme'?'checked':''}> Conforme — RAS</label>
-      </div>
+      <select class="select-code-couleur">
+        <option value="">— Aucun —</option>
+        ${["S","P","A","conforme"].map(c=>`<option value="${c}" ${phase.codeCouleur===c?'selected':''}>${LABELS_CODE_COULEUR[c]}</option>`).join('')}
+      </select>
       <label style="margin-top:10px;font-size:13px">Photos de la phase ${idx+1}</label>
       <div class="zone-photos" style="padding:10px">&#128247; Ajouter des photos — cliquez ou deposez</div>
       <input type="file" accept="image/*" multiple hidden>
       <div class="vignettes"></div>`;
     const ta = bloc.querySelector("textarea");
     ta.addEventListener("input", ()=>{ phase.texte = ta.value; });
+    const selCode = bloc.querySelector(".select-code-couleur");
+    selCode.value = phase.codeCouleur || "";
+    selCode.addEventListener("change", ()=>{ phase.codeCouleur = selCode.value; });
     const btnDel = bloc.querySelector("button.btn-danger");
     if(btnDel) btnDel.addEventListener("click", ()=>{ phasesAvancement.splice(idx,1); rendrePhasesAvancement(); });
-    const groupeCouleur = bloc.querySelector(".code-couleur-phase");
-    groupeCouleur.querySelectorAll("input").forEach(radio=>{
-      radio.addEventListener("change", ()=>{ phase.codeCouleur = radio.value; majPilleCodeCouleur(groupeCouleur); });
-    });
     const zonePhoto = bloc.querySelector(".zone-photos");
     const inputPhoto = bloc.querySelector('input[type="file"]');
     const vignettesDiv = bloc.querySelector(".vignettes");
     zonePhoto.addEventListener("click", ()=>inputPhoto.click());
     inputPhoto.addEventListener("change", async ev=>{
-      for(const f of ev.target.files){ phase.photos.push(await compresserImage(f)); }
+      for(const f of ev.target.files){ phase.photos.push(await compresserImage(f)); phase.commentaires.push(""); }
       ev.target.value = "";
       rendrePhasesAvancement();
     });
     phase.photos.forEach((src, pIdx)=>{
       const v = document.createElement("div"); v.className = "vignette";
-      v.innerHTML = `<div class="vignette-img-wrap"><img src="${src}" alt="photo phase ${idx+1}"><button title="Retirer">&#10005;</button></div>`;
-      v.querySelector("button").addEventListener("click", ()=>{ phase.photos.splice(pIdx,1); rendrePhasesAvancement(); });
+      v.innerHTML = `<div class="vignette-img-wrap"><img src="${src}" alt="photo phase ${idx+1}"><button title="Retirer">&#10005;</button></div><textarea class="commentaire-photo" placeholder="Commentaire (optionnel)">${echap(phase.commentaires[pIdx]||"")}</textarea>`;
+      v.querySelector("button").addEventListener("click", ()=>{ phase.photos.splice(pIdx,1); phase.commentaires.splice(pIdx,1); rendrePhasesAvancement(); });
+      v.querySelector("textarea").addEventListener("input", ev2=>{ phase.commentaires[pIdx] = ev2.target.value; });
       vignettesDiv.appendChild(v);
     });
     zone.appendChild(bloc);
   });
 }
-$("#btnAjouterPhase").addEventListener("click", ()=>{ phasesAvancement.push({texte:"", photos:[], codeCouleur:""}); rendrePhasesAvancement(); });
-function chargerPhasesAvancement(avancementPhase, photosParPhase, codeCouleurParPhase){
+$("#btnAjouterPhase").addEventListener("click", ()=>{ phasesAvancement.push({texte:"", photos:[], codeCouleur:"", commentaires:[]}); rendrePhasesAvancement(); });
+function chargerPhasesAvancement(avancementPhase, photosParPhase, codeCouleurParPhase, commentairesParPhase){
   const textes = (avancementPhase || "") ? (avancementPhase).split("\n\n") : [""];
   const n = Math.max(textes.length, (photosParPhase||[]).length, 1);
   phasesAvancement = [];
@@ -1522,13 +1521,17 @@ function chargerPhasesAvancement(avancementPhase, photosParPhase, codeCouleurPar
     phasesAvancement.push({
       texte: textes[i] || "",
       photos: (photosParPhase && photosParPhase[i]) ? [...photosParPhase[i]] : [],
-      codeCouleur: (codeCouleurParPhase && codeCouleurParPhase[i]) || ""
+      codeCouleur: (codeCouleurParPhase && codeCouleurParPhase[i]) || "",
+      commentaires: (commentairesParPhase && commentairesParPhase[i]) ? [...commentairesParPhase[i]] : []
     });
   }
   // Migration : anciennes photos "chantier" non liees a une phase -> rattachees a la phase 1
   if((!photosParPhase || !photosParPhase.length) && photosChantier.length){
     phasesAvancement[0].photos = [...photosChantier];
+    phasesAvancement[0].commentaires = [...commentairesChantier];
   }
+  // Securite : s'assurer que le tableau de commentaires a toujours la meme longueur que les photos
+  phasesAvancement.forEach(p=>{ while(p.commentaires.length < p.photos.length) p.commentaires.push(""); });
   rendrePhasesAvancement();
 }
 function getAvancementPhaseTexte(){
@@ -1632,6 +1635,7 @@ async function chargerCRPourEdition(cr){
     $("#crNumeroAffaire").insertAdjacentHTML("beforeend", `<option value="${echap(ip.numeroAffaire)}">${echap(ip.numeroAffaire)} (non enregistre)</option>`);
   }
   $("#crNumeroAffaire").value = ip.numeroAffaire || "";
+  $("#crIndice").value = ip.indice || "";
   $("#crNCite").value = ip.nCite || "";
   $("#crNIntervenant").value = ip.nIntervenant || "";
   $("#crAdresseChantier").value = ip.adresseChantier || "";
@@ -1680,12 +1684,12 @@ async function chargerCRPourEdition(cr){
   photosIncident.length = 0; photosIncident.push(...photos.incidents);
   photosChantier.length = 0; photosChantier.push(...(photos.chantier||[]));
   photosLocalisation.length = 0; photosLocalisation.push(...(photos.localisation||[]));
-  chargerPhasesAvancement(ip.avancementPhase, photos.phases, ip.phasesCodeCouleur);
   const commentairesCR = chargerCommentairesCR(cr.id);
   commentairesAcces.length = 0; commentairesAcces.push(...(commentairesCR.acces||[]));
   commentairesIncident.length = 0; commentairesIncident.push(...(commentairesCR.incidents||[]));
   commentairesChantier.length = 0; commentairesChantier.push(...(commentairesCR.chantier||[]));
   commentairesLocalisation.length = 0; commentairesLocalisation.push(...(commentairesCR.localisation||[]));
+  chargerPhasesAvancement(ip.avancementPhase, photos.phases, ip.phasesCodeCouleur, commentairesCR.phases);
   rendreVignettes("#vignAcces", photosAcces, 'acces');
   rendreVignettes("#vignIncident", photosIncident, 'incident');
   rendreVignettes("#vignLocalisation", photosLocalisation, 'localisation');
@@ -1720,11 +1724,12 @@ function viderFormulaire(){
   $("#signaturePreview").style.display = "none";
   $("#crTypeTravaux").value = "";
   $("#crNumeroAffaire").value = "";
+  $("#crIndice").value = "";
   definirMaitreOuvrage(""); $("#crReferentClient").value = ""; $("#crReferentTel").value = ""; $("#crReferentEmail").value = "";
   $("#crEntTravauxNom").value = ""; $("#crEntTravauxContact").value = ""; $("#crEntTravauxTel").value = "";
   $("#crVilleVoirieNom").value = ""; $("#crVilleVoirieContact").value = ""; $("#crVilleVoirieTel").value = "";
   cocherPrescriptions([]);
-  chargerPhasesAvancement("", []);
+  chargerPhasesAvancement("", [], [], []);
   $("#crPersoCompagnons").value = 0; $("#crPersoPelles").value = 0; $("#crPersoCamions").value = 0; $("#crPersoNote").value = "";
   chargerSynthese({});
   $("#crSigMoeNom").value = ""; $("#crSigMoeDate").value = "";
@@ -1752,6 +1757,7 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
     remiseCirculation: $("#crRemiseCirculation").value,
     typeTravaux: $("#crTypeTravaux").value,
     numeroAffaire: $("#crNumeroAffaire").value.trim(),
+    indice: $("#crIndice").value.trim(),
     ...(typeDocumentActuel === 'minutes' ? {
       maitreOuvrageSociete: valeurMaitreOuvrage(),
       referentClient: $("#crReferentClient").value.trim(),
@@ -2061,14 +2067,18 @@ async function exporterPDF(cr, retournerBlob){
   };
 
   // Client & intervenants
-  y = pdfSautPage(doc, y, 57);
-  dessinerBandeau("CLIENT & INTERVENANTS DU PROJET");
   const clientLignes = [
     ["Maitre d'ouvrage", ip.maitreOuvrageSociete || "—"],
-    ["Referent client", [ip.referentClient, ip.referentTel, ip.referentEmail].filter(Boolean).join(" / ") || "—"],
-    ["Entreprise travaux", [ip.entrepriseTravauxNom, ip.entrepriseTravauxContact, ip.entrepriseTravauxTel].filter(Boolean).join(" / ") || "—"],
-    ["Ville / Voirie", [ip.villeVoirieNom, ip.villeVoirieContact, ip.villeVoirieTel].filter(Boolean).join(" / ") || "—"]
+    ["Referent client", [ip.referentClient, ip.referentTel, ip.referentEmail].filter(Boolean).join(" / ") || "—"]
   ];
+  if(ip.entrepriseTravauxNom || ip.entrepriseTravauxContact || ip.entrepriseTravauxTel){
+    clientLignes.push(["Entreprise travaux", [ip.entrepriseTravauxNom, ip.entrepriseTravauxContact, ip.entrepriseTravauxTel].filter(Boolean).join(" / ")]);
+  }
+  if(ip.villeVoirieNom || ip.villeVoirieContact || ip.villeVoirieTel){
+    clientLignes.push(["Ville / Voirie", [ip.villeVoirieNom, ip.villeVoirieContact, ip.villeVoirieTel].filter(Boolean).join(" / ")]);
+  }
+  y = pdfSautPage(doc, y, 9 + clientLignes.length * 8 + 3);
+  dessinerBandeau("CLIENT & INTERVENANTS DU PROJET");
   clientLignes.forEach(([label,val])=>{
     doc.setFillColor(245,245,245); doc.rect(14, y, 45, 7, "F");
     doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.text(label, 16, y+5);
@@ -2178,8 +2188,11 @@ async function exporterPDF(cr, retournerBlob){
     }catch(e){}
   }
 
-  // Footer charte GTA — redessine sur chaque page du document, avec le numero d'affaire
-  const dessinerPiedDePage = ()=>{
+  // Footer charte GTA — redessine sur chaque page du document.
+  // A gauche : ligne d'identification (N° d'affaire, maitre d'ouvrage, site, reference, indice).
+  // A droite : pagination reelle (page X / Y), calculee sur le nombre de pages du PDF genere.
+  const ligneIdentification = ligneIdentificationDocument(cr);
+  const dessinerPiedDePage = (numeroPage, totalPages)=>{
     doc.setFillColor(26,26,26); doc.rect(0, 278, 210, 19, "F");
     for(let x=0; x<210; x+=0.5){
       const ratio = x/210;
@@ -2189,18 +2202,20 @@ async function exporterPDF(cr, retournerBlob){
       doc.setDrawColor(r,g,bcol); doc.setLineWidth(0.5);
       doc.line(x, 278, x+0.5, 278);
     }
-    doc.setTextColor(180); doc.setFontSize(7); doc.setFont("helvetica","normal");
-    doc.text("GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid", 14, 285);
-    doc.text("1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr", 14, 289);
-    doc.text("Document genere le " + new Date().toLocaleDateString("fr-FR") + " a " + new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}), 14, 293);
-    if(ip.numeroAffaire){
-      doc.setTextColor(37,99,235); doc.setFont("helvetica","bold");
-      doc.text(ip.numeroAffaire, 180, 285, {align:"right"});
+    if(ligneIdentification){
+      doc.setTextColor(96,165,250); doc.setFont("helvetica","bold"); doc.setFontSize(7.5);
+      doc.text(ligneIdentification, 14, 284);
       doc.setFont("helvetica","normal");
     }
+    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(8);
+    doc.text("Page " + numeroPage + " / " + totalPages, 196, 284, {align:"right"});
+    doc.setTextColor(180); doc.setFontSize(7); doc.setFont("helvetica","normal");
+    doc.text("GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid", 14, 289);
+    doc.text("1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr", 14, 293);
+    doc.text("Document genere le " + new Date().toLocaleDateString("fr-FR") + " a " + new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}), 105, 293);
   };
   const nbPages = doc.internal.getNumberOfPages();
-  for(let p=1; p<=nbPages; p++){ doc.setPage(p); dessinerPiedDePage(); }
+  for(let p=1; p<=nbPages; p++){ doc.setPage(p); dessinerPiedDePage(p, nbPages); }
 
   if(retournerBlob) return doc.output('blob');
   doc.save(refDocument(cr) + "_"+cr.date+"_"+cr.secteur.replace(/\s+/g,"_").substring(0,30)+".pdf");
@@ -2232,12 +2247,16 @@ function construireSujetCorps(cr){
   return {sujet, corps};
 }
 
-async function preparerEmailOutlook(cr, sujet, corps){
+async function preparerEmailOutlook(cr, sujet, corps, fenetreReservee){
   const params = new URLSearchParams();
   if(cr.type !== 'minutes') params.set("to", CONTACT_DESTINATAIRE.email);
   params.set("subject", sujet);
   params.set("body", corps + String.fromCharCode(10,10) + "Le document au format PDF ainsi que les photos sont joints.");
-  window.open("https://outlook.office.com/mail/deeplink/compose?" + params.toString(), "_blank");
+  const url = "https://outlook.office.com/mail/deeplink/compose?" + params.toString();
+  // On reutilise la fenetre deja ouverte au debut du clic (voir partagerCR) pour eviter
+  // que le navigateur bloque l'ouverture d'Outlook apres les traitements asynchrones.
+  if(fenetreReservee && !fenetreReservee.closed){ fenetreReservee.location.href = url; }
+  else { window.open(url, "_blank"); }
   await modalAlert(cr.type === 'minutes'
     ? "Outlook s'ouvre dans un nouvel onglet. Choisissez le ou les destinataires dans vos contacts, puis n'oubliez pas de joindre le PDF et les photos."
     : "Outlook s'ouvre dans un nouvel onglet, pre-rempli pour Mario DE JESUS. N'oubliez pas de joindre le PDF et les photos.");
@@ -2245,29 +2264,66 @@ async function preparerEmailOutlook(cr, sujet, corps){
 
 async function partagerCR(cr){
   const {sujet, corps} = construireSujetCorps(cr);
+
+  // IMPORTANT : on ouvre tout de suite (de maniere synchrone, dans le geste de clic de
+  // l'utilisateur) une fenetre vide. Si le partage natif echoue plus loin (apres des
+  // traitements asynchrones comme la generation du PDF), on la reutilisera pour afficher
+  // Outlook au lieu d'appeler window.open() trop tard, ce qui est bloque par le
+  // navigateur comme pop-up (c'est ce qui provoquait le message "Le pop-up a ete bloque").
+  let fenetreReservee = null;
+  try{ fenetreReservee = window.open("", "_blank"); }catch(e){}
+
   try{
-    if(navigator.share && navigator.canShare){
+    if(navigator.share){
       const pdfBlob = await exporterPDF(cr, true);
       const nomPdf = refDocument(cr) + "_" + cr.date + "_" + cr.secteur.replace(/\s+/g,"_").substring(0,30) + ".pdf";
-      const fichiers = [new File([pdfBlob], nomPdf, {type:'application/pdf'})];
+      const pdfFichier = new File([pdfBlob], nomPdf, {type:'application/pdf'});
       const photos = await getPhotosCR(cr.id);
       const sourcesPhotos = cr.type === 'minutes'
         ? [...(photos.localisation||[]), ...((photos.phases||[]).flat())]
         : [...(photos.acces||[]), ...(photos.incidents||[])];
+      const photosFichiers = [];
       for(let i=0; i<sourcesPhotos.length; i++){
-        try{ fichiers.push(await dataUrlVersFile(sourcesPhotos[i], "photo_"+(i+1)+".jpg")); }catch(e){}
+        try{ photosFichiers.push(await dataUrlVersFile(sourcesPhotos[i], "photo_"+(i+1)+".jpg")); }catch(e){}
       }
-      const donneesPartage = { title: sujet, text: corps, files: fichiers };
-      if(navigator.canShare(donneesPartage)){
-        await navigator.share(donneesPartage);
+
+      // Tentative 1 : PDF + toutes les photos (le partage le plus complet). C'est celui qui
+      // fait apparaitre le menu natif du telephone (WhatsApp, SMS, e-mail, Outlook, etc.).
+      const paquetComplet = { title: sujet, text: corps, files: [pdfFichier, ...photosFichiers] };
+      if(!navigator.canShare || navigator.canShare(paquetComplet)){
+        try{
+          if(fenetreReservee) fenetreReservee.close();
+          await navigator.share(paquetComplet);
+          return;
+        }catch(e){ if(e && e.name === 'AbortError') return; }
+      }
+
+      // Tentative 2 : PDF seul. Certains telephones refusent de partager un PDF et plusieurs
+      // photos ensemble (trop de fichiers, ou types differents), mais acceptent un seul fichier.
+      const paquetPdfSeul = { title: sujet, text: corps, files: [pdfFichier] };
+      if(photosFichiers.length && (!navigator.canShare || navigator.canShare(paquetPdfSeul))){
+        try{
+          if(fenetreReservee) fenetreReservee.close();
+          await navigator.share(paquetPdfSeul);
+          await modalAlert("Le PDF a ete partage. Le telephone n'a pas accepte d'y joindre aussi les " + photosFichiers.length + " photo(s) : pensez a les envoyer separement si besoin.");
+          return;
+        }catch(e){ if(e && e.name === 'AbortError') return; }
+      }
+
+      // Tentative 3 : partage du texte seul, sans fichier. Ca ouvre quand meme le menu
+      // natif (WhatsApp, SMS, e-mail, Outlook...) meme si aucun fichier n'est joignable ici.
+      try{
+        if(fenetreReservee) fenetreReservee.close();
+        await navigator.share({ title: sujet, text: corps });
+        await modalAlert("Le message a ete partage sans piece jointe (ce navigateur/telephone n'accepte pas le partage de fichiers dans cette application). Joignez le PDF et les photos manuellement depuis l'application choisie.");
         return;
-      }
+      }catch(e){ if(e && e.name === 'AbortError') return; }
     }
   }catch(e){
     if(e && e.name === 'AbortError') return; // partage annule par l'utilisateur
   }
-  // Repli (ordinateur ou navigateur sans partage natif) : Outlook Web pre-rempli
-  await preparerEmailOutlook(cr, sujet, corps);
+  // Repli (ordinateur, ou telephone/navigateur sans partage natif du tout) : Outlook Web pre-rempli
+  await preparerEmailOutlook(cr, sujet, corps, fenetreReservee);
 }
 
 function refDocument(cr){
@@ -2275,6 +2331,14 @@ function refDocument(cr){
   const memeType = etat.crs.filter(c=>c.type===cr.type).slice().sort((a,b)=>(a.cree||0)-(b.cree||0));
   const idx = memeType.findIndex(c=>c.id===cr.id);
   return prefix + String(idx>=0 ? idx+1 : 1).padStart(2,'0');
+}
+
+// Ligne d'identification affichee en pied de page : N° d'affaire, maitre d'ouvrage,
+// site du chantier, reference du document (MCXx / CRXx) et indice de revision.
+function ligneIdentificationDocument(cr){
+  const ip = cr.infoProjet || {};
+  const parties = [ip.numeroAffaire, ip.maitreOuvrageSociete, ip.siteLoc, refDocument(cr), ip.indice || "Ind0"].filter(Boolean);
+  return parties.join(" · ");
 }
 
 function bandeauSection(numero, titre){
@@ -2330,14 +2394,17 @@ async function imprimerCR(cr){
           <tr><th>Maitre d'ouvrage (societe)</th><td>${echap(ip.maitreOuvrageSociete||"—")}</td><th>Referent client</th><td>${echap(ip.referentClient||"—")}</td></tr>
           <tr><th>Telephone</th><td>${echap(ip.referentTel||"—")}</td><th>E-mail</th><td>${echap(ip.referentEmail||"—")}</td></tr>
         </table>
+        ${(ip.entrepriseTravauxNom || ip.entrepriseTravauxContact || ip.entrepriseTravauxTel || ip.villeVoirieNom || ip.villeVoirieContact || ip.villeVoirieTel) ? `
         <div class="section-body" style="margin-top:8px">
+          ${(ip.entrepriseTravauxNom || ip.entrepriseTravauxContact || ip.entrepriseTravauxTel) ? `
           <div style="font-weight:700;color:var(--rouge);font-size:10.5px;margin-bottom:3px">Entreprise travaux</div>
           <div>${echap(ip.entrepriseTravauxNom||"—")}</div>
-          <div style="color:var(--acier);font-size:10px">${echap([ip.entrepriseTravauxContact, ip.entrepriseTravauxTel].filter(Boolean).join(" / ")||"—")}</div>
+          <div style="color:var(--acier);font-size:10px">${echap([ip.entrepriseTravauxContact, ip.entrepriseTravauxTel].filter(Boolean).join(" / ")||"—")}</div>` : ''}
+          ${(ip.villeVoirieNom || ip.villeVoirieContact || ip.villeVoirieTel) ? `
           <div style="font-weight:700;color:var(--rouge);font-size:10.5px;margin:8px 0 3px">Ville / Voirie</div>
           <div>${echap(ip.villeVoirieNom||"—")}</div>
-          <div style="color:var(--acier);font-size:10px">${echap([ip.villeVoirieContact, ip.villeVoirieTel].filter(Boolean).join(" / ")||"—")}</div>
-        </div>
+          <div style="color:var(--acier);font-size:10px">${echap([ip.villeVoirieContact, ip.villeVoirieTel].filter(Boolean).join(" / ")||"—")}</div>` : ''}
+        </div>` : ''}
       </div>` : '';
 
   const sectionPrescriptions = estMinutes ? `
@@ -2366,7 +2433,7 @@ async function imprimerCR(cr){
                   ${code && COULEURS_CODE_COULEUR[code] ? `<span style="background:${COULEURS_CODE_COULEUR[code]};color:#fff;font-size:9px;font-weight:700;border-radius:3px;padding:2px 7px;text-transform:uppercase">${echap(LABELS_CODE_COULEUR[code]||code)}</span>` : ''}
                 </div>
                 <div>${echap(phasesTxt[p]||"—").replace(/\n/g,"<br>")}</div>
-                ${photosPhase.length ? galeriePhotosImprimee(photosPhase, []) : ''}
+                ${photosPhase.length ? galeriePhotosImprimee(photosPhase, (commentaires.phases||[])[p] || []) : ''}
               </div>`;
             }
             return html;
@@ -2472,8 +2539,10 @@ async function imprimerCR(cr){
       ${(cr.signature && !estMinutes) ? `<div class="section-print signature-print">${bandeauSection(n++,"Signature")}<img src="${cr.signature}"></div>` : ''}
     </div>
     <div class="footer-print">
-      <div>GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid<br>1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr<br>Document genere le ${new Date().toLocaleDateString("fr-FR")} a ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</div>
-      <div style="color:#2563EB;font-family:var(--display);font-size:14px">${ip.numeroAffaire ? echap(ip.numeroAffaire) : ''}</div>
+      <div>
+        ${ligneIdentificationDocument(cr) ? `<div style="color:#2563EB;font-weight:700;margin-bottom:2px">${echap(ligneIdentificationDocument(cr))}</div>` : ''}
+        GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid<br>1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr<br>Document genere le ${new Date().toLocaleDateString("fr-FR")} a ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}
+      </div>
     </div>
   </div>`;
   window.print();
