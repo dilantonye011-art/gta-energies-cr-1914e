@@ -198,11 +198,13 @@
     .page-cr .photos-print{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:6px}
     .page-cr .photos-print img{width:100%;max-height:180px;object-fit:contain;border:1px solid #ccc;display:block}
     .page-cr .photos-print figure.photo-print-item{width:46%;margin:0}
+    .page-cr .photos-print figure.photo-print-item-grande{width:75%;margin:0 auto}
+    .page-cr .photos-print figure.photo-print-item-grande img{max-height:280px}
     .page-cr .photos-print .commentaire-print{font-size:10px;color:#333;margin-top:3px;font-style:italic}
     .page-cr .badge-print{display:inline-block;border:1px solid #C6432E;color:#C6432E;background:#FBEDEA;border-radius:3px;padding:2px 6px;font-size:9px;font-weight:700;text-transform:uppercase}
     .page-cr .badge-print-ok{border-color:#1E7A46;color:#1E7A46;background:#EAF4EE}
-    .page-cr .footer-print{background:#fff;color:var(--acier);padding:6mm 15mm;font-size:9px;display:flex;justify-content:space-between;align-items:center;border-top:3px solid var(--rouge);position:fixed;left:0;right:0;bottom:0}
-    .page-cr .content-print{margin-bottom:26mm}
+    .page-cr .footer-print{background:#fff;color:var(--acier);padding:6mm 15mm;font-size:9px;display:flex;justify-content:space-between;align-items:center;border-top:3px solid var(--rouge);margin-top:10mm;break-inside:avoid;page-break-inside:avoid}
+    .page-cr .content-print{margin-bottom:0}
     .page-cr .signature-print{margin-top:10px;border-top:1px solid #ccc;padding-top:8px}
     .page-cr .sig-bloc-print{border:1px solid var(--ligne);padding:8px 10px;margin-bottom:8px;background:#fff}
     .page-cr .sig-bloc-titre{font-weight:700;color:var(--rouge);font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
@@ -386,7 +388,20 @@
       </div>
       <div class="grille2">
         <div><label for="crSiteLoc">Site de localisation du projet</label><input type="text" id="crSiteLoc" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris — angle Malesherbes / coordonnees GPS"></div>
-        <div><label for="crIndice">Indice du document (revision)</label><input type="text" id="crIndice" placeholder="Ex. : Ind0"></div>
+        <div><label for="crIndice">Indice du document (revision)</label>
+          <select id="crIndice">
+            <option value="0" selected>0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </div>
       </div>
       <div class="carte" id="blocPhotosLocalisation" style="display:none;margin-top:10px;background:#FBFBFA">
         <label style="margin-top:0">Photo de localisation du chantier</label>
@@ -395,7 +410,7 @@
         <div class="vignettes" id="vignLocalisation"></div>
         <div class="photo-geo-info" id="geoInfoLocalisation" style="display:none"></div>
       </div>
-      <div class="grille2">
+      <div class="grille2" id="blocAdresseChantier" style="display:none">
         <div><label for="crAdresseChantier">Adresse du chantier</label><input type="text" id="crAdresseChantier" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris"></div>
       </div>
       <div id="blocChantierMinutesExtra" style="display:none">
@@ -649,29 +664,35 @@
 
     <div class="carte">
       <h3>GTA GE</h3>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-        <div style="flex:1;min-width:200px"><label for="nvExecGTA">Nom de l'executant</label><input type="text" id="nvExecGTA" placeholder="Ex. : A. TCHADJEU"></div>
-        <button class="btn btn-sombre" id="btnAjoutExecGTA">Ajouter</button>
+      <div class="grille3">
+        <div><label for="nvExecGTANom">Nom</label><input type="text" id="nvExecGTANom" placeholder="Ex. : A. TCHADJEU"></div>
+        <div><label for="nvExecGTATel">Telephone</label><input type="text" id="nvExecGTATel" placeholder="Ex. : 06 00 00 00 00"></div>
+        <div><label for="nvExecGTAEmail">E-mail</label><input type="email" id="nvExecGTAEmail" placeholder="a.tchadjeu@gtage.fr"></div>
       </div>
-      <div class="puces" id="listeEquipeGTA" style="margin-top:14px"></div>
+      <div class="actions"><button class="btn btn-sombre" id="btnAjoutExecGTA">Ajouter</button></div>
+      <div id="listeEquipeGTA" style="margin-top:14px"></div>
     </div>
 
     <div class="carte">
       <h3>GTA ENERGIES</h3>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-        <div style="flex:1;min-width:200px"><label for="nvExecEnergies">Nom de l'executant</label><input type="text" id="nvExecEnergies" placeholder="Ex. : M. DUPONT"></div>
-        <button class="btn btn-sombre" id="btnAjoutExecEnergies">Ajouter</button>
+      <div class="grille3">
+        <div><label for="nvExecEnergiesNom">Nom</label><input type="text" id="nvExecEnergiesNom" placeholder="Ex. : M. DUPONT"></div>
+        <div><label for="nvExecEnergiesTel">Telephone</label><input type="text" id="nvExecEnergiesTel" placeholder="Ex. : 06 00 00 00 00"></div>
+        <div><label for="nvExecEnergiesEmail">E-mail</label><input type="email" id="nvExecEnergiesEmail" placeholder="m.dupont@gtaenergies.fr"></div>
       </div>
-      <div class="puces" id="listeEquipeEnergies" style="margin-top:14px"></div>
+      <div class="actions"><button class="btn btn-sombre" id="btnAjoutExecEnergies">Ajouter</button></div>
+      <div id="listeEquipeEnergies" style="margin-top:14px"></div>
     </div>
 
     <div class="carte">
       <h3>SOUS-TRAITANT</h3>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-        <div style="flex:1;min-width:200px"><label for="nvExecST">Nom de l'executant</label><input type="text" id="nvExecST" placeholder="Ex. : B. MARTIN"></div>
-        <button class="btn btn-sombre" id="btnAjoutExecST">Ajouter</button>
+      <div class="grille3">
+        <div><label for="nvExecSTNom">Nom</label><input type="text" id="nvExecSTNom" placeholder="Ex. : B. MARTIN (ECM)"></div>
+        <div><label for="nvExecSTTel">Telephone</label><input type="text" id="nvExecSTTel" placeholder="Ex. : 06 00 00 00 00"></div>
+        <div><label for="nvExecSTEmail">E-mail</label><input type="email" id="nvExecSTEmail" placeholder="b.martin@ecm.fr"></div>
       </div>
-      <div class="puces" id="listeEquipeST" style="margin-top:14px"></div>
+      <div class="actions"><button class="btn btn-sombre" id="btnAjoutExecST">Ajouter</button></div>
+      <div id="listeEquipeST" style="margin-top:14px"></div>
     </div>
 
     <div class="carte">
@@ -783,7 +804,7 @@ const CONTACT_DESTINATAIRE = {
   nom: "Mario DE JESUS",
   entite: "GTA GE",
   email: "m.dejesus@gtage.fr",
-  civilite: "Monsieur DE JESUS"
+  civilite: "M. DE JESUS"
 };
 
 let sb = null, utilisateur = null, modeHorsLigne = false;
@@ -853,6 +874,11 @@ function frDate(iso){
   if(!iso) return "—";
   const d = new Date(iso + (iso.length===10 ? "T12:00:00" : ""));
   return d.toLocaleDateString("fr-FR", {weekday:"long", day:"2-digit", month:"long", year:"numeric"});
+}
+function frDateCourte(iso){
+  if(!iso) return "—";
+  const d = new Date(iso + (iso.length===10 ? "T12:00:00" : ""));
+  return d.toLocaleDateString("fr-FR");
 }
 
 function compresserImage(fichier){
@@ -1023,7 +1049,7 @@ async function syncDepuisSupabase(){
   if(!sb || modeHorsLigne) return;
   try{
     const { data: equipeData } = await sb.from('equipe').select('*').order('nom');
-    if(equipeData){ etat.equipe = {"GTA GE":[],"GTA ENERGIES":[],"SOUS-TRAITANT":[]}; equipeData.forEach(e=>{ if(etat.equipe[e.entite]) etat.equipe[e.entite].push(e.nom); }); }
+    if(equipeData){ etat.equipe = {"GTA GE":[],"GTA ENERGIES":[],"SOUS-TRAITANT":[]}; equipeData.forEach(e=>{ if(etat.equipe[e.entite]) etat.equipe[e.entite].push({id:uid(), nom:e.nom, tel:e.tel||"", email:e.email||""}); }); }
     const { data: moeData } = await sb.from('contacts_moe').select('*').order('cree', {ascending:true});
     if(moeData) etat.moe = moeData.map(m=>({id:m.id, nom:m.nom, role:m.role, tel:m.tel, email:m.email}));
     const { data: semData } = await sb.from('semaines').select('*').order('lundi');
@@ -1232,7 +1258,7 @@ function rendrePlanning(){
     const div = document.createElement("div"); div.className = "jour";
     div.innerHTML = `<div class="jour-entete"><span class="num">Journee ${idx+1}</span><input type="date" value="${j.date||""}" data-champ="date"><input type="text" value="${echap(j.zone)}" placeholder="Secteur / galerie *" data-champ="zone" style="flex:1;min-width:180px"><button class="btn btn-danger btn-petit" data-action="supprimer">&#10005;</button></div><label style="margin-top:10px">Executants affectes</label><div class="puces" data-role="execs"></div><label>Consignes du jour</label><input type="text" value="${echap(j.note)}" placeholder="Ex. : prevoir aide installation lumiere" data-champ="note">`;
     const zone = div.querySelector('[data-role="execs"]');
-    const tousExecs = [...etat.equipe["GTA GE"], ...etat.equipe["GTA ENERGIES"], ...etat.equipe["SOUS-TRAITANT"]];
+    const tousExecs = [...etat.equipe["GTA GE"], ...etat.equipe["GTA ENERGIES"], ...etat.equipe["SOUS-TRAITANT"]].map(p=>p.nom);
     if(tousExecs.length===0) zone.innerHTML = `<span style="color:var(--acier);font-size:13px">Ajoutez des executants dans l'onglet Equipe.</span>`;
     tousExecs.forEach(nom=>{
       const coche = (j.execs||[]).includes(nom);
@@ -1282,6 +1308,7 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
       $("#blocIntervenantsPresents").style.display = "none";
       $("#blocPhotosLocalisation").style.display = "block";
       $("#blocChantierMinutesExtra").style.display = "block";
+      $("#blocAdresseChantier").style.display = "block";
     } else {
       $("#titreNouveauCR").textContent = "Nouveau compte-rendu";
       $("#sousTitreNouveau").textContent = "A rediger apres chaque intervention. Obligatoire des qu'un incident est remarque.";
@@ -1298,6 +1325,7 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
       $("#blocIntervenantsPresents").style.display = "block";
       $("#blocPhotosLocalisation").style.display = "none";
       $("#blocChantierMinutesExtra").style.display = "none";
+      $("#blocAdresseChantier").style.display = "none";
       rendreIntervenantsPresents();
     }
   });
@@ -1694,7 +1722,8 @@ function rendreIntervenantsPresents(){
       zone.innerHTML = `<span style="color:var(--acier);font-size:13px">Aucun executant dans cette entite (ajoutez-le dans l'onglet Equipe).</span>`;
       return;
     }
-    liste.forEach(nom=>{
+    liste.forEach(personne=>{
+      const nom = personne.nom;
       const coche = (formInfosGenerales.execs || []).includes(nom);
       const lab = document.createElement("label"); lab.className = "puce" + (coche ? " coche" : "");
       lab.innerHTML = `<input type="checkbox" ${coche?"checked":""}> ${echap(nom)}`;
@@ -1788,7 +1817,7 @@ async function chargerCRPourEdition(cr){
     $("#crNumeroAffaire").insertAdjacentHTML("beforeend", `<option value="${echap(ip.numeroAffaire)}">${echap(ip.numeroAffaire)} (non enregistre)</option>`);
   }
   $("#crNumeroAffaire").value = ip.numeroAffaire || "";
-  $("#crIndice").value = ip.indice || "";
+  $("#crIndice").value = ip.indice || "0";
   $("#crNCite").value = ip.nCite || "";
   $("#crIntervenantNom").value = ip.intervenantNom || "";
   $("#crIntervenantTel").value = ip.intervenantTel || "";
@@ -1880,7 +1909,7 @@ function viderFormulaire(){
   $("#signaturePreview").style.display = "none";
   $("#crTypeTravaux").value = "";
   $("#crNumeroAffaire").value = "";
-  $("#crIndice").value = "";
+  $("#crIndice").value = "0";
   definirMaitreOuvrage(""); $("#crReferentClient").value = ""; $("#crReferentTel").value = ""; $("#crReferentEmail").value = "";
   definirEntrepriseTravaux(""); $("#crEntTravauxContact").value = ""; $("#crEntTravauxTel").value = "";
   $("#crVilleVoirieNom").value = ""; $("#crVilleVoirieContact").value = ""; $("#crVilleVoirieTel").value = "";
@@ -2119,6 +2148,23 @@ function pdfSautPage(doc, y, hauteurNecessaire){
   return y;
 }
 
+// Incruste reellement les photos dans le PDF (jusque-la, seul un texte du type
+// "2 photo(s) jointe(s)" etait ecrit, sans que l'image ne soit jamais dessinee).
+// Mise en page : 2 photos par ligne, avec saut de page automatique si necessaire.
+function pdfAjouterPhotos(doc, y, photos){
+  if(!photos || !photos.length) return y;
+  const imgW = 86, imgH = 62, gap = 10, marginX = 14;
+  for(let i=0; i<photos.length; i+=2){
+    y = pdfSautPage(doc, y, imgH + 6);
+    try{ doc.addImage(photos[i], 'JPEG', marginX, y, imgW, imgH); }catch(e){}
+    if(photos[i+1]){
+      try{ doc.addImage(photos[i+1], 'JPEG', marginX + imgW + gap, y, imgW, imgH); }catch(e){}
+    }
+    y += imgH + 6;
+  }
+  return y;
+}
+
 async function exporterPDF(cr, retournerBlob){
   const photos = await getPhotosCR(cr.id);
   const { jsPDF } = window.jspdf;
@@ -2167,9 +2213,20 @@ async function exporterPDF(cr, retournerBlob){
   }
   y = yInfoLigne + 9;
 
+  if(ip.siteLoc){
+    doc.setFont("helvetica","bold"); doc.setFontSize(9);
+    doc.text("Site de localisation du projet :", 14, y);
+    doc.setFont("helvetica","normal");
+    const siteLignes = doc.splitTextToSize(ip.siteLoc, 170);
+    doc.text(siteLignes, 14, y+5);
+    y += 5 + siteLignes.length * 4.5 + 3;
+  }
+  y = pdfAjouterPhotos(doc, y, photos.localisation);
+  y += 4;
+
   let numSection = 1;
   const bandeauNum = (titre)=>{
-    doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
+    doc.setFillColor(227,30,36); doc.rect(14, y, 182, 6, "F");
     doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(9);
     doc.text(numSection + ". " + titre, 16, y+4.5); numSection++;
     y += 9;
@@ -2200,11 +2257,22 @@ async function exporterPDF(cr, retournerBlob){
     const travaux = doc.splitTextToSize(cr.travaux || "—", 170);
     doc.text(travaux, 16, y); y += travaux.length * 4.5 + 4;
 
+    if(photos.acces && photos.acces.length){
+      y = pdfSautPage(doc, y, 9);
+      bandeauNum("PHOTOS BR ACCES");
+      y = pdfAjouterPhotos(doc, y, photos.acces);
+      y += 4;
+    }
+
     bandeauNum("INCIDENTS REMARQUES");
     if(cr.incidents.length){
       cr.incidents.forEach(inc=>{ doc.text("• " + inc, 16, y); y += 4; });
       const desc = doc.splitTextToSize(cr.incidentDesc || "—", 170);
       doc.text(desc, 16, y); y += desc.length * 4.5 + 3;
+      if(photos.incidents && photos.incidents.length){
+        y = pdfAjouterPhotos(doc, y, photos.incidents);
+        y += 4;
+      }
     } else { doc.text("Rien a signaler.", 16, y); y += 6; }
 
     bandeauNum("OBSERVATIONS & SUITES");
@@ -2218,7 +2286,7 @@ async function exporterPDF(cr, retournerBlob){
   let numSuite = numSection;
 
   const dessinerBandeau = (titre)=>{
-    doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
+    doc.setFillColor(227,30,36); doc.rect(14, y, 182, 6, "F");
     doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(9);
     doc.text(numSuite + ". " + titre, 16, y+4.5); numSuite++;
     y += 9;
@@ -2267,15 +2335,16 @@ async function exporterPDF(cr, retournerBlob){
   dessinerBandeau("AVANCEMENT & POINTS RELEVES");
   for(let p=0; p<nbPhasesPdf; p++){
     const texteBrut = phasesTxt[p] || "—";
-    const nbPhotosPhase = ((photos.phases||[])[p] || []).length;
-    const lignePhoto = nbPhotosPhase ? (" (" + nbPhotosPhase + " photo(s) jointe(s) — voir l'apercu/impression)") : "";
+    const photosPhase = (photos.phases||[])[p] || [];
     const codePhase = codesPhasePdf[p];
     const libelleCode = codePhase && LABELS_CODE_COULEUR[codePhase] ? "  [" + LABELS_CODE_COULEUR[codePhase] + "]" : "";
-    const lignes = doc.splitTextToSize("Phase " + (p+1) + " — " + texteBrut + lignePhoto + libelleCode, 170);
+    const lignes = doc.splitTextToSize("Phase " + (p+1) + " — " + texteBrut + libelleCode, 170);
     y = pdfSautPage(doc, y, lignes.length * 4.5 + 3);
     doc.setFont("helvetica","bold"); doc.text("Phase " + (p+1), 16, y); doc.setFont("helvetica","normal");
-    const lignesTexte = doc.splitTextToSize(texteBrut + lignePhoto + libelleCode, 170);
+    const lignesTexte = doc.splitTextToSize(texteBrut + libelleCode, 170);
     doc.text(lignesTexte, 16, y+4.5); y += lignesTexte.length * 4.5 + 6;
+    y = pdfAjouterPhotos(doc, y, photosPhase);
+    y += 4;
   }
 
   // Personnels & materiels
@@ -2335,7 +2404,7 @@ async function exporterPDF(cr, retournerBlob){
   // Signature (compte-rendu d'intervention uniquement — les Minutes s'arretent aux visas ci-dessus)
   if(cr.signature && cr.type !== 'minutes'){
     y = pdfSautPage(doc, y, 40);
-    doc.setFillColor(26,26,26); doc.rect(14, y, 182, 6, "F");
+    doc.setFillColor(227,30,36); doc.rect(14, y, 182, 6, "F");
     doc.setTextColor(255,255,255); doc.setFont("helvetica","bold");
     doc.text("SIGNATURE", 16, y+4.5); y += 9;
     try{
@@ -2418,18 +2487,29 @@ function refDocument(cr){
 // des messages de partage (WhatsApp / SMS / e-mail / Outlook).
 function construireObjetDocument(cr){
   const ip = cr.infoProjet || {};
-  const parties = [ip.numeroAffaire, ip.maitreOuvrageSociete, (ip.adresseChantier || ip.siteLoc), refDocument(cr), (ip.indice || "Ind0")].filter(Boolean);
+  if(cr.type === 'minutes'){
+    const parties = [ip.numeroAffaire, ip.maitreOuvrageSociete, (ip.adresseChantier || ip.siteLoc), refDocument(cr), (ip.indice || "Ind0")].filter(Boolean);
+    return parties.join("_");
+  }
+  // CR d'intervention : marche fixe (EDP), objet simplifie N°affaire_EDP_Indice
+  const parties = [ip.numeroAffaire, "EDP", (ip.indice || "Ind0")].filter(Boolean);
   return parties.join("_");
 }
 
 function construireCorpsMessage(cr){
   const ip = cr.infoProjet || {};
-  const nature = cr.type === 'minutes' ? "de la Minute de chantier effectuee" : "du Compte-rendu d'intervention effectue";
-  const projet = [ip.typeTravaux, ip.maitreOuvrageSociete].filter(Boolean).join(" de ");
-  let corps = "Bonjour a tous," + String.fromCharCode(10,10);
-  corps += "Veuillez trouver ci-joint le compte rendu " + nature + (projet ? " concernant le projet de " + projet : "") + "." + String.fromCharCode(10);
-  corps += "Lieu : " + (ip.adresseChantier || ip.siteLoc || "—") + String.fromCharCode(10);
-  corps += "Date : " + frDate(cr.date) + String.fromCharCode(10,10);
+  if(cr.type === 'minutes'){
+    const projet = [ip.typeTravaux, ip.maitreOuvrageSociete].filter(Boolean).join(" de ");
+    let corps = "Bonjour a tous," + String.fromCharCode(10,10);
+    corps += "Veuillez trouver ci-joint le compte rendu de la Minute de chantier effectuee concernant le projet de " + (projet || "—") + String.fromCharCode(10);
+    corps += "Lieu : " + (ip.adresseChantier || ip.siteLoc || "—") + String.fromCharCode(10);
+    corps += "Date : " + frDate(cr.date) + String.fromCharCode(10,10);
+    corps += "Cordialement,";
+    return corps;
+  }
+  // CR d'intervention : message court, destinataire unique (Mario DE JESUS)
+  let corps = "Bonjour " + CONTACT_DESTINATAIRE.civilite + "," + String.fromCharCode(10);
+  corps += "Ci-joint le CR N°" + refDocument(cr).replace(/^CR/,'') + " de la visite de la galerie " + (cr.secteur || "—") + " de ce " + frDateCourte(cr.date) + "." + String.fromCharCode(10,10);
   corps += "Cordialement,";
   return corps;
 }
@@ -2443,9 +2523,10 @@ function bandeauSection(numero, titre){
   return `<div class="section-title"><span class="num-badge">${numero}</span>${echap(titre)}</div>`;
 }
 
-function galeriePhotosImprimee(srcs, commentaires){
+function galeriePhotosImprimee(srcs, commentaires, grande){
   if(!srcs || !srcs.length) return '';
-  return `<div class="photos-print">${srcs.map((s,i)=>`<figure class="photo-print-item"><img src="${s}">${(commentaires && commentaires[i]) ? `<figcaption class="commentaire-print">${echap(commentaires[i])}</figcaption>` : ''}</figure>`).join("")}</div>`;
+  const classeItem = grande ? "photo-print-item photo-print-item-grande" : "photo-print-item";
+  return `<div class="photos-print">${srcs.map((s,i)=>`<figure class="${classeItem}"><img src="${s}">${(commentaires && commentaires[i]) ? `<figcaption class="commentaire-print">${echap(commentaires[i])}</figcaption>` : ''}</figure>`).join("")}</div>`;
 }
 
 async function telechargerPdfPourPartage(cr){
@@ -2460,20 +2541,11 @@ async function envoyerViaWhatsapp(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
-  // Sur mobile, le partage natif permet de choisir WhatsApp et d'y joindre directement le PDF (et les photos).
-  if(navigator.share){
-    try{
-      const pdfBlob = await exporterPDF(cr, true);
-      const nomPdf = refDocument(cr) + "_" + cr.date + ".pdf";
-      const pdfFichier = new File([pdfBlob], nomPdf, {type:'application/pdf'});
-      const paquet = { title: sujet, text: corps, files: [pdfFichier] };
-      if(!navigator.canShare || navigator.canShare(paquet)){
-        if(fenetre && !fenetre.closed) fenetre.close();
-        await navigator.share(paquet);
-        return;
-      }
-    }catch(e){ if(e && e.name === 'AbortError') return; }
-  }
+  // Important : WhatsApp ignore quasi-systematiquement le texte/legende quand un fichier
+  // est joint via le partage natif du telephone (limitation cote WhatsApp, pas du site).
+  // Pour garantir que le message pre-rempli s'affiche bien dans la nouvelle conversation,
+  // on ouvre donc toujours le lien wa.me avec le texte, et le PDF (deja telecharge
+  // ci-dessus) se joint manuellement depuis les telechargements.
   const texte = sujet + String.fromCharCode(10,10) + corps;
   const url = "https://wa.me/?text=" + encodeURIComponent(texte);
   if(fenetre && !fenetre.closed){ fenetre.location.href = url; } else { window.open(url, "_blank"); }
@@ -2497,7 +2569,8 @@ async function envoyerViaEmail(cr, sujet, corps){
   const params = new URLSearchParams();
   params.set("subject", sujet);
   params.set("body", corps + String.fromCharCode(10,10) + "Le PDF a ete telecharge sur cet appareil : pensez a le joindre.");
-  const url = "mailto:?" + params.toString();
+  const destinataire = cr.type !== 'minutes' ? CONTACT_DESTINATAIRE.email : "";
+  const url = "mailto:" + destinataire + "?" + params.toString();
   if(fenetre && !fenetre.closed){ fenetre.location.href = url; } else { window.open(url, "_blank"); }
   await modalAlert("Votre application e-mail par defaut s'ouvre, message pret. Choisissez ou validez le destinataire, puis joignez le PDF telecharge.");
 }
@@ -2507,6 +2580,7 @@ async function envoyerViaOutlook(cr, sujet, corps){
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
   const params = new URLSearchParams();
+  if(cr.type !== 'minutes') params.set("to", CONTACT_DESTINATAIRE.email);
   params.set("subject", sujet);
   params.set("body", corps + String.fromCharCode(10,10) + "Le document au format PDF a ete telecharge sur cet appareil : pensez a le joindre avec le trombone.");
   const url = "https://outlook.office.com/mail/deeplink/compose?" + params.toString();
@@ -2548,17 +2622,15 @@ async function imprimerCR(cr){
         <div class="section-body">
           ${ip.typeTravaux ? `<div style="font-weight:700;text-transform:uppercase;text-align:center;letter-spacing:.02em;margin-bottom:8px">Travaux de realisation de : ${echap(ip.typeTravaux).toUpperCase()}</div>` : ''}
           ${ip.numeroAffaire ? `<div style="font-size:10.5px;color:var(--gris-label);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px">N&deg; d'affaire</div><div style="font-weight:700;color:var(--rouge);margin-bottom:8px">${echap(ip.numeroAffaire)}</div>` : ''}
-          <div style="font-size:10.5px;color:var(--gris-label);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px">Site de localisation du projet</div>
+          <div style="font-size:15px;font-weight:700;color:var(--bitume);text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px">Site de localisation du projet</div>
           <div style="font-weight:600;margin-bottom:8px">${echap(ip.siteLoc || "—")}</div>
-          ${galeriePhotosImprimee(photos.localisation, commentaires.localisation)}
+          ${galeriePhotosImprimee(photos.localisation, commentaires.localisation, true)}
         </div>
-        <table class="info-table info-table-projet">
-          <tr><th>Adresse du chantier</th><td colspan="3">${echap(ip.adresseChantier||"—")}</td></tr>
-          ${estMinutes ? `<tr><th>N&deg; cite / N&deg; de demande</th><td colspan="3">${echap(ip.nCite||"—")}</td></tr>
-          <tr><th>Emprise(s) / Parite</th><td>${echap(ip.emprises||"—")}</td><th>Debut des travaux</th><td>${ip.debutTravaux?frDate(ip.debutTravaux):"—"}</td></tr>
-          <tr><th>Fin des travaux</th><td>${ip.finTravaux?frDate(ip.finTravaux):"—"}</td><th>Remise en etat de la voie</th><td>${ip.remiseVoie?frDate(ip.remiseVoie):"—"}</td></tr>
-          <tr><th>Remise a la circulation</th><td colspan="3">${ip.remiseCirculation?frDate(ip.remiseCirculation):"—"}</td></tr>` : ''}
-        </table>
+        ${estMinutes ? `<table class="info-table info-table-projet">
+          <tr><th>N&deg; cite / N&deg; de demande</th><td colspan="3">${echap(ip.nCite||"—")}</td></tr>
+          <tr><th>Debut des travaux</th><td>${ip.debutTravaux?frDate(ip.debutTravaux):"—"}</td><th>Fin des travaux</th><td>${ip.finTravaux?frDate(ip.finTravaux):"—"}</td></tr>
+          <tr><th>Remise a la circulation</th><td colspan="3">${ip.remiseCirculation?frDate(ip.remiseCirculation):"—"}</td></tr>
+        </table>` : ''}
       </div>`;
 
   const sectionMoe = etat.moe.length ? `
@@ -2737,13 +2809,13 @@ function rendreEquipe(){
     const l = $(id);
     const liste = etat.equipe[entite] || [];
     l.innerHTML = liste.length ? "" : `<span style="color:var(--acier)">Aucun executant.</span>`;
-    liste.forEach(nom=>{
-      const p = document.createElement("span"); p.className = "puce";
-      p.innerHTML = `${echap(nom)} <button style="border:none;background:none;cursor:pointer;color:var(--alerte);font-weight:700">&#10005;</button>`;
+    liste.forEach(personne=>{
+      const p = document.createElement("div"); p.className = "moe-carte";
+      p.innerHTML = `<div><div class="nom">${echap(personne.nom)}</div><div class="coord">${[personne.tel,personne.email].filter(Boolean).map(echap).join(" / ")||"—"}</div></div><button style="border:none;background:none;cursor:pointer;color:var(--alerte);font-weight:700" title="Retirer">&#10005;</button>`;
       p.querySelector("button").addEventListener("click", async ()=>{
-        if(!(await modalConfirm("Retirer "+nom+" ?"))) return;
-        etat.equipe[entite] = etat.equipe[entite].filter(n=>n!==nom);
-        await dbDelete('equipe', {col:'nom', val:nom});
+        if(!(await modalConfirm("Retirer "+personne.nom+" ?"))) return;
+        etat.equipe[entite] = etat.equipe[entite].filter(x=>x.id!==personne.id);
+        await dbDelete('equipe', {col:'nom', val:personne.nom});
         sauverLocal(); rendreEquipe(); rendreFormulaireCR(); rendrePlanning();
       });
       l.appendChild(p);
@@ -2754,14 +2826,17 @@ function rendreEquipe(){
   renderList("#listeEquipeST", "SOUS-TRAITANT");
 }
 
-async function ajouterExec(inputId, entite){
-  const champ = $("#"+inputId);
-  const nom = champ.value.trim();
-  if(!nom) return;
-  const existeDeja = (etat.equipe["GTA GE"].some(n=>n.toLowerCase()===nom.toLowerCase()) || etat.equipe["GTA ENERGIES"].some(n=>n.toLowerCase()===nom.toLowerCase()) || etat.equipe["SOUS-TRAITANT"].some(n=>n.toLowerCase()===nom.toLowerCase()));
-  if(existeDeja){ await modalAlert("Cet executant existe deja dans une entite."); champ.value=""; return; }
-  etat.equipe[entite].push(nom); champ.value = "";
-  dbInsert('equipe', {nom, entite});
+async function ajouterExec(prefixe, entite){
+  const champNom = $("#"+prefixe+"Nom"), champTel = $("#"+prefixe+"Tel"), champEmail = $("#"+prefixe+"Email");
+  const nom = champNom.value.trim();
+  if(!nom){ await modalAlert("Indiquez au moins un nom."); return; }
+  const tousLesNoms = [...etat.equipe["GTA GE"], ...etat.equipe["GTA ENERGIES"], ...etat.equipe["SOUS-TRAITANT"]];
+  const existeDeja = tousLesNoms.some(p=>p.nom.toLowerCase()===nom.toLowerCase());
+  if(existeDeja){ await modalAlert("Cet executant existe deja dans une entite."); return; }
+  const personne = { id: uid(), nom, tel: champTel.value.trim(), email: champEmail.value.trim() };
+  etat.equipe[entite].push(personne);
+  champNom.value = ""; champTel.value = ""; champEmail.value = "";
+  dbInsert('equipe', {nom:personne.nom, entite, tel:personne.tel, email:personne.email});
   sauverLocal(); rendreEquipe(); rendreFormulaireCR(); rendrePlanning();
 }
 
@@ -2793,11 +2868,11 @@ async function ajouterMoe(){
 $("#btnAjoutMoe").addEventListener("click", ajouterMoe);
 
 $("#btnAjoutExecGTA").addEventListener("click", async ()=>{ await ajouterExec("nvExecGTA", "GTA GE"); });
-$("#nvExecGTA").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecGTA", "GTA GE"); });
+$("#nvExecGTANom").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecGTA", "GTA GE"); });
 $("#btnAjoutExecEnergies").addEventListener("click", async ()=>{ await ajouterExec("nvExecEnergies", "GTA ENERGIES"); });
-$("#nvExecEnergies").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecEnergies", "GTA ENERGIES"); });
+$("#nvExecEnergiesNom").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecEnergies", "GTA ENERGIES"); });
 $("#btnAjoutExecST").addEventListener("click", async ()=>{ await ajouterExec("nvExecST", "SOUS-TRAITANT"); });
-$("#nvExecST").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecST", "SOUS-TRAITANT"); });
+$("#nvExecSTNom").addEventListener("keydown", async e=>{ if(e.key==="Enter") await ajouterExec("nvExecST", "SOUS-TRAITANT"); });
 
 // === EXPORT / IMPORT ===
 async function exporterDonnees(){
@@ -2821,7 +2896,7 @@ async function importerDonnees(fichier){
   for(const id in (paquet.commentairesPhotos||{})){ lsEcrire("gta1914e_commentaires_"+id, paquet.commentairesPhotos[id]); }
   if(paquet.listeAffaires){ lsEcrire("gta1914e_liste_affaires", paquet.listeAffaires); rafraichirListesAffaires(); }
   if(sb && !modeHorsLigne){
-    for(const entite in etat.equipe){ for(const nom of etat.equipe[entite]) await dbInsert('equipe', {nom, entite}); }
+    for(const entite in etat.equipe){ for(const personne of etat.equipe[entite]) await dbInsert('equipe', {nom:personne.nom, entite, tel:personne.tel, email:personne.email}); }
     for(const s of etat.semaines) await dbInsert('semaines', {id:s.id, lundi:s.lundi, jours:s.jours});
     for(const c of etat.crs){
       await dbInsert('comptes_rendus', {id:c.id, type:c.type||'cr', date:c.date, secteur:c.secteur, entite:c.entite, execs:c.execs, incidents:c.incidents, travaux:c.travaux, incident_desc:c.incidentDesc, obs:c.obs, points_abordes:c.pointsAbordes, decisions:c.decisions, prochaines_etapes:c.prochainesEtapes, cree:c.cree, statut:c.statut, envoye:c.envoye, modifie:c.modifie, nb_acces:c.nbAcces, nb_incident:c.nbIncident, auteur:c.auteur, signature:c.signature});
