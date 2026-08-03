@@ -2137,12 +2137,13 @@ function exporterCSV(){
 }
 $("#btnExporterCSV").addEventListener("click", exporterCSV);
 
+let pdfDocTypeMinutesActuel = false;
 function pdfSautPage(doc, y, hauteurNecessaire){
   if(y + hauteurNecessaire > 270){
     doc.addPage();
     doc.setFillColor(26,26,26); doc.rect(0,0,210,10,"F");
     doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont("helvetica","bold");
-    doc.text("GTA ENERGIES — Mission 1914_E (suite)", 14, 6.5);
+    doc.text(pdfDocTypeMinutesActuel ? "GTA ENERGIES (suite)" : "GTA ENERGIES — Mission 1914_E (suite)", 14, 6.5);
     return 18;
   }
   return y;
@@ -2151,22 +2152,36 @@ function pdfSautPage(doc, y, hauteurNecessaire){
 // Incruste reellement les photos dans le PDF (jusque-la, seul un texte du type
 // "2 photo(s) jointe(s)" etait ecrit, sans que l'image ne soit jamais dessinee).
 // Mise en page : 2 photos par ligne, avec saut de page automatique si necessaire.
-function pdfAjouterPhotos(doc, y, photos){
+function pdfAjouterPhotos(doc, y, photos, commentaires){
   if(!photos || !photos.length) return y;
-  const imgW = 86, imgH = 62, gap = 10, marginX = 14;
+  const imgW = 86, imgH = 62, gap = 10, marginX = 14, hauteurLigne = 3.5;
   for(let i=0; i<photos.length; i+=2){
-    y = pdfSautPage(doc, y, imgH + 6);
+    const comGauche = (commentaires && commentaires[i]) ? String(commentaires[i]).trim() : "";
+    const comDroit = (commentaires && commentaires[i+1]) ? String(commentaires[i+1]).trim() : "";
+    const lignesGauche = comGauche ? doc.splitTextToSize(comGauche, imgW) : [];
+    const lignesDroit = comDroit ? doc.splitTextToSize(comDroit, imgW) : [];
+    const maxLignes = Math.max(lignesGauche.length, lignesDroit.length);
+    const hauteurBloc = imgH + 3 + (maxLignes * hauteurLigne) + 6;
+    y = pdfSautPage(doc, y, hauteurBloc);
     try{ doc.addImage(photos[i], 'JPEG', marginX, y, imgW, imgH); }catch(e){}
     if(photos[i+1]){
       try{ doc.addImage(photos[i+1], 'JPEG', marginX + imgW + gap, y, imgW, imgH); }catch(e){}
     }
-    y += imgH + 6;
+    if(lignesGauche.length || lignesDroit.length){
+      doc.setFont("helvetica","italic"); doc.setFontSize(7); doc.setTextColor(90,90,90);
+      if(lignesGauche.length) doc.text(lignesGauche, marginX, y + imgH + 4);
+      if(lignesDroit.length) doc.text(lignesDroit, marginX + imgW + gap, y + imgH + 4);
+      doc.setFont("helvetica","normal"); doc.setTextColor(26,26,26); doc.setFontSize(9);
+    }
+    y += hauteurBloc;
   }
   return y;
 }
 
 async function exporterPDF(cr, retournerBlob){
   const photos = await getPhotosCR(cr.id);
+  const commentaires = chargerCommentairesCR(cr.id);
+  pdfDocTypeMinutesActuel = (cr.type === 'minutes');
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
@@ -2221,7 +2236,7 @@ async function exporterPDF(cr, retournerBlob){
     doc.text(siteLignes, 14, y+5);
     y += 5 + siteLignes.length * 4.5 + 3;
   }
-  y = pdfAjouterPhotos(doc, y, photos.localisation);
+  y = pdfAjouterPhotos(doc, y, photos.localisation, commentaires.localisation);
   y += 4;
 
   let numSection = 1;
@@ -2260,7 +2275,7 @@ async function exporterPDF(cr, retournerBlob){
     if(photos.acces && photos.acces.length){
       y = pdfSautPage(doc, y, 9);
       bandeauNum("PHOTOS BR ACCES");
-      y = pdfAjouterPhotos(doc, y, photos.acces);
+      y = pdfAjouterPhotos(doc, y, photos.acces, commentaires.acces);
       y += 4;
     }
 
@@ -2270,7 +2285,7 @@ async function exporterPDF(cr, retournerBlob){
       const desc = doc.splitTextToSize(cr.incidentDesc || "—", 170);
       doc.text(desc, 16, y); y += desc.length * 4.5 + 3;
       if(photos.incidents && photos.incidents.length){
-        y = pdfAjouterPhotos(doc, y, photos.incidents);
+        y = pdfAjouterPhotos(doc, y, photos.incidents, commentaires.incidents);
         y += 4;
       }
     } else { doc.text("Rien a signaler.", 16, y); y += 6; }
@@ -2343,7 +2358,7 @@ async function exporterPDF(cr, retournerBlob){
     doc.setFont("helvetica","bold"); doc.text("Phase " + (p+1), 16, y); doc.setFont("helvetica","normal");
     const lignesTexte = doc.splitTextToSize(texteBrut + libelleCode, 170);
     doc.text(lignesTexte, 16, y+4.5); y += lignesTexte.length * 4.5 + 6;
-    y = pdfAjouterPhotos(doc, y, photosPhase);
+    y = pdfAjouterPhotos(doc, y, photosPhase, (commentaires.phases||[])[p]);
     y += 4;
   }
 
@@ -2421,7 +2436,7 @@ async function exporterPDF(cr, retournerBlob){
   // A droite : pagination reelle (page X / Y), calculee sur le nombre de pages du PDF genere.
   const ligneIdentification = ligneIdentificationDocument(cr);
   const dessinerPiedDePage = (numeroPage, totalPages)=>{
-    doc.setFillColor(26,26,26); doc.rect(0, 278, 210, 19, "F");
+    doc.setFillColor(255,255,255); doc.rect(0, 278, 210, 19, "F");
     for(let x=0; x<210; x+=0.5){
       const ratio = x/210;
       const r = Math.round(227 + (0-227)*ratio);
@@ -2431,13 +2446,13 @@ async function exporterPDF(cr, retournerBlob){
       doc.line(x, 278, x+0.5, 278);
     }
     if(ligneIdentification){
-      doc.setTextColor(96,165,250); doc.setFont("helvetica","bold"); doc.setFontSize(7.5);
+      doc.setTextColor(37,99,235); doc.setFont("helvetica","bold"); doc.setFontSize(7.5);
       doc.text(ligneIdentification, 14, 284);
       doc.setFont("helvetica","normal");
     }
-    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(8);
+    doc.setTextColor(26,26,26); doc.setFont("helvetica","bold"); doc.setFontSize(8);
     doc.text("Page " + numeroPage + " / " + totalPages, 196, 284, {align:"right"});
-    doc.setTextColor(180); doc.setFontSize(7); doc.setFont("helvetica","normal");
+    doc.setTextColor(91,101,112); doc.setFontSize(7); doc.setFont("helvetica","normal");
     doc.text("GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid", 14, 289);
     doc.text("1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr", 14, 293);
     doc.text("Document genere le " + new Date().toLocaleDateString("fr-FR") + " a " + new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}), 105, 293);
@@ -2579,13 +2594,20 @@ async function envoyerViaOutlook(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
+  // Important : le lien web "outlook.office.com/mail/deeplink/compose" n'est fiable que
+  // dans un navigateur deja connecte a Outlook Web. Sur telephone, quand l'application
+  // Outlook est installee, Android/iOS interceptent ce lien et ouvrent l'app plutot que
+  // le site web — mais l'app Outlook ignore alors le sujet/corps pre-remplis, d'ou le
+  // message qui n'apparaissait jamais. Le protocole mailto: est lui respecte par toutes
+  // les applications de messagerie (Outlook, Gmail, Mail...), qu'il s'agisse de l'app
+  // installee ou du webmail : c'est donc la methode fiable a utiliser ici.
   const params = new URLSearchParams();
-  if(cr.type !== 'minutes') params.set("to", CONTACT_DESTINATAIRE.email);
   params.set("subject", sujet);
   params.set("body", corps + String.fromCharCode(10,10) + "Le document au format PDF a ete telecharge sur cet appareil : pensez a le joindre avec le trombone.");
-  const url = "https://outlook.office.com/mail/deeplink/compose?" + params.toString();
+  const destinataire = cr.type !== 'minutes' ? CONTACT_DESTINATAIRE.email : "";
+  const url = "mailto:" + destinataire + "?" + params.toString();
   if(fenetre && !fenetre.closed){ fenetre.location.href = url; } else { window.open(url, "_blank"); }
-  await modalAlert("Outlook s'ouvre dans un nouveau message pret a l'envoi. Choisissez ou validez le destinataire, puis joignez le PDF telecharge (et les photos si besoin) avant d'envoyer.");
+  await modalAlert("Votre application mail par defaut (Outlook si elle est configuree comme telle) s'ouvre avec le message pret a l'envoi. Choisissez ou validez le destinataire, puis joignez le PDF telecharge (et les photos si besoin) avant d'envoyer.");
 }
 
 async function partagerCR(cr){
