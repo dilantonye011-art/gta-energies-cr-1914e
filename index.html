@@ -1446,11 +1446,11 @@ function initSignaturePad(canvas){
   };
   canvas.addEventListener("mousedown", e=>{ pad.actif = true; const p = getPosLocal(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
   canvas.addEventListener("mousemove", e=>{ if(!pad.actif) return; const p = getPosLocal(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
-  canvas.addEventListener("mouseup", ()=>{ pad.actif = false; pad.data = canvas.toDataURL("image/png"); });
+  canvas.addEventListener("mouseup", ()=>{ pad.actif = false; pad.data = canvas.toDataURL("image/png"); if(pad===padSignature) signatureData=pad.data; });
   canvas.addEventListener("mouseleave", ()=>{ pad.actif = false; });
   canvas.addEventListener("touchstart", e=>{ e.preventDefault(); pad.actif = true; const p = getPosLocal(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive:false});
   canvas.addEventListener("touchmove", e=>{ e.preventDefault(); if(!pad.actif) return; const p = getPosLocal(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, {passive:false});
-  canvas.addEventListener("touchend", e=>{ e.preventDefault(); pad.actif = false; pad.data = canvas.toDataURL("image/png"); }, {passive:false});
+  canvas.addEventListener("touchend", e=>{ e.preventDefault(); pad.actif = false; pad.data = canvas.toDataURL("image/png"); if(pad===padSignature) signatureData=pad.data; }, {passive:false});
   pad.clear = ()=>{ ctx.clearRect(0, 0, canvas.width, canvas.height); pad.data = null; };
   return pad;
 }
@@ -1912,7 +1912,7 @@ async function chargerCRPourEdition(cr){
   $("#crPointsAbordes").value = cr.pointsAbordes || "";
   $("#crDecisions").value = cr.decisions || "";
   $("#crProchainesEtapes").value = cr.prochainesEtapes || "";
-  const ip = cr.infoProjet || {};
+  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
   $("#crTypeTravaux").value = ip.typeTravaux || "";
   $("#crSiteLoc").value = ip.siteLoc || "";
   if(ip.numeroAffaire && !chargerListeAffaires().includes(ip.numeroAffaire)){
@@ -2312,7 +2312,7 @@ async function exporterPDF(cr, retournerBlob){
     doc.line(x, 30, x+0.5, 30);
   }
 
-  const ip = cr.infoProjet || {};
+  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
   let y = 40;
   doc.setTextColor(26,26,26); doc.setFontSize(13); doc.setFont("helvetica","bold");
   doc.text(cr.type === 'minutes' ? "MINUTES DE CHANTIER" : "COMPTE-RENDU D'INTERVENTION", 14, y);
@@ -2524,36 +2524,49 @@ async function exporterPDF(cr, retournerBlob){
   }
 
   // Signature (compte-rendu d'intervention uniquement — les Minutes s'arretent aux visas ci-dessus)
-  if(cr.signature && cr.type !== 'minutes'){
+  const ipPdf = cr.infoProjet || {};
+  if(!estMinutes && (cr.signature || ipPdf.signatureMoeImage || ipPdf.signatureChefImage || ipPdf.signatureMoeNom || ipPdf.signatureChefNom)){
     y = pdfSautPage(doc, y, 40);
     doc.setFillColor(227,30,36); doc.rect(14, y, 182, 6, "F");
     doc.setTextColor(255,255,255); doc.setFont("helvetica","bold");
-    doc.text("SIGNATURE", 16, y+4.5); y += 9;
-    try{
-      const img = new Image();
-      // Important : on securise le chargement avec onerror + timeout, pour ne jamais
-      // bloquer indefiniment la generation du PDF si l'image de signature est corrompue
-      // ou trop lente a charger (avant ce correctif, un echec silencieux pouvait faire
-      // disparaitre toute la fin du document sans aucun message).
-      const chargee = await new Promise((resolve)=>{
-        img.onload = ()=>resolve(true);
-        img.onerror = ()=>resolve(false);
-        img.src = cr.signature;
-        setTimeout(()=>resolve(false), 3000);
-      });
-      if(chargee && img.width && img.height){
-        const ratio = img.width / img.height;
-        const w = 60, h = w / ratio;
-        doc.addImage(cr.signature, 'PNG', 16, y, w, h);
-      } else {
-        doc.setFont("helvetica","italic"); doc.setFontSize(9); doc.setTextColor(150);
-        doc.text("Signature non disponible", 16, y+5);
-        doc.setFont("helvetica","normal"); doc.setTextColor(26,26,26); doc.setFontSize(9);
-      }
-    }catch(e){
-      doc.setFont("helvetica","italic"); doc.setFontSize(9); doc.setTextColor(150);
-      doc.text("Signature non disponible", 16, y+5);
+    doc.text("VALIDATION & SIGNATURES", 16, y+4.5); y += 9;
+    // Signature MOE
+    if(ipPdf.signatureMoeNom || ipPdf.signatureMoeImage){
+      doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(227,30,36);
+      doc.text("Pour le maitre d'oeuvre — GTA Energies", 16, y+4); y += 6;
       doc.setFont("helvetica","normal"); doc.setTextColor(26,26,26); doc.setFontSize(9);
+      doc.text((ipPdf.signatureMoeNom || "Nom du signataire") + " — " + (ipPdf.signatureMoeDate ? frDate(ipPdf.signatureMoeDate) : "—"), 16, y+4); y += 6;
+      if(ipPdf.signatureMoeImage){
+        try{
+          const imgMoe = new Image();
+          const chargeeMoe = await new Promise((resolve)=>{ imgMoe.onload=()=>resolve(true); imgMoe.onerror=()=>resolve(false); imgMoe.src=ipPdf.signatureMoeImage; setTimeout(()=>resolve(false),3000); });
+          if(chargeeMoe && imgMoe.width && imgMoe.height){ const r=imgMoe.width/imgMoe.height, w=50, h=w/r; doc.addImage(ipPdf.signatureMoeImage,'PNG',16,y,w,h); y += h+2; }
+        }catch(e){}
+      }
+      y += 3;
+    }
+    // Signature Chef
+    if(ipPdf.signatureChefNom || ipPdf.signatureChefImage){
+      doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(227,30,36);
+      doc.text("Visa du chef de chantier", 16, y+4); y += 6;
+      doc.setFont("helvetica","normal"); doc.setTextColor(26,26,26); doc.setFontSize(9);
+      doc.text((ipPdf.signatureChefNom || "Nom du signataire") + " — " + (ipPdf.signatureChefDate ? frDate(ipPdf.signatureChefDate) : "—"), 16, y+4); y += 6;
+      if(ipPdf.signatureChefImage){
+        try{
+          const imgChef = new Image();
+          const chargeeChef = await new Promise((resolve)=>{ imgChef.onload=()=>resolve(true); imgChef.onerror=()=>resolve(false); imgChef.src=ipPdf.signatureChefImage; setTimeout(()=>resolve(false),3000); });
+          if(chargeeChef && imgChef.width && imgChef.height){ const r=imgChef.width/imgChef.height, w=50, h=w/r; doc.addImage(ipPdf.signatureChefImage,'PNG',16,y,w,h); y += h+2; }
+        }catch(e){}
+      }
+      y += 3;
+    }
+    // Signature principale (legacy)
+    if(cr.signature){
+      try{
+        const img = new Image();
+        const chargee = await new Promise((resolve)=>{ img.onload=()=>resolve(true); img.onerror=()=>resolve(false); img.src=cr.signature; setTimeout(()=>resolve(false),3000); });
+        if(chargee && img.width && img.height){ const r=img.width/img.height, w=60, h=w/r; doc.addImage(cr.signature,'PNG',16,y,w,h); }
+      }catch(e){}
     }
   }
 
@@ -2627,7 +2640,7 @@ function refDocument(cr){
 // et indice de revision. Utilise en pied de page du PDF/impression et comme objet
 // des messages de partage (WhatsApp / SMS / e-mail / Outlook).
 function construireObjetDocument(cr){
-  const ip = cr.infoProjet || {};
+  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
   if(cr.type === 'minutes'){
     const parties = [ip.numeroAffaire, ip.maitreOuvrageSociete, (ip.adresseChantier || ip.siteLoc), refDocument(cr), (ip.indice || "Ind0")].filter(Boolean);
     return parties.join("_");
@@ -2638,7 +2651,7 @@ function construireObjetDocument(cr){
 }
 
 function construireCorpsMessage(cr){
-  const ip = cr.infoProjet || {};
+  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
   if(cr.type === 'minutes'){
     const projet = [ip.typeTravaux, ip.maitreOuvrageSociete].filter(Boolean).join(" de ");
     let corps = "Bonjour a tous," + String.fromCharCode(10,10);
@@ -2670,7 +2683,7 @@ function galeriePhotosImprimee(srcs, commentaires, grande){
   return `<div class="photos-print">${srcs.map((s,i)=>`<figure class="${classeItem}"><img src="${s}">${(commentaires && commentaires[i]) ? `<figcaption class="commentaire-print">${echap(commentaires[i])}</figcaption>` : ''}</figure>`).join("")}</div>`;
 }
 
-async function telechargerPdfPourPartage(cr){
+async async function telechargerPdfPourPartage(cr){
   try{ await exporterPDF(cr, false); }catch(e){}
 }
 
@@ -2678,7 +2691,7 @@ function fermerMenuPartage(){
   $("#modalPartageOverlay").classList.remove("actif");
 }
 
-async function envoyerViaWhatsapp(cr, sujet, corps){
+async async function envoyerViaWhatsapp(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
@@ -2693,7 +2706,7 @@ async function envoyerViaWhatsapp(cr, sujet, corps){
   await modalAlert("WhatsApp s'ouvre avec le message pre-rempli. Le PDF a ete telecharge sur cet appareil : joignez-le manuellement depuis vos telechargements (WhatsApp Web n'accepte pas de piece jointe automatique via un lien).");
 }
 
-async function envoyerViaSMS(cr, sujet, corps){
+async async function envoyerViaSMS(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
@@ -2703,7 +2716,7 @@ async function envoyerViaSMS(cr, sujet, corps){
   await modalAlert("L'application Messages s'ouvre avec le texte pre-rempli. Le PDF a ete telecharge : joignez-le manuellement (les SMS/MMS n'acceptent pas de piece jointe automatique via un lien).");
 }
 
-async function envoyerViaEmail(cr, sujet, corps){
+async async function envoyerViaEmail(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
@@ -2714,7 +2727,7 @@ async function envoyerViaEmail(cr, sujet, corps){
   await modalAlert("Votre application e-mail par defaut s'ouvre, message pret. Choisissez ou validez le destinataire, puis joignez le PDF telecharge.");
 }
 
-async function envoyerViaOutlook(cr, sujet, corps){
+async async function envoyerViaOutlook(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
@@ -2756,7 +2769,7 @@ async function imprimerCR(cr){
   const z = $("#zoneImpression");
   const badgeIncidents = cr.incidents.length ? `<span class="badge-print">${cr.incidents.length} incident(s)</span>` : `<span class="badge-print badge-print-ok">RAS</span>`;
   const typeLabel = cr.type === 'minutes' ? 'MINUTES DE CHANTIER' : "COMPTE-RENDU D'INTERVENTION";
-  const ip = cr.infoProjet || {};
+  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
   let n = 1;
   const estMinutes = cr.type === 'minutes';
 
@@ -2941,13 +2954,13 @@ async function imprimerCR(cr){
         <div class="section-body">${echap(cr.obs||"—").replace(/\n/g,"<br>")}</div>
       </div>` : ''}
       ${sectionValidation}
-      ${(cr.signature && !estMinutes) ? `<div class="section-print signature-print">${bandeauSection(n++,"Signature")}<img src="${cr.signature}"></div>` : ''}
-      ${(!estMinutes && !cr.signature && (ip.signatureMoeNom || ip.signatureChefNom)) ? `
+      ${!estMinutes ? `
       <div class="section-print">
-        ${bandeauSection(n++, "Validation")}
+        ${bandeauSection(n++, "Validation & signatures")}
         <div class="section-body">
-          ${ip.signatureMoeNom ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Pour le maitre d'oeuvre — GTA Energies</div><div style="font-weight:700">${echap(ip.signatureMoeNom)}</div>${ip.signatureMoeDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(ip.signatureMoeDate)}</div>` : ''}${ip.signatureMoeImage ? `<img src="${ip.signatureMoeImage}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
-          ${ip.signatureChefNom ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Visa du chef de chantier</div><div style="font-weight:700">${echap(ip.signatureChefNom)}</div>${ip.signatureChefDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(ip.signatureChefDate)}</div>` : ''}${ip.signatureChefImage ? `<img src="${ip.signatureChefImage}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
+          ${ip.signatureMoeNom || ip.signatureMoeImage ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Pour le maitre d'oeuvre — GTA Energies</div><div style="font-weight:700">${echap(ip.signatureMoeNom||"Nom du signataire")}</div>${ip.signatureMoeDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(ip.signatureMoeDate)}</div>` : ''}${ip.signatureMoeImage ? `<img src="${ip.signatureMoeImage}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
+          ${ip.signatureChefNom || ip.signatureChefImage ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Visa du chef de chantier</div><div style="font-weight:700">${echap(ip.signatureChefNom||"Nom du signataire")}</div>${ip.signatureChefDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(ip.signatureChefDate)}</div>` : ''}${ip.signatureChefImage ? `<img src="${ip.signatureChefImage}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
+          ${cr.signature ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Signature du compte-rendu</div><img src="${cr.signature}" class="sig-img-print"></div>` : ''}
         </div>
       </div>` : ''}
     </div>
