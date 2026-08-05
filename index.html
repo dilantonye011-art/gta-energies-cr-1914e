@@ -2683,7 +2683,7 @@ function galeriePhotosImprimee(srcs, commentaires, grande){
   return `<div class="photos-print">${srcs.map((s,i)=>`<figure class="${classeItem}"><img src="${s}">${(commentaires && commentaires[i]) ? `<figcaption class="commentaire-print">${echap(commentaires[i])}</figcaption>` : ''}</figure>`).join("")}</div>`;
 }
 
-async async function telechargerPdfPourPartage(cr){
+async function telechargerPdfPourPartage(cr){
   try{ await exporterPDF(cr, false); }catch(e){}
 }
 
@@ -2691,7 +2691,7 @@ function fermerMenuPartage(){
   $("#modalPartageOverlay").classList.remove("actif");
 }
 
-async async function envoyerViaWhatsapp(cr, sujet, corps){
+async function envoyerViaWhatsapp(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
@@ -2706,7 +2706,7 @@ async async function envoyerViaWhatsapp(cr, sujet, corps){
   await modalAlert("WhatsApp s'ouvre avec le message pre-rempli. Le PDF a ete telecharge sur cet appareil : joignez-le manuellement depuis vos telechargements (WhatsApp Web n'accepte pas de piece jointe automatique via un lien).");
 }
 
-async async function envoyerViaSMS(cr, sujet, corps){
+async function envoyerViaSMS(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
@@ -2716,7 +2716,7 @@ async async function envoyerViaSMS(cr, sujet, corps){
   await modalAlert("L'application Messages s'ouvre avec le texte pre-rempli. Le PDF a ete telecharge : joignez-le manuellement (les SMS/MMS n'acceptent pas de piece jointe automatique via un lien).");
 }
 
-async async function envoyerViaEmail(cr, sujet, corps){
+async function envoyerViaEmail(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
@@ -2727,7 +2727,7 @@ async async function envoyerViaEmail(cr, sujet, corps){
   await modalAlert("Votre application e-mail par defaut s'ouvre, message pret. Choisissez ou validez le destinataire, puis joignez le PDF telecharge.");
 }
 
-async async function envoyerViaOutlook(cr, sujet, corps){
+async function envoyerViaOutlook(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
@@ -2934,10 +2934,7 @@ async function imprimerCR(cr){
           <tr><th>Statut incidents</th><td>${badgeIncidents}</td></tr>
         </table>
       </div>
-      <div class="section-print">
-        ${bandeauSection(n++, "Travaux realises")}
-        <div class="section-body">${echap(cr.travaux||"—").replace(/\n/g,"<br>")}</div>
-      </div>` : ''}
+     
       ${!estMinutes ? `
       <div class="section-print">
         ${bandeauSection(n++, "Photos BR acces")}
