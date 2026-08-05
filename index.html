@@ -243,6 +243,7 @@
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div id="modalOverlay">
@@ -2934,12 +2935,12 @@ async function imprimerCR(cr){
       </div>` : ''}
       ${sectionValidation}
       ${(cr.signature && !estMinutes) ? `<div class="section-print signature-print">${bandeauSection(n++,"Signature")}<img src="${cr.signature}"></div>` : ''}
-      ${(!estMinutes && !cr.signature && (cr.sigMoeNom || cr.sigChefNom)) ? `
+      ${(!estMinutes && !cr.signature && (ip.signatureMoeNom || ip.signatureChefNom)) ? `
       <div class="section-print">
         ${bandeauSection(n++, "Validation")}
         <div class="section-body">
-          ${cr.sigMoeNom ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Pour le maitre d'oeuvre — GTA Energies</div><div style="font-weight:700">${echap(cr.sigMoeNom)}</div>${cr.sigMoeDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(cr.sigMoeDate)}</div>` : ''}${cr.sigMoe ? `<img src="${cr.sigMoe}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
-          ${cr.sigChefNom ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Visa du chef de chantier</div><div style="font-weight:700">${echap(cr.sigChefNom)}</div>${cr.sigChefDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(cr.sigChefDate)}</div>` : ''}${cr.sigChef ? `<img src="${cr.sigChef}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
+          ${ip.signatureMoeNom ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Pour le maitre d'oeuvre — GTA Energies</div><div style="font-weight:700">${echap(ip.signatureMoeNom)}</div>${ip.signatureMoeDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(ip.signatureMoeDate)}</div>` : ''}${ip.signatureMoeImage ? `<img src="${ip.signatureMoeImage}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
+          ${ip.signatureChefNom ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Visa du chef de chantier</div><div style="font-weight:700">${echap(ip.signatureChefNom)}</div>${ip.signatureChefDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(ip.signatureChefDate)}</div>` : ''}${ip.signatureChefImage ? `<img src="${ip.signatureChefImage}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
         </div>
       </div>` : ''}
     </div>
