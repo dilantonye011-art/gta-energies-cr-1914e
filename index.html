@@ -166,6 +166,7 @@
 
   #zoneImpression{display:none}
   @media print{
+    @page { margin-bottom: 15mm; @bottom-center { content: "Page " counter(page); } }
     body>*{display:none !important}
     #zoneImpression{display:block !important;background:#fff}
     .page-cr{padding:0;font-size:11px;font-family:'Segoe UI',Arial,sans-serif;color:#333}
@@ -200,6 +201,9 @@
     .page-cr .photos-print figure.photo-print-item{width:46%;margin:0}
     .page-cr .photos-print figure.photo-print-item-grande{width:75%;margin:0 auto}
     .page-cr .photos-print figure.photo-print-item-grande img{max-height:280px}
+    .page-cr .photos-print.incidents-print figure.photo-print-item{width:48%;margin:0 1%}
+    .page-cr .photos-print.incidents-print img{max-height:240px;object-fit:cover;width:100%}
+    .page-cr .photos-print.incidents-print .remarque-label{font-weight:700;color:var(--rouge);font-size:9.5px;text-transform:uppercase;margin-bottom:2px;display:block}
     .page-cr .photos-print .commentaire-print{font-size:10px;color:#333;margin-top:3px;font-style:italic}
     .page-cr .badge-print{display:inline-block;border:1px solid #C6432E;color:#C6432E;background:#FBEDEA;border-radius:3px;padding:2px 6px;font-size:9px;font-weight:700;text-transform:uppercase}
     .page-cr .badge-print-ok{border-color:#1E7A46;color:#1E7A46;background:#EAF4EE}
@@ -237,6 +241,7 @@
   .partage-boutons button .puce-canal{width:10px;height:10px;border-radius:50%;flex-shrink:0}
   #btnAnnulerPartage{margin-top:14px;width:100%;padding:9px;border-radius:8px;border:1px solid var(--ligne);background:#eee;color:#333;font-weight:600;cursor:pointer}
 </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -391,6 +396,35 @@
           <label for="crNumeroGalerie">N&deg; de galerie / egout</label>
           <select id="crNumeroGalerie">
             <option value="">— Choisir un N&deg; de galerie/egout —</option>
+            <option value="BR32">BR32</option>
+            <option value="BR33">BR33</option>
+            <option value="BR34">BR34</option>
+            <option value="BR35">BR35</option>
+            <option value="BR36">BR36</option>
+            <option value="BR37">BR37</option>
+            <option value="BR38">BR38</option>
+            <option value="BR39">BR39</option>
+            <option value="BR40">BR40</option>
+            <option value="G12">G12</option>
+            <option value="G13">G13</option>
+            <option value="G14">G14</option>
+            <option value="G15">G15</option>
+            <option value="G16">G16</option>
+            <option value="G17">G17</option>
+            <option value="G18">G18</option>
+            <option value="G19">G19</option>
+            <option value="G20">G20</option>
+            <option value="EG01">EG01</option>
+            <option value="EG02">EG02</option>
+            <option value="EG03">EG03</option>
+            <option value="EG04">EG04</option>
+            <option value="EG05">EG05</option>
+            <option value="EG06">EG06</option>
+            <option value="EG07">EG07</option>
+            <option value="EG08">EG08</option>
+            <option value="EG09">EG09</option>
+            <option value="EG10">EG10</option>
+            <option value="__autre__">+ Autre (saisie manuelle)</option>
           </select>
           <input type="text" id="crNumeroGalerieAutre" placeholder="Nouveau N&deg; de galerie/egout" style="margin-top:6px;display:none">
         </div>
@@ -762,6 +796,18 @@
 
 const SUPABASE_URL = 'https://reymqvaglfsnqbtcffpn.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJleW1xdmFnbGZzbnFidGNmZnBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NjgyMTIsImV4cCI6MjEwMDI0NDIxMn0.7yZWARAsMvz-GNl4vwYi2B0v7dXMZveH4hlqVONh-JU';
+
+/* Gestion Numero de galerie "Autre" */
+document.addEventListener('DOMContentLoaded', function(){
+  const selGalerie = document.getElementById('crNumeroGalerie');
+  const autreGalerie = document.getElementById('crNumeroGalerieAutre');
+  if(selGalerie && autreGalerie){
+    selGalerie.addEventListener('change', function(){
+      autreGalerie.style.display = (this.value === '__autre__') ? 'block' : 'none';
+      if(this.value !== '__autre__') autreGalerie.value = '';
+    });
+  }
+});
 
 const TYPES_INCIDENTS = [
   "Fuite","Fissure sur genie civil","Eboulement sur genie civil",
@@ -2718,7 +2764,7 @@ async function imprimerCR(cr){
         <div class="section-body">
           ${ip.typeTravaux ? `<div style="font-weight:700;text-transform:uppercase;text-align:center;letter-spacing:.02em;margin-bottom:8px">Travaux de realisation de : ${echap(ip.typeTravaux).toUpperCase()}</div>` : ''}
           ${ip.numeroAffaire ? `<div style="font-size:10.5px;color:var(--gris-label);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px">N&deg; d'affaire</div><div style="font-weight:700;color:var(--rouge);margin-bottom:8px">${echap(ip.numeroAffaire)}</div>` : ''}
-          <div style="font-size:15px;font-weight:700;color:var(--bitume);text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px">Site de localisation du projet</div>
+          <div style="font-size:15px;font-weight:700;color:var(--rouge);text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px">Site de localisation de la galerie</div>
           <div style="font-weight:600;margin-bottom:8px">${echap(ip.siteLoc || "—")}</div>
           ${galeriePhotosImprimee(photos.localisation, commentaires.localisation, true)}
         </div>
@@ -2859,11 +2905,10 @@ async function imprimerCR(cr){
         <table class="info-table">
           <tr><th>Mission</th><td>1914_E — Releve des galeries et egouts</td></tr>
           <tr><th>Date</th><td>${frDate(cr.date)}</td></tr>
-          <tr><th>Secteur</th><td>${echap(cr.secteur)}</td></tr>
           <tr><th>N&deg; galerie/egout</th><td>${echap((ip.numeroGalerie)||"—")}</td></tr>
           <tr><th>Entite</th><td>${cr.entite || 'GTA GE'}</td></tr>
           <tr><th>Executants</th><td>${echap(cr.execs.join(", ")||"—")}</td></tr>
-          <tr><th>Contact intervenant</th><td>${echap([ip.intervenantNom, ip.intervenantTel, ip.intervenantEmail].filter(Boolean).join(" / ")||"—")}</td></tr>
+          <tr><th>Contact intervenant</th><td>${ip.intervenantNom ? `<b>${echap(ip.intervenantNom)}</b>` : '—'}${ip.intervenantTel ? ` — <span style="font-family:var(--mono);font-size:9.5px">${echap(ip.intervenantTel)}</span>` : ''}${ip.intervenantEmail ? ` — <span style="font-family:var(--mono);font-size:9.5px">${echap(ip.intervenantEmail)}</span>` : ''}</td></tr>
           <tr><th>Auteur</th><td>${echap(cr.auteur||"—")}</td></tr>
           <tr><th>Statut incidents</th><td>${badgeIncidents}</td></tr>
         </table>
@@ -2889,6 +2934,14 @@ async function imprimerCR(cr){
       </div>` : ''}
       ${sectionValidation}
       ${(cr.signature && !estMinutes) ? `<div class="section-print signature-print">${bandeauSection(n++,"Signature")}<img src="${cr.signature}"></div>` : ''}
+      ${(!estMinutes && !cr.signature && (cr.sigMoeNom || cr.sigChefNom)) ? `
+      <div class="section-print">
+        ${bandeauSection(n++, "Validation")}
+        <div class="section-body">
+          ${cr.sigMoeNom ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Pour le maitre d'oeuvre — GTA Energies</div><div style="font-weight:700">${echap(cr.sigMoeNom)}</div>${cr.sigMoeDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(cr.sigMoeDate)}</div>` : ''}${cr.sigMoe ? `<img src="${cr.sigMoe}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
+          ${cr.sigChefNom ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Visa du chef de chantier</div><div style="font-weight:700">${echap(cr.sigChefNom)}</div>${cr.sigChefDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(cr.sigChefDate)}</div>` : ''}${cr.sigChef ? `<img src="${cr.sigChef}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
+        </div>
+      </div>` : ''}
     </div>
     <div class="footer-print">
       <div>
