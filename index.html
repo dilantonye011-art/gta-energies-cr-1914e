@@ -3101,6 +3101,49 @@ function afficherContactDestinataire(){
     }catch(e){}
   }
 })();
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Navigation par onglets
+  document.querySelectorAll('nav button[data-vue]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var cible = this.getAttribute('data-vue');
+      
+      // Retire "actif" de tous les boutons
+      document.querySelectorAll('nav button').forEach(function(b) { b.classList.remove('actif'); });
+      this.classList.add('actif');
+      
+      // Cache toutes les vues
+      document.querySelectorAll('main .vue').forEach(function(v) { v.classList.remove('active'); });
+      
+      // Affiche la vue ciblée
+      var vue = document.getElementById('vue-' + cible);
+      if (vue) vue.classList.add('active');
+    });
+  });
+
+  // Connexion : passer de l'auth au planning
+  var btnAuth = document.getElementById('btnAuthAction');
+  if (btnAuth) {
+    btnAuth.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('vue-auth').classList.remove('active');
+      document.getElementById('vue-planning').classList.add('active');
+      document.getElementById('mainNav').style.display = 'flex';
+      document.getElementById('userBar').style.display = 'flex';
+    });
+  }
+
+  // Mode hors-ligne (même comportement)
+  var btnOffline = document.getElementById('btnModeHorsLigne');
+  if (btnOffline) {
+    btnOffline.addEventListener('click', function() {
+      document.getElementById('vue-auth').classList.remove('active');
+      document.getElementById('vue-planning').classList.add('active');
+      document.getElementById('mainNav').style.display = 'flex';
+      document.getElementById('userBar').style.display = 'flex';
+    });
+  }
+});
 </script>
 </body>
 </html>
