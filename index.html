@@ -166,7 +166,6 @@
 
   #zoneImpression{display:none}
   @media print{
-    @page { margin-bottom: 15mm; @bottom-center { content: "Page " counter(page); } }
     body>*{display:none !important}
     #zoneImpression{display:block !important;background:#fff}
     .page-cr{padding:0;font-size:11px;font-family:'Segoe UI',Arial,sans-serif;color:#333}
@@ -197,13 +196,10 @@
     .page-cr .info-table-projet th{width:19%}
     .page-cr .info-table-projet td{width:31%}
     .page-cr .photos-print{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:6px}
-    .page-cr .photos-print img{width:100%;max-height:180px;object-fit:contain;border:1px solid #ccc;display:block}
-    .page-cr .photos-print figure.photo-print-item{width:46%;margin:0}
+    .page-cr .photos-print img{width:100%;max-height:260px;object-fit:contain;border:1px solid #ccc;display:block}
+    .page-cr .photos-print figure.photo-print-item{width:48%;margin:0}
     .page-cr .photos-print figure.photo-print-item-grande{width:75%;margin:0 auto}
     .page-cr .photos-print figure.photo-print-item-grande img{max-height:280px}
-    .page-cr .photos-print.incidents-print figure.photo-print-item{width:48%;margin:0 1%}
-    .page-cr .photos-print.incidents-print img{max-height:240px;object-fit:cover;width:100%}
-    .page-cr .photos-print.incidents-print .remarque-label{font-weight:700;color:var(--rouge);font-size:9.5px;text-transform:uppercase;margin-bottom:2px;display:block}
     .page-cr .photos-print .commentaire-print{font-size:10px;color:#333;margin-top:3px;font-style:italic}
     .page-cr .badge-print{display:inline-block;border:1px solid #C6432E;color:#C6432E;background:#FBEDEA;border-radius:3px;padding:2px 6px;font-size:9px;font-weight:700;text-transform:uppercase}
     .page-cr .badge-print-ok{border-color:#1E7A46;color:#1E7A46;background:#EAF4EE}
@@ -211,11 +207,12 @@
     .page-cr .content-print{margin-bottom:0}
     .page-cr .signature-print{margin-top:10px;border-top:1px solid #ccc;padding-top:8px}
     .page-cr .sig-bloc-print{border:1px solid var(--ligne);padding:8px 10px;margin-bottom:8px;background:#fff}
-    .page-cr .section-print.photos-section,.page-cr .section-print.incidents-section{break-before:avoid;page-break-before:avoid}
     .page-cr .sig-bloc-titre{font-weight:700;color:var(--rouge);font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
     .page-cr .sig-img-print{max-height:60px;max-width:200px;margin-top:6px;display:block}
     .page-cr .sig-vide-print{color:var(--acier);font-style:italic;font-size:10px;margin-top:6px}
     .page-cr .signature-print img{max-height:60px}
+    .pagination-print::after { content: " / " counter(pages); }
+    @page { counter-increment: page; }
   }
 
   /* ===== Modales internes (remplace alert/confirm/prompt) ===== */
@@ -242,8 +239,6 @@
   .partage-boutons button .puce-canal{width:10px;height:10px;border-radius:50%;flex-shrink:0}
   #btnAnnulerPartage{margin-top:14px;width:100%;padding:9px;border-radius:8px;border:1px solid var(--ligne);background:#eee;color:#333;font-weight:600;cursor:pointer}
 </style>
-<base target="_blank">
-<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -300,6 +295,7 @@
   <button data-vue="nouveau">Nouveau CR</button>
   <button data-vue="historique">Historique CR <span id="compteurCR"></span><span id="pastilleUrgent" class="pastille" style="display:none"></span></button>
   <button data-vue="affaires">Affaires</button>
+  <button data-vue="galeries">N&deg; Galeries</button>
   <button data-vue="equipe">Equipe</button>
 </nav>
 
@@ -398,41 +394,12 @@
           <label for="crNumeroGalerie">N&deg; de galerie / egout</label>
           <select id="crNumeroGalerie">
             <option value="">— Choisir un N&deg; de galerie/egout —</option>
-            <option value="BR32">BR32</option>
-            <option value="BR33">BR33</option>
-            <option value="BR34">BR34</option>
-            <option value="BR35">BR35</option>
-            <option value="BR36">BR36</option>
-            <option value="BR37">BR37</option>
-            <option value="BR38">BR38</option>
-            <option value="BR39">BR39</option>
-            <option value="BR40">BR40</option>
-            <option value="G12">G12</option>
-            <option value="G13">G13</option>
-            <option value="G14">G14</option>
-            <option value="G15">G15</option>
-            <option value="G16">G16</option>
-            <option value="G17">G17</option>
-            <option value="G18">G18</option>
-            <option value="G19">G19</option>
-            <option value="G20">G20</option>
-            <option value="EG01">EG01</option>
-            <option value="EG02">EG02</option>
-            <option value="EG03">EG03</option>
-            <option value="EG04">EG04</option>
-            <option value="EG05">EG05</option>
-            <option value="EG06">EG06</option>
-            <option value="EG07">EG07</option>
-            <option value="EG08">EG08</option>
-            <option value="EG09">EG09</option>
-            <option value="EG10">EG10</option>
-            <option value="__autre__">+ Autre (saisie manuelle)</option>
           </select>
           <input type="text" id="crNumeroGalerieAutre" placeholder="Nouveau N&deg; de galerie/egout" style="margin-top:6px;display:none">
         </div>
       </div>
       <div class="grille2">
-        <div><label for="crSiteLoc">Site de localisation du projet</label><input type="text" id="crSiteLoc" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris — angle Malesherbes / coordonnees GPS"></div>
+        <div><label for="crSiteLoc">Site de localisation de la galerie</label><input type="text" id="crSiteLoc" placeholder="Ex. : 24 rue Juliette Lamber, 75017 Paris — angle Malesherbes / coordonnees GPS"></div>
         <div><label for="crIndice">Indice du document (revision)</label>
           <select id="crIndice">
             <option value="0" selected>0</option>
@@ -489,10 +456,12 @@
       </div>
       <div class="sous-carte">
         <div class="sous-carte-titre">Contact intervenant</div>
-        <div class="grille3">
-          <div><input type="text" id="crIntervenantNom" placeholder="Nom de l'intervenant"></div>
-          <div><input type="text" id="crIntervenantTel" placeholder="Telephone"></div>
-          <div><input type="email" id="crIntervenantEmail" placeholder="E-mail"></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="text" id="crIntervenantNom" placeholder="Nom de l'intervenant" style="flex:2;min-width:140px">
+          <span style="color:var(--acier);font-weight:700">—</span>
+          <input type="text" id="crIntervenantTel" placeholder="Telephone" style="flex:1;min-width:120px">
+          <span style="color:var(--acier);font-weight:700">—</span>
+          <input type="email" id="crIntervenantEmail" placeholder="E-mail" style="flex:2;min-width:160px">
         </div>
       </div>
     </div>
@@ -694,6 +663,27 @@
     <div id="listeCR"></div>
   </section>
 
+  <section class="vue" id="vue-galeries">
+    <h2>N&deg; de Galeries / Egouts</h2>
+    <p class="sous-titre">Gerez la liste des numeros de galeries et egouts disponibles dans le formulaire de CR.</p>
+    <div class="carte">
+      <h3>Ajouter un numero de galerie</h3>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px">
+          <label for="nvGalerieInput">Numero de galerie / egout</label>
+          <input type="text" id="nvGalerieInput" placeholder="Ex. : GC-A14, EG-12, GAL-075...">
+        </div>
+        <button class="btn btn-sombre" id="btnAjouterGalerie">Ajouter</button>
+      </div>
+      <div id="listeGaleriesEnregistrees" style="margin-top:14px"></div>
+    </div>
+    <div class="carte">
+      <h3>Galeries predefinies — Mission 1914_E</h3>
+      <p class="sous-titre" style="margin-bottom:10px">Ces numeros sont pre-charges dans la liste deroulante du formulaire. Cliquez pour les ajouter a votre liste active.</p>
+      <div id="galeriesPredef" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+    </div>
+  </section>
+
   <section class="vue" id="vue-equipe">
     <h2>Equipe — executants</h2>
     <p class="sous-titre">Gerez les executants par entite. Cette liste alimente le planning et les documents.</p>
@@ -798,18 +788,6 @@
 
 const SUPABASE_URL = 'https://reymqvaglfsnqbtcffpn.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJleW1xdmFnbGZzbnFidGNmZnBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NjgyMTIsImV4cCI6MjEwMDI0NDIxMn0.7yZWARAsMvz-GNl4vwYi2B0v7dXMZveH4hlqVONh-JU';
-
-/* Gestion Numero de galerie "Autre" */
-document.addEventListener('DOMContentLoaded', function(){
-  const selGalerie = document.getElementById('crNumeroGalerie');
-  const autreGalerie = document.getElementById('crNumeroGalerieAutre');
-  if(selGalerie && autreGalerie){
-    selGalerie.addEventListener('change', function(){
-      autreGalerie.style.display = (this.value === '__autre__') ? 'block' : 'none';
-      if(this.value !== '__autre__') autreGalerie.value = '';
-    });
-  }
-});
 
 const TYPES_INCIDENTS = [
   "Fuite","Fissure sur genie civil","Eboulement sur genie civil",
@@ -1028,6 +1006,64 @@ document.getElementById("btnAjouterAffaire").addEventListener("click", async ()=
 // Liste extensible : quelques numeros pre-remplis, le reste s'ajoute au fil de l'eau via
 // l'option "+ Autre" (memorise automatiquement pour les prochaines fois).
 const GALERIES_PAR_DEFAUT = ["18-50-00","18-69-00","18-70-00","18-72-00","18-049-00"];
+// Liste predefinies galeries Mission 1914_E
+const GALERIES_PREDEF = [
+  "GC-A1","GC-A2","GC-A3","GC-A4","GC-A5","GC-A6","GC-A7","GC-A8","GC-A9","GC-A10",
+  "GC-A11","GC-A12","GC-A13","GC-A14","GC-A15","GC-A16","GC-A17","GC-A18","GC-A19","GC-A20",
+  "GC-B1","GC-B2","GC-B3","GC-B4","GC-B5","GC-B6","GC-B7","GC-B8","GC-B9","GC-B10",
+  "EG-01","EG-02","EG-03","EG-04","EG-05","EG-06","EG-07","EG-08","EG-09","EG-10",
+  "EG-11","EG-12","EG-13","EG-14","EG-15","EG-16","EG-17","EG-18","EG-19","EG-20",
+  "GAL-001","GAL-002","GAL-003","GAL-004","GAL-005","GAL-006","GAL-007","GAL-008","GAL-009","GAL-010"
+];
+
+function rendreGaleriesPredef(){
+  const cont = document.getElementById("galeriesPredef");
+  if(!cont) return;
+  const liste = chargerListeGaleries();
+  cont.innerHTML = GALERIES_PREDEF.map(g=>{
+    const deja = liste.includes(g);
+    return `<button class="btn btn-${deja?'ok':'ligne'} btn-petit" data-gal="${g}" title="${deja?'Deja dans la liste':'Ajouter'}" style="${deja?'background:var(--securite);color:#fff;border-color:var(--securite)':''}">${g}</button>`;
+  }).join("");
+  cont.querySelectorAll("[data-gal]").forEach(b=>{
+    b.addEventListener("click",()=>{ memoriserGalerie(b.dataset.gal); rendreListeGaleriesUI(); rendreGaleriesPredef(); });
+  });
+}
+
+function rendreListeGaleriesUI(){
+  const cont = document.getElementById("listeGaleriesEnregistrees");
+  if(!cont) return;
+  const liste = chargerListeGaleries();
+  if(!liste.length){ cont.innerHTML = `<span style="color:var(--acier)">Aucun numero enregistre.</span>`; return; }
+  cont.innerHTML = liste.map((g,i)=>`<div class="moe-carte" style="margin-bottom:6px"><div><div class="nom">${g}</div></div><button class="btn btn-danger btn-petit" data-idx="${i}">&#10005; Retirer</button></div>`).join("");
+  cont.querySelectorAll("[data-idx]").forEach(b=>{
+    b.addEventListener("click", async ()=>{
+      const idx = parseInt(b.dataset.idx);
+      const l = chargerListeGaleries();
+      l.splice(idx,1);
+      lsEcrire("gta1914e_liste_galeries", l);
+      rafraichirListeGaleries();
+      rendreListeGaleriesUI();
+      rendreGaleriesPredef();
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const btnAjouterGalerie = document.getElementById("btnAjouterGalerie");
+  const nvGalerieInput = document.getElementById("nvGalerieInput");
+  if(btnAjouterGalerie){
+    btnAjouterGalerie.addEventListener("click", async ()=>{
+      const val = nvGalerieInput.value.trim();
+      if(!val){ await modalAlert("Indiquez un numero de galerie."); return; }
+      memoriserGalerie(val);
+      nvGalerieInput.value = "";
+      rendreListeGaleriesUI();
+      rendreGaleriesPredef();
+    });
+    nvGalerieInput.addEventListener("keydown", async e=>{ if(e.key==="Enter"){ btnAjouterGalerie.click(); } });
+  }
+});
+
 function chargerListeGaleries(){
   const sauvegardee = lsLire("gta1914e_liste_galeries");
   return (sauvegardee && sauvegardee.length) ? sauvegardee : [...GALERIES_PAR_DEFAUT];
@@ -1212,6 +1248,7 @@ document.querySelectorAll("nav button").forEach(b=>{
     b.classList.add("actif");
     document.getElementById("vue-"+b.dataset.vue).classList.add("active");
     if(b.dataset.vue === "affaires") rendreAffaires();
+    if(b.dataset.vue === "galeries"){ rendreListeGaleriesUI(); rendreGaleriesPredef(); }
     if(b.dataset.vue === "nouveau") getGeolocation();
     fermerMenuMobile();
   });
@@ -1446,11 +1483,11 @@ function initSignaturePad(canvas){
   };
   canvas.addEventListener("mousedown", e=>{ pad.actif = true; const p = getPosLocal(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
   canvas.addEventListener("mousemove", e=>{ if(!pad.actif) return; const p = getPosLocal(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
-  canvas.addEventListener("mouseup", ()=>{ pad.actif = false; pad.data = canvas.toDataURL("image/png"); if(pad===padSignature) signatureData=pad.data; });
+  canvas.addEventListener("mouseup", ()=>{ pad.actif = false; pad.data = canvas.toDataURL("image/png"); });
   canvas.addEventListener("mouseleave", ()=>{ pad.actif = false; });
   canvas.addEventListener("touchstart", e=>{ e.preventDefault(); pad.actif = true; const p = getPosLocal(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive:false});
   canvas.addEventListener("touchmove", e=>{ e.preventDefault(); if(!pad.actif) return; const p = getPosLocal(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, {passive:false});
-  canvas.addEventListener("touchend", e=>{ e.preventDefault(); pad.actif = false; pad.data = canvas.toDataURL("image/png"); if(pad===padSignature) signatureData=pad.data; }, {passive:false});
+  canvas.addEventListener("touchend", e=>{ e.preventDefault(); pad.actif = false; pad.data = canvas.toDataURL("image/png"); }, {passive:false});
   pad.clear = ()=>{ ctx.clearRect(0, 0, canvas.width, canvas.height); pad.data = null; };
   return pad;
 }
@@ -1468,6 +1505,20 @@ $("#btnClearSignature").addEventListener("click", ()=>{
   signatureData = null;
   $("#signaturePreview").style.display = "none";
 });
+
+// Correctif : quand la signature est dessinee directement au doigt/souris sur le canvas,
+// il faut recopier padSignature.data dans la variable globale signatureData — sinon
+// c'est toujours null au moment d'enregistrer le CR et la signature n'apparait jamais
+// dans le PDF / le partage, meme si elle est bien visible a l'ecran.
+const synchroniserSignatureDessinee = ()=>{
+  if(padSignature.data){
+    signatureData = padSignature.data;
+    $("#imgSignaturePreview").src = signatureData;
+    $("#signaturePreview").style.display = "block";
+  }
+};
+canvasSig.addEventListener("mouseup", synchroniserSignatureDessinee);
+canvasSig.addEventListener("touchend", synchroniserSignatureDessinee);
 
 $("#btnImportSignature").addEventListener("click", ()=>$("#fichSignature").click());
 $("#fichSignature").addEventListener("change", async e=>{
@@ -1912,7 +1963,7 @@ async function chargerCRPourEdition(cr){
   $("#crPointsAbordes").value = cr.pointsAbordes || "";
   $("#crDecisions").value = cr.decisions || "";
   $("#crProchainesEtapes").value = cr.prochainesEtapes || "";
-  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
+  const ip = cr.infoProjet || {};
   $("#crTypeTravaux").value = ip.typeTravaux || "";
   $("#crSiteLoc").value = ip.siteLoc || "";
   if(ip.numeroAffaire && !chargerListeAffaires().includes(ip.numeroAffaire)){
@@ -2312,7 +2363,7 @@ async function exporterPDF(cr, retournerBlob){
     doc.line(x, 30, x+0.5, 30);
   }
 
-  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
+  const ip = cr.infoProjet || {};
   let y = 40;
   doc.setTextColor(26,26,26); doc.setFontSize(13); doc.setFont("helvetica","bold");
   doc.text(cr.type === 'minutes' ? "MINUTES DE CHANTIER" : "COMPTE-RENDU D'INTERVENTION", 14, y);
@@ -2357,14 +2408,24 @@ async function exporterPDF(cr, retournerBlob){
   if(cr.type !== 'minutes'){
     const infos = [
       ["Mission","1914_E — Releve des galeries et egouts"],
-      ["Date",frDate(cr.date)],["Secteur",cr.secteur],
+      ["Date",frDate(cr.date)],
       ["N° galerie/egout", (cr.infoProjet && cr.infoProjet.numeroGalerie) || "—"],
       ["Entite",cr.entite || "GTA GE"],
-      ["Executants",cr.execs.join(", ") || "—"],
-      ["Contact intervenant",[ip.intervenantNom, ip.intervenantTel, ip.intervenantEmail].filter(Boolean).join(" / ") || "—"],
-      ["Auteur",cr.auteur || "—"],
       ["Statut",cr.incidents.length ? cr.incidents.length + " incident(s)" : "RAS"]
     ];
+    // Intervenants : une ligne par personne avec nom, numero et e-mail (quand disponibles).
+    const lignesInterv = lignesIntervenants(cr);
+    const hauteurInterv = lignesInterv.length ? Math.max(8, lignesInterv.length*5+3) : 8;
+    doc.setFillColor(245,245,245); doc.rect(14, y, 60, hauteurInterv, "F");
+    doc.setTextColor(26,26,26); doc.setFont("helvetica","bold"); doc.setFontSize(8);
+    doc.text("Intervenants", 16, y+5);
+    doc.setFont("helvetica","normal");
+    if(lignesInterv.length){
+      lignesInterv.forEach((ligne,i)=>{ doc.text(String(ligne).substring(0,90), 76, y+5+i*5); });
+    } else {
+      doc.text("—", 76, y+5);
+    }
+    y += hauteurInterv;
     infos.forEach(([label, val])=>{
       doc.setFillColor(245,245,245); doc.rect(14, y, 60, 7, "F");
       doc.setTextColor(26,26,26); doc.setFont("helvetica","bold"); doc.setFontSize(8);
@@ -2374,10 +2435,6 @@ async function exporterPDF(cr, retournerBlob){
       y += 8;
     });
     y += 3;
-
-    bandeauNum("TRAVAUX REALISES");
-    const travaux = doc.splitTextToSize(cr.travaux || "—", 170);
-    doc.text(travaux, 16, y); y += travaux.length * 4.5 + 4;
 
     if(photos.acces && photos.acces.length){
       y = pdfSautPage(doc, y, 9);
@@ -2524,49 +2581,36 @@ async function exporterPDF(cr, retournerBlob){
   }
 
   // Signature (compte-rendu d'intervention uniquement — les Minutes s'arretent aux visas ci-dessus)
-  const ipPdf = cr.infoProjet || {};
-  if(!estMinutes && (cr.signature || ipPdf.signatureMoeImage || ipPdf.signatureChefImage || ipPdf.signatureMoeNom || ipPdf.signatureChefNom)){
+  if(cr.signature && cr.type !== 'minutes'){
     y = pdfSautPage(doc, y, 40);
     doc.setFillColor(227,30,36); doc.rect(14, y, 182, 6, "F");
     doc.setTextColor(255,255,255); doc.setFont("helvetica","bold");
-    doc.text("VALIDATION & SIGNATURES", 16, y+4.5); y += 9;
-    // Signature MOE
-    if(ipPdf.signatureMoeNom || ipPdf.signatureMoeImage){
-      doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(227,30,36);
-      doc.text("Pour le maitre d'oeuvre — GTA Energies", 16, y+4); y += 6;
-      doc.setFont("helvetica","normal"); doc.setTextColor(26,26,26); doc.setFontSize(9);
-      doc.text((ipPdf.signatureMoeNom || "Nom du signataire") + " — " + (ipPdf.signatureMoeDate ? frDate(ipPdf.signatureMoeDate) : "—"), 16, y+4); y += 6;
-      if(ipPdf.signatureMoeImage){
-        try{
-          const imgMoe = new Image();
-          const chargeeMoe = await new Promise((resolve)=>{ imgMoe.onload=()=>resolve(true); imgMoe.onerror=()=>resolve(false); imgMoe.src=ipPdf.signatureMoeImage; setTimeout(()=>resolve(false),3000); });
-          if(chargeeMoe && imgMoe.width && imgMoe.height){ const r=imgMoe.width/imgMoe.height, w=50, h=w/r; doc.addImage(ipPdf.signatureMoeImage,'PNG',16,y,w,h); y += h+2; }
-        }catch(e){}
+    doc.text("SIGNATURE", 16, y+4.5); y += 9;
+    try{
+      const img = new Image();
+      // Important : on securise le chargement avec onerror + timeout, pour ne jamais
+      // bloquer indefiniment la generation du PDF si l'image de signature est corrompue
+      // ou trop lente a charger (avant ce correctif, un echec silencieux pouvait faire
+      // disparaitre toute la fin du document sans aucun message).
+      const chargee = await new Promise((resolve)=>{
+        img.onload = ()=>resolve(true);
+        img.onerror = ()=>resolve(false);
+        img.src = cr.signature;
+        setTimeout(()=>resolve(false), 3000);
+      });
+      if(chargee && img.width && img.height){
+        const ratio = img.width / img.height;
+        const w = 60, h = w / ratio;
+        doc.addImage(cr.signature, 'PNG', 16, y, w, h);
+      } else {
+        doc.setFont("helvetica","italic"); doc.setFontSize(9); doc.setTextColor(150);
+        doc.text("Signature non disponible", 16, y+5);
+        doc.setFont("helvetica","normal"); doc.setTextColor(26,26,26); doc.setFontSize(9);
       }
-      y += 3;
-    }
-    // Signature Chef
-    if(ipPdf.signatureChefNom || ipPdf.signatureChefImage){
-      doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(227,30,36);
-      doc.text("Visa du chef de chantier", 16, y+4); y += 6;
+    }catch(e){
+      doc.setFont("helvetica","italic"); doc.setFontSize(9); doc.setTextColor(150);
+      doc.text("Signature non disponible", 16, y+5);
       doc.setFont("helvetica","normal"); doc.setTextColor(26,26,26); doc.setFontSize(9);
-      doc.text((ipPdf.signatureChefNom || "Nom du signataire") + " — " + (ipPdf.signatureChefDate ? frDate(ipPdf.signatureChefDate) : "—"), 16, y+4); y += 6;
-      if(ipPdf.signatureChefImage){
-        try{
-          const imgChef = new Image();
-          const chargeeChef = await new Promise((resolve)=>{ imgChef.onload=()=>resolve(true); imgChef.onerror=()=>resolve(false); imgChef.src=ipPdf.signatureChefImage; setTimeout(()=>resolve(false),3000); });
-          if(chargeeChef && imgChef.width && imgChef.height){ const r=imgChef.width/imgChef.height, w=50, h=w/r; doc.addImage(ipPdf.signatureChefImage,'PNG',16,y,w,h); y += h+2; }
-        }catch(e){}
-      }
-      y += 3;
-    }
-    // Signature principale (legacy)
-    if(cr.signature){
-      try{
-        const img = new Image();
-        const chargee = await new Promise((resolve)=>{ img.onload=()=>resolve(true); img.onerror=()=>resolve(false); img.src=cr.signature; setTimeout(()=>resolve(false),3000); });
-        if(chargee && img.width && img.height){ const r=img.width/img.height, w=60, h=w/r; doc.addImage(cr.signature,'PNG',16,y,w,h); }
-      }catch(e){}
     }
   }
 
@@ -2640,7 +2684,7 @@ function refDocument(cr){
 // et indice de revision. Utilise en pied de page du PDF/impression et comme objet
 // des messages de partage (WhatsApp / SMS / e-mail / Outlook).
 function construireObjetDocument(cr){
-  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
+  const ip = cr.infoProjet || {};
   if(cr.type === 'minutes'){
     const parties = [ip.numeroAffaire, ip.maitreOuvrageSociete, (ip.adresseChantier || ip.siteLoc), refDocument(cr), (ip.indice || "Ind0")].filter(Boolean);
     return parties.join("_");
@@ -2651,7 +2695,7 @@ function construireObjetDocument(cr){
 }
 
 function construireCorpsMessage(cr){
-  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
+  const ip = cr.infoProjet || {};
   if(cr.type === 'minutes'){
     const projet = [ip.typeTravaux, ip.maitreOuvrageSociete].filter(Boolean).join(" de ");
     let corps = "Bonjour a tous," + String.fromCharCode(10,10);
@@ -2677,14 +2721,41 @@ function bandeauSection(numero, titre){
   return `<div class="section-title"><span class="num-badge">${numero}</span>${echap(titre)}</div>`;
 }
 
+// Retrouve, pour un nom d'executant donne, ses coordonnees (tel/email) enregistrees
+// dans l'onglet Equipe (recherche sur les 3 entites). Utilise pour afficher chaque
+// intervenant avec nom + numero + email dans les rapports (CR / Minutes).
+function trouverCoordonneesExecutant(nom){
+  const toutes = [...etat.equipe["GTA GE"], ...etat.equipe["GTA ENERGIES"], ...etat.equipe["SOUS-TRAITANT"]];
+  return toutes.find(p=>p.nom===nom) || null;
+}
+
+// Construit, pour la liste des executants d'un CR, une ligne par intervenant avec
+// son nom, son numero et son e-mail (quand ils sont renseignes dans l'onglet Equipe).
+function lignesIntervenants(cr){
+  if(!cr.execs || !cr.execs.length) return [];
+  return cr.execs.map(nom=>{
+    const p = trouverCoordonneesExecutant(nom);
+    const parties = [nom, p && p.tel, p && p.email].filter(Boolean);
+    return parties.join(" — ");
+  });
+}
+
 function galeriePhotosImprimee(srcs, commentaires, grande){
   if(!srcs || !srcs.length) return '';
   const classeItem = grande ? "photo-print-item photo-print-item-grande" : "photo-print-item";
-  return `<div class="photos-print">${srcs.map((s,i)=>`<figure class="${classeItem}"><img src="${s}">${(commentaires && commentaires[i]) ? `<figcaption class="commentaire-print">${echap(commentaires[i])}</figcaption>` : ''}</figure>`).join("")}</div>`;
+  return `<div class="photos-print">${srcs.map((s,i)=>`<figure class="${classeItem}"><img src="${s}">${(commentaires && commentaires[i]) ? `<figcaption class="commentaire-print"><strong>Remarque :</strong> ${echap(commentaires[i])}</figcaption>` : ''}</figure>`).join("")}</div>`;
 }
 
 async function telechargerPdfPourPartage(cr){
-  try{ await exporterPDF(cr, false); }catch(e){}
+  try{
+    await exporterPDF(cr, false);
+  }catch(e){
+    // Correctif : une erreur ici etait avalee en silence, donnant l'impression que le
+    // partage "ne faisait rien". On previent desormais clairement l'utilisateur.
+    console.error("Echec generation PDF pour partage :", e);
+    await modalAlert("Le PDF n'a pas pu etre genere (" + (e && e.message ? e.message : "erreur inconnue") + "). Reessayez ; si le probleme persiste, verifiez votre connexion.");
+    throw e;
+  }
 }
 
 function fermerMenuPartage(){
@@ -2731,18 +2802,33 @@ async function envoyerViaOutlook(cr, sujet, corps){
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
-  // Important : le lien web "outlook.office.com/mail/deeplink/compose" n'est fiable que
-  // dans un navigateur deja connecte a Outlook Web. Sur telephone, quand l'application
-  // Outlook est installee, Android/iOS interceptent ce lien et ouvrent l'app plutot que
-  // le site web — mais l'app Outlook ignore alors le sujet/corps pre-remplis, d'ou le
-  // message qui n'apparaissait jamais. Le protocole mailto: est lui respecte par toutes
-  // les applications de messagerie (Outlook, Gmail, Mail...), qu'il s'agisse de l'app
-  // installee ou du webmail : c'est donc la methode fiable a utiliser ici.
+  // Correctif : mailto: ouvre l'application mail PAR DEFAUT du telephone, qui n'est pas
+  // forcement Outlook (d'ou l'impression que "le partage Outlook ne marche pas" si Gmail
+  // ou une autre appli s'ouvrait a la place). On force donc l'ouverture de l'appli Outlook
+  // elle-meme via son schema propre ms-outlook://compose — et seulement si cela echoue
+  // (Outlook non installe, ou lien bloque) on bascule automatiquement sur mailto: apres
+  // un court delai, pour ne jamais laisser le partage "ne rien faire".
   const corpsComplet = corps + String.fromCharCode(10,10) + "Le document au format PDF a ete telecharge sur cet appareil : pensez a le joindre avec le trombone.";
   const destinataire = cr.type !== 'minutes' ? CONTACT_DESTINATAIRE.email : "";
-  const url = "mailto:" + destinataire + "?subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(corpsComplet);
-  if(fenetre && !fenetre.closed){ fenetre.location.href = url; } else { window.open(url, "_blank"); }
-  await modalAlert("Votre application mail par defaut (Outlook si elle est configuree comme telle) s'ouvre avec le message pret a l'envoi. Choisissez ou validez le destinataire, puis joignez le PDF telecharge (et les photos si besoin) avant d'envoyer.");
+  const urlOutlookApp = "ms-outlook://compose?to=" + encodeURIComponent(destinataire) + "&subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(corpsComplet);
+  const urlMailtoSecours = "mailto:" + destinataire + "?subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(corpsComplet);
+
+  let bascule = false;
+  const surVisibilite = ()=>{ if(document.hidden) bascule = true; };
+  document.addEventListener("visibilitychange", surVisibilite);
+
+  if(fenetre && !fenetre.closed){ fenetre.location.href = urlOutlookApp; } else { window.open(urlOutlookApp, "_blank"); }
+
+  setTimeout(()=>{
+    document.removeEventListener("visibilitychange", surVisibilite);
+    if(!bascule){
+      // L'appli Outlook n'a pas repris la main (probablement pas installee) : on ouvre
+      // le mail par defaut a la place, pour que le partage aboutisse quand meme.
+      if(fenetre && !fenetre.closed){ fenetre.location.href = urlMailtoSecours; } else { window.open(urlMailtoSecours, "_blank"); }
+    }
+  }, 1200);
+
+  await modalAlert("L'appli Outlook s'ouvre avec le message pret a l'envoi (si Outlook n'est pas installee, votre appli mail par defaut s'ouvre a la place apres 1 a 2 secondes). Choisissez ou validez le destinataire, puis joignez le PDF telecharge (et les photos si besoin) avant d'envoyer.");
 }
 
 async function partagerCR(cr){
@@ -2750,17 +2836,22 @@ async function partagerCR(cr){
   const corps = construireCorpsMessage(cr);
   $("#modalPartageOverlay").classList.add("actif");
   const boutons = document.querySelectorAll("#modalPartageOverlay [data-canal]");
+  // Correctif : on utilise .onclick (qui remplace toujours le gestionnaire precedent)
+  // plutot que addEventListener(...,{once:true}) qui pouvait empiler d'anciens
+  // gestionnaires — encore lies a un CR precedent — si le menu de partage etait
+  // ouvert/ferme plusieurs fois sans qu'un canal soit choisi.
   boutons.forEach(b=>{
-    const gestion = async ()=>{
+    b.onclick = async ()=>{
       fermerMenuPartage();
-      if(b.dataset.canal === "whatsapp") await envoyerViaWhatsapp(cr, sujet, corps);
-      else if(b.dataset.canal === "sms") await envoyerViaSMS(cr, sujet, corps);
-      else if(b.dataset.canal === "email") await envoyerViaEmail(cr, sujet, corps);
-      else if(b.dataset.canal === "outlook") await envoyerViaOutlook(cr, sujet, corps);
+      try{
+        if(b.dataset.canal === "whatsapp") await envoyerViaWhatsapp(cr, sujet, corps);
+        else if(b.dataset.canal === "sms") await envoyerViaSMS(cr, sujet, corps);
+        else if(b.dataset.canal === "email") await envoyerViaEmail(cr, sujet, corps);
+        else if(b.dataset.canal === "outlook") await envoyerViaOutlook(cr, sujet, corps);
+      }catch(e){ /* deja signale a l'utilisateur dans telechargerPdfPourPartage */ }
     };
-    b.addEventListener("click", gestion, {once:true});
   });
-  $("#btnAnnulerPartage").addEventListener("click", fermerMenuPartage, {once:true});
+  $("#btnAnnulerPartage").onclick = fermerMenuPartage;
 }
 
 async function imprimerCR(cr){
@@ -2769,7 +2860,7 @@ async function imprimerCR(cr){
   const z = $("#zoneImpression");
   const badgeIncidents = cr.incidents.length ? `<span class="badge-print">${cr.incidents.length} incident(s)</span>` : `<span class="badge-print badge-print-ok">RAS</span>`;
   const typeLabel = cr.type === 'minutes' ? 'MINUTES DE CHANTIER' : "COMPTE-RENDU D'INTERVENTION";
-  infoProjet = cr.infoProjet || {}; const ip = infoProjet;
+  const ip = cr.infoProjet || {};
   let n = 1;
   const estMinutes = cr.type === 'minutes';
 
@@ -2779,7 +2870,7 @@ async function imprimerCR(cr){
         <div class="section-body">
           ${ip.typeTravaux ? `<div style="font-weight:700;text-transform:uppercase;text-align:center;letter-spacing:.02em;margin-bottom:8px">Travaux de realisation de : ${echap(ip.typeTravaux).toUpperCase()}</div>` : ''}
           ${ip.numeroAffaire ? `<div style="font-size:10.5px;color:var(--gris-label);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px">N&deg; d'affaire</div><div style="font-weight:700;color:var(--rouge);margin-bottom:8px">${echap(ip.numeroAffaire)}</div>` : ''}
-          <div style="font-size:15px;font-weight:700;color:var(--rouge);text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px">Site de localisation de la galerie</div>
+          <div style="font-size:15px;font-weight:700;color:var(--bitume);text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px">Site de localisation de la galerie</div>
           <div style="font-weight:600;margin-bottom:8px">${echap(ip.siteLoc || "—")}</div>
           ${galeriePhotosImprimee(photos.localisation, commentaires.localisation, true)}
         </div>
@@ -2790,13 +2881,9 @@ async function imprimerCR(cr){
         </table>` : ''}
       </div>`;
 
-  const sectionMoe = etat.moe.length ? `
-      <div class="section-print">
-        ${bandeauSection(n++, "Maitrise d'oeuvre — GTA Energies")}
-        <div class="section-body">
-          ${etat.moe.map(m=>`<div style="margin-bottom:8px"><div style="font-weight:700">${echap(m.nom)}</div><div style="color:var(--rouge);font-style:italic;font-size:10.5px">${echap(m.role||"—")}</div><div style="color:var(--acier);font-size:10px">${echap([m.tel,m.email].filter(Boolean).join(" / ")||"—")}</div></div>`).join("")}
-        </div>
-      </div>` : '';
+  // Section "Maitrise d'oeuvre — GTA Energies" retiree du document imprime/PDF a la demande du client
+  // (le contact MOE reste gere dans l'onglet Equipe de l'app, mais n'apparait plus dans le rapport).
+  const sectionMoe = '';
 
   const sectionClient = estMinutes ? `
       <div class="section-print">
@@ -2908,6 +2995,7 @@ async function imprimerCR(cr){
     </div>
     <div class="content-print">
       ${sectionInfoProjet}
+      ${sectionMoe}
       ${sectionClient}
       ${sectionPrescriptions}
       ${sectionAvancement}
@@ -2921,26 +3009,17 @@ async function imprimerCR(cr){
           <tr><th>Date</th><td>${frDate(cr.date)}</td></tr>
           <tr><th>N&deg; galerie/egout</th><td>${echap((ip.numeroGalerie)||"—")}</td></tr>
           <tr><th>Entite</th><td>${cr.entite || 'GTA GE'}</td></tr>
-          <tr><th>Executants</th><td>${(()=>{
-          const tousExecs = [...etat.equipe["GTA GE"], ...etat.equipe["GTA ENERGIES"], ...etat.equipe["SOUS-TRAITANT"]];
-          return cr.execs.length ? cr.execs.map(nom=>{
-            const p = tousExecs.find(e=>e.nom===nom);
-            if(p) return `<div style="margin-bottom:2px;font-size:10.5px"><b>${echap(p.nom)}</b>${p.tel?` &nbsp;|&nbsp; ${echap(p.tel)}`:''}${p.email?` &nbsp;|&nbsp; ${echap(p.email)}`:''}</div>`;
-            return `<div style="margin-bottom:2px;font-size:10.5px"><b>${echap(nom)}</b></div>`;
-          }).join('') : '—';
-        })()}</td></tr>
-          <tr><th>Contact intervenant</th><td>${ip.intervenantNom ? `<b>${echap(ip.intervenantNom)}</b>` : '—'}${ip.intervenantTel ? ` — <span style="font-family:var(--mono);font-size:9.5px">${echap(ip.intervenantTel)}</span>` : ''}${ip.intervenantEmail ? ` — <span style="font-family:var(--mono);font-size:9.5px">${echap(ip.intervenantEmail)}</span>` : ''}</td></tr>
-          
+          <tr><th>Intervenants</th><td>${lignesIntervenants(cr).length ? lignesIntervenants(cr).map(l=>`<div>${echap(l)}</div>`).join("") : "—"}</td></tr>
           <tr><th>Statut incidents</th><td>${badgeIncidents}</td></tr>
         </table>
       </div>
-     
+` : ''}
       ${!estMinutes ? `
       <div class="section-print">
         ${bandeauSection(n++, "Photos BR acces")}
         <div class="section-body">${photos.acces.length ? galeriePhotosImprimee(photos.acces, commentaires.acces) : "Aucune photo."}</div>
       </div>
-      <div class="section-print incidents-section">
+      <div class="section-print">
         ${bandeauSection(n++, "Incidents remarques")}
         <div class="section-body">${cr.incidents.length ? `<ul style="margin-left:16px">${cr.incidents.map(i=>`<li>${echap(i)}</li>`).join("")}</ul><div style="margin-top:6px">${echap(cr.incidentDesc||"—").replace(/\n/g,"<br>")}</div>${photos.incidents.length ? galeriePhotosImprimee(photos.incidents, commentaires.incidents) : ""}` : "Rien a signaler."}</div>
       </div>
@@ -2951,21 +3030,14 @@ async function imprimerCR(cr){
         <div class="section-body">${echap(cr.obs||"—").replace(/\n/g,"<br>")}</div>
       </div>` : ''}
       ${sectionValidation}
-      ${!estMinutes ? `
-      <div class="section-print">
-        ${bandeauSection(n++, "Validation & signatures")}
-        <div class="section-body">
-          ${ip.signatureMoeNom || ip.signatureMoeImage ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Pour le maitre d'oeuvre — GTA Energies</div><div style="font-weight:700">${echap(ip.signatureMoeNom||"Nom du signataire")}</div>${ip.signatureMoeDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(ip.signatureMoeDate)}</div>` : ''}${ip.signatureMoeImage ? `<img src="${ip.signatureMoeImage}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
-          ${ip.signatureChefNom || ip.signatureChefImage ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Visa du chef de chantier</div><div style="font-weight:700">${echap(ip.signatureChefNom||"Nom du signataire")}</div>${ip.signatureChefDate ? `<div style="font-size:9.5px;color:var(--acier)">${frDate(ip.signatureChefDate)}</div>` : ''}${ip.signatureChefImage ? `<img src="${ip.signatureChefImage}" class="sig-img-print">` : '<span class="sig-vide-print">Signature manquante</span>'}</div>` : ''}
-          ${cr.signature ? `<div class="sig-bloc-print"><div class="sig-bloc-titre">Signature du compte-rendu</div><img src="${cr.signature}" class="sig-img-print"></div>` : ''}
-        </div>
-      </div>` : ''}
+      ${(cr.signature && !estMinutes) ? `<div class="section-print signature-print" style="break-inside:avoid;page-break-inside:avoid">${bandeauSection(n++,"Signature")}<div class="section-body" style="padding-top:8px"><img src="${cr.signature}" style="max-height:80px;display:block"></div></div>` : ''}
     </div>
     <div class="footer-print">
       <div>
         ${ligneIdentificationDocument(cr) ? `<div style="color:#2563EB;font-weight:700;margin-bottom:2px">${echap(ligneIdentificationDocument(cr))}</div>` : ''}
         GTA Energies by Vulcain — Bureau d'etudes reseaux de chaleur & froid<br>1 Place des Marseillais, 94220 Charenton-le-Pont — www.gta-energies.fr<br>Document genere le ${new Date().toLocaleDateString("fr-FR")} a ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}
       </div>
+      <div style="font-weight:700;font-size:10px;text-align:right;white-space:nowrap" class="pagination-print">Page <span class="page-num">—</span></div>
     </div>
   </div>`;
   window.print();
@@ -3101,49 +3173,6 @@ function afficherContactDestinataire(){
     }catch(e){}
   }
 })();
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Navigation par onglets
-  document.querySelectorAll('nav button[data-vue]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var cible = this.getAttribute('data-vue');
-      
-      // Retire "actif" de tous les boutons
-      document.querySelectorAll('nav button').forEach(function(b) { b.classList.remove('actif'); });
-      this.classList.add('actif');
-      
-      // Cache toutes les vues
-      document.querySelectorAll('main .vue').forEach(function(v) { v.classList.remove('active'); });
-      
-      // Affiche la vue ciblée
-      var vue = document.getElementById('vue-' + cible);
-      if (vue) vue.classList.add('active');
-    });
-  });
-
-  // Connexion : passer de l'auth au planning
-  var btnAuth = document.getElementById('btnAuthAction');
-  if (btnAuth) {
-    btnAuth.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.getElementById('vue-auth').classList.remove('active');
-      document.getElementById('vue-planning').classList.add('active');
-      document.getElementById('mainNav').style.display = 'flex';
-      document.getElementById('userBar').style.display = 'flex';
-    });
-  }
-
-  // Mode hors-ligne (même comportement)
-  var btnOffline = document.getElementById('btnModeHorsLigne');
-  if (btnOffline) {
-    btnOffline.addEventListener('click', function() {
-      document.getElementById('vue-auth').classList.remove('active');
-      document.getElementById('vue-planning').classList.add('active');
-      document.getElementById('mainNav').style.display = 'flex';
-      document.getElementById('userBar').style.display = 'flex';
-    });
-  }
-});
 </script>
 </body>
 </html>
