@@ -2768,18 +2768,24 @@ function fermerMenuPartage(){
 // pour les fichiers : la fonction renvoie alors false et l'appelant doit prevoir un repli.
 async function partagerFichierNatif(cr, titre, texte){
   try{
-    if(!navigator.share || !navigator.canShare) return false;
+    if(!navigator.share || !navigator.canShare) return 'unsupported';
     const blob = await exporterPDF(cr, true);
     const nomFichier = refDocument(cr) + "_" + cr.date + ".pdf";
     const fichier = new File([blob], nomFichier, {type: "application/pdf"});
-    if(!navigator.canShare({files:[fichier]})) return false;
+    if(!navigator.canShare({files:[fichier]})) return 'unsupported';
+    // Filet de securite : certaines applis (Outlook mobile notamment) ignorent le texte
+    // du partage des qu'un fichier est joint et n'affichent que la piece jointe, sans le
+    // corps du message. On copie donc le texte dans le presse-papiers pour qu'un simple
+    // "Coller" dans le corps du mail suffise si Outlook ne l'a pas rempli automatiquement.
+    try{ await navigator.clipboard.writeText(texte); }catch(e){}
     await navigator.share({files:[fichier], title: titre, text: texte});
-    return true;
+    return 'shared';
   }catch(e){
-    // AbortError = l'utilisateur a simplement annule le partage : ce n'est pas un echec.
-    if(e && e.name === "AbortError") return true;
+    // AbortError = l'utilisateur a simplement annule le partage : ce n'est pas un echec,
+    // on ne doit pas basculer sur le repli PC dans ce cas.
+    if(e && e.name === "AbortError") return 'aborted';
     console.error("Partage natif indisponible, repli sur la methode classique :", e);
-    return false;
+    return 'unsupported';
   }
 }
 
@@ -2822,25 +2828,28 @@ async function envoyerViaEmail(cr, sujet, corps){
 async function envoyerViaOutlook(cr, sujet, corps){
   // 1) On tente d'abord le partage natif : Outlook apparait alors comme un choix dans la
   // fenetre de partage du telephone, PDF deja joint — c'est ce que le client demande.
-  const reussi = await partagerFichierNatif(cr, sujet, corps);
-  if(reussi) return;
+  const resultat = await partagerFichierNatif(cr, sujet, corps);
+  if(resultat === 'shared'){
+    await modalAlert("Le PDF a ete partage. Si le corps du message n'est pas deja rempli dans Outlook (cela depend de l'appareil), le texte a ete copie automatiquement : faites Coller dans le corps du mail.");
+    return;
+  }
+  if(resultat === 'aborted') return; // l'utilisateur a annule le partage, on ne fait rien de plus
 
-  // 2) Repli PC (ou navigateur sans partage de fichiers) : on ouvre Outlook sur le web
-  // (outlook.office.com) specifiquement — pas le mail par defaut du systeme — pour que ce
-  // soit bien Outlook qui s'affiche. C'est un lien https classique, donc fiable : si la
-  // personne est deja connectee a Outlook dans ce navigateur, le message pre-rempli
-  // s'affiche directement ; sinon Outlook demande la connexion puis enchaine normalement.
-  // Le PDF (deja telecharge ci-dessous) doit toujours etre joint a la main : aucun site ne
-  // peut joindre un fichier automatiquement a un email sur PC, c'est une limite de securite
-  // des navigateurs, la meme pour toutes les applications web.
+  // 2) Repli PC (ou navigateur sans partage de fichiers) : mailto: classique. Le lien
+  // Outlook Web (outlook.office.com/mail/deeplink/compose) a ete teste mais perd parfois le
+  // destinataire et l'objet lors de la redirection de connexion (bug cote Microsoft) — on
+  // revient donc a mailto:, qui remplit fiablement destinataire/objet/corps dans tous les
+  // clients mail, y compris Outlook s'il est configure par defaut sur l'ordinateur. Le PDF
+  // (deja telecharge ci-dessous) reste a joindre a la main : aucun site ne peut joindre un
+  // fichier automatiquement a un email sur PC, c'est une limite de securite des navigateurs.
   let fenetre = null;
   try{ fenetre = window.open("", "_blank"); }catch(e){}
   await telechargerPdfPourPartage(cr);
   const corpsComplet = corps + String.fromCharCode(10,10) + "Le document au format PDF a ete telecharge sur cet appareil : pensez a le joindre avec le trombone.";
   const destinataire = cr.type !== 'minutes' ? CONTACT_DESTINATAIRE.email : "";
-  const url = "https://outlook.office.com/mail/deeplink/compose?to=" + encodeURIComponent(destinataire) + "&subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(corpsComplet);
+  const url = "mailto:" + destinataire + "?subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(corpsComplet);
   if(fenetre && !fenetre.closed){ fenetre.location.href = url; } else { window.open(url, "_blank"); }
-  await modalAlert("Outlook sur le web s'ouvre (connexion demandee si necessaire) avec le message pret a l'envoi. Choisissez ou validez le destinataire, puis joignez le PDF telecharge (trombone) avant d'envoyer.");
+  await modalAlert("Votre application mail par defaut s'ouvre (Outlook si configuree comme telle sur cet ordinateur) avec destinataire, objet et message prets. Joignez le PDF telecharge (trombone) avant d'envoyer.");
 }
 
 async function partagerCR(cr){
