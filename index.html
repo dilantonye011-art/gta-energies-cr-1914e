@@ -418,7 +418,7 @@
       <div class="carte" id="blocPhotosLocalisation" style="display:none;margin-top:10px;background:#FBFBFA">
         <label style="margin-top:0">Photo de localisation du chantier</label>
         <div class="zone-photos" id="zoneLocalisation">&#128247; Ajouter une photo de localisation — cliquez ou deposez</div>
-        <input type="file" id="fichLocalisation" accept="image/*" multiple hidden>
+        <input type="file" id="fichLocalisation" accept="image/*" capture="environment" multiple hidden>
         <div class="vignettes" id="vignLocalisation"></div>
         <div class="photo-geo-info" id="geoInfoLocalisation" style="display:none"></div>
       </div>
@@ -588,10 +588,19 @@
     </div>
     </div>
 
+    <div class="carte" id="blocZoningGalerie">
+      <h3>Zoning galerie</h3>
+      <p class="sous-titre" style="margin-bottom:8px">Plan(s)/photo(s) du zoning de la galerie — figure en 1ere page du rapport.</p>
+      <div class="zone-photos" id="zoneZoning">&#128247; Ajouter des photos — cliquez ou deposez</div>
+      <input type="file" id="fichZoning" accept="image/*" capture="environment" multiple hidden>
+      <div class="vignettes" id="vignZoning"></div>
+      <div class="photo-geo-info" id="geoInfoZoning" style="display:none"></div>
+    </div>
+
     <div class="carte" id="blocPhotosAcces">
       <h3 id="titrePhotosAcces">Photos BR acces (vue panoramique)</h3>
       <div class="zone-photos" id="zoneAcces">&#128247; Ajouter des photos — cliquez ou deposez</div>
-      <input type="file" id="fichAcces" accept="image/*" multiple hidden>
+      <input type="file" id="fichAcces" accept="image/*" capture="environment" multiple hidden>
       <div class="vignettes" id="vignAcces"></div>
       <div class="photo-geo-info" id="geoInfoAcces" style="display:none"></div>
     </div>
@@ -603,7 +612,7 @@
       <textarea id="crIncidentDesc" placeholder="Precisez la nature, la localisation (n° de BR, troncon) et l'ampleur…"></textarea>
       <label>Photos des incidents</label>
       <div class="zone-photos" id="zoneIncident">&#128247; Ajouter des photos des incidents — cliquez ou deposez</div>
-      <input type="file" id="fichIncident" accept="image/*" multiple hidden>
+      <input type="file" id="fichIncident" accept="image/*" capture="environment" multiple hidden>
       <div class="vignettes" id="vignIncident"></div>
       <div class="photo-geo-info" id="geoInfoIncident" style="display:none"></div>
     </div>
@@ -916,7 +925,27 @@ function frDateCourte(iso){
   return d.toLocaleDateString("fr-FR");
 }
 
+// Sauvegarde la photo originale (avant compression) dans la galerie/telechargements de
+// l'appareil, comme le ferait l'appli Appareil photo native. Ainsi, meme si l'utilisateur
+// ne va pas jusqu'au bout de l'enregistrement du CR, la photo n'est pas perdue : elle
+// reste accessible depuis la galerie du telephone (ou le dossier Telechargements selon
+// les navigateurs Android).
+function sauverPhotoEnGalerie(fichier){
+  try{
+    const url = URL.createObjectURL(fichier);
+    const a = document.createElement("a");
+    const horodatage = new Date().toISOString().replace(/[:.]/g,"-");
+    a.href = url;
+    a.download = "GTA_1914E_" + horodatage + ".jpg";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  }catch(e){ console.error("Sauvegarde galerie:", e); }
+}
+
 function compresserImage(fichier){
+  sauverPhotoEnGalerie(fichier);
   return new Promise(resoudre=>{
     const fr = new FileReader();
     fr.onload = ()=>{
@@ -1223,22 +1252,23 @@ async function uploadPhoto(crId, type, dataUrl, index){
 }
 
 async function getPhotosCR(crId){
-  if(!sb || modeHorsLigne) return lsLire("gta1914e_photos_"+crId) || {acces:[],incidents:[],chantier:[],localisation:[],phases:[]};
+  if(!sb || modeHorsLigne) return lsLire("gta1914e_photos_"+crId) || {acces:[],incidents:[],chantier:[],localisation:[],zoning:[],phases:[]};
   try{
     const { data: files } = await sb.storage.from('photos-cr').list('cr_' + crId);
-    if(!files) return {acces:[],incidents:[],chantier:[],localisation:[],phases:[]};
-    const acces=[], incidents=[], chantier=[], localisation=[], phases=[];
+    if(!files) return {acces:[],incidents:[],chantier:[],localisation:[],zoning:[],phases:[]};
+    const acces=[], incidents=[], chantier=[], localisation=[], zoning=[], phases=[];
     for(const f of files){
       const { data } = sb.storage.from('photos-cr').getPublicUrl('cr_' + crId + '/' + f.name);
       if(f.name.startsWith('acces_')) acces.push(data.publicUrl);
       else if(f.name.startsWith('incident_')) incidents.push(data.publicUrl);
       else if(f.name.startsWith('chantier_')) chantier.push(data.publicUrl);
       else if(f.name.startsWith('localisation_')) localisation.push(data.publicUrl);
+      else if(f.name.startsWith('zoning_')) zoning.push(data.publicUrl);
       else { const m = f.name.match(/^phase(\d+)_/); if(m){ const idx = parseInt(m[1],10); if(!phases[idx]) phases[idx]=[]; phases[idx].push(data.publicUrl); } }
     }
     for(let i=0;i<phases.length;i++) if(!phases[i]) phases[i]=[];
-    return {acces, incidents, chantier, localisation, phases};
-  }catch(e){ return {acces:[],incidents:[],chantier:[],localisation:[],phases:[]}; }
+    return {acces, incidents, chantier, localisation, zoning, phases};
+  }catch(e){ return {acces:[],incidents:[],chantier:[],localisation:[],zoning:[],phases:[]}; }
 }
 
 document.querySelectorAll("nav button").forEach(b=>{
@@ -1435,6 +1465,7 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
       $("#sousTitreNouveau").textContent = "Compte-rendu de reunion de chantier avec les parties prenantes.";
       $("#rappelDelai").style.display = "none";
       $("#blocIncidents").style.display = "none";
+      $("#blocZoningGalerie").style.display = "none";
       $("#blocPhotosAcces").style.display = "none";
       $("#blocMinutesOnly").style.display = "none";
       $("#blocObservations").style.display = "none";
@@ -1452,6 +1483,7 @@ document.querySelectorAll("#typeDocSelector button").forEach(btn=>{
       $("#sousTitreNouveau").textContent = "A rediger apres chaque intervention. Obligatoire des qu'un incident est remarque.";
       $("#rappelDelai").style.display = "flex";
       $("#blocIncidents").style.display = "block";
+      $("#blocZoningGalerie").style.display = "block";
       $("#blocPhotosAcces").style.display = "block";
       $("#titrePhotosAcces").textContent = "Photos BR acces (vue panoramique)";
       $("#blocMinutesOnly").style.display = "none";
@@ -1536,16 +1568,16 @@ $("#fichSignature").addEventListener("change", async e=>{
 });
 
 // === PHOTOS AVEC GEOLOCALISATION ===
-let photosAcces = [], photosIncident = [], photosChantier = [], photosLocalisation = [];
-let commentairesAcces = [], commentairesIncident = [], commentairesChantier = [], commentairesLocalisation = [];
+let photosAcces = [], photosIncident = [], photosChantier = [], photosLocalisation = [], photosZoning = [];
+let commentairesAcces = [], commentairesIncident = [], commentairesChantier = [], commentairesLocalisation = [], commentairesZoning = [];
 function commentairesDuType(type){
-  return type === 'acces' ? commentairesAcces : (type === 'chantier' ? commentairesChantier : (type === 'localisation' ? commentairesLocalisation : commentairesIncident));
+  return type === 'acces' ? commentairesAcces : (type === 'chantier' ? commentairesChantier : (type === 'localisation' ? commentairesLocalisation : (type === 'zoning' ? commentairesZoning : commentairesIncident)));
 }
-function chargerCommentairesCR(crId){ return lsLire("gta1914e_commentaires_"+crId) || {acces:[],incidents:[],chantier:[],localisation:[],phases:[]}; }
+function chargerCommentairesCR(crId){ return lsLire("gta1914e_commentaires_"+crId) || {acces:[],incidents:[],chantier:[],localisation:[],zoning:[],phases:[]}; }
 function sauverCommentairesCR(crId){
-  lsEcrire("gta1914e_commentaires_"+crId, {acces:[...commentairesAcces], incidents:[...commentairesIncident], chantier:[...commentairesChantier], localisation:[...commentairesLocalisation], phases: phasesAvancement.map(p=>[...(p.commentaires||[])])});
+  lsEcrire("gta1914e_commentaires_"+crId, {acces:[...commentairesAcces], incidents:[...commentairesIncident], chantier:[...commentairesChantier], localisation:[...commentairesLocalisation], zoning:[...commentairesZoning], phases: phasesAvancement.map(p=>[...(p.commentaires||[])])});
 }
-let geoAcces = null, geoIncident = null, geoChantier = null, geoLocalisation = null;
+let geoAcces = null, geoIncident = null, geoChantier = null, geoLocalisation = null, geoZoning = null;
 
 function getGeolocation(){
   // En galerie/egout, le GPS satellite (haute precision) met souvent plus de 5s a repondre,
@@ -1618,6 +1650,7 @@ async function processPhotoAvecGeo(file, type){
   if(type === 'acces'){ geoAcces = geo; }
   else if(type === 'chantier'){ geoChantier = geo; }
   else if(type === 'localisation'){ geoLocalisation = geo; }
+  else if(type === 'zoning'){ geoZoning = geo; }
   else { geoIncident = geo; }
   return result;
 }
@@ -1646,8 +1679,8 @@ function rendreVignettes(idVign, tableau, type){
     d.querySelector("textarea").addEventListener("input", ev=>{ commentaires[i] = ev.target.value; });
     v.appendChild(d);
   });
-  const geo = type === 'acces' ? geoAcces : (type === 'chantier' ? geoChantier : (type === 'localisation' ? geoLocalisation : geoIncident));
-  const infoId = type === 'acces' ? '#geoInfoAcces' : (type === 'chantier' ? '#geoInfoChantier' : (type === 'localisation' ? '#geoInfoLocalisation' : '#geoInfoIncident'));
+  const geo = type === 'acces' ? geoAcces : (type === 'chantier' ? geoChantier : (type === 'localisation' ? geoLocalisation : (type === 'zoning' ? geoZoning : geoIncident)));
+  const infoId = type === 'acces' ? '#geoInfoAcces' : (type === 'chantier' ? '#geoInfoChantier' : (type === 'localisation' ? '#geoInfoLocalisation' : (type === 'zoning' ? '#geoInfoZoning' : '#geoInfoIncident')));
   if(geo){
     $(infoId).innerHTML = String.fromCharCode(128205) + " " + geo.lat.toFixed(5) + ", " + geo.lon.toFixed(5) + " (precision : " + Math.round(geo.accuracy) + " m) — "
       + `<a href="https://maps.google.com/?q=${geo.lat},${geo.lon}" target="_blank" rel="noopener" style="color:var(--rouge);font-weight:700">voir sur la carte</a>`
@@ -1666,9 +1699,10 @@ async function reessayerGeoloc(type){
   if(type === 'acces'){ geoAcces = geo; }
   else if(type === 'chantier'){ geoChantier = geo; }
   else if(type === 'localisation'){ geoLocalisation = geo; }
+  else if(type === 'zoning'){ geoZoning = geo; }
   else { geoIncident = geo; }
-  const idVign = type === 'acces' ? '#vignAcces' : (type === 'chantier' ? '#vignChantier' : (type === 'localisation' ? '#vignLocalisation' : '#vignIncident'));
-  const tableau = type === 'acces' ? photosAcces : (type === 'chantier' ? photosChantier : (type === 'localisation' ? photosLocalisation : photosIncident));
+  const idVign = type === 'acces' ? '#vignAcces' : (type === 'chantier' ? '#vignChantier' : (type === 'localisation' ? '#vignLocalisation' : (type === 'zoning' ? '#vignZoning' : '#vignIncident')));
+  const tableau = type === 'acces' ? photosAcces : (type === 'chantier' ? photosChantier : (type === 'localisation' ? photosLocalisation : (type === 'zoning' ? photosZoning : photosIncident)));
   if(!geo){
     await modalAlert("La localisation reste indisponible. Verifiez que le service de localisation est active sur l'appareil et autorise pour ce site. En galerie ou sous-sol, le signal GPS peut aussi etre trop faible : rapprochez-vous d'une ouverture si possible, puis reessayez.");
   }
@@ -1678,6 +1712,7 @@ async function reessayerGeoloc(type){
 brancherPhotos("#zoneAcces","#fichAcces","#vignAcces",photosAcces,'acces');
 brancherPhotos("#zoneIncident","#fichIncident","#vignIncident",photosIncident,'incident');
 brancherPhotos("#zoneLocalisation","#fichLocalisation","#vignLocalisation",photosLocalisation,'localisation');
+brancherPhotos("#zoneZoning","#fichZoning","#vignZoning",photosZoning,'zoning');
 
 function rendreSynthese(){
   const cont = $("#crSynthese");
@@ -1755,7 +1790,7 @@ function rendrePhasesAvancement(){
       </select>
       <label style="margin-top:10px;font-size:13px">Photos de la phase ${idx+1}</label>
       <div class="zone-photos" style="padding:10px">&#128247; Ajouter des photos — cliquez ou deposez</div>
-      <input type="file" accept="image/*" multiple hidden>
+      <input type="file" accept="image/*" capture="environment" multiple hidden>
       <div class="vignettes"></div>`;
     const ta = bloc.querySelector("textarea");
     ta.addEventListener("input", ()=>{ phase.texte = ta.value; });
@@ -2022,15 +2057,18 @@ async function chargerCRPourEdition(cr){
   photosIncident.length = 0; photosIncident.push(...photos.incidents);
   photosChantier.length = 0; photosChantier.push(...(photos.chantier||[]));
   photosLocalisation.length = 0; photosLocalisation.push(...(photos.localisation||[]));
+  photosZoning.length = 0; photosZoning.push(...(photos.zoning||[]));
   const commentairesCR = chargerCommentairesCR(cr.id);
   commentairesAcces.length = 0; commentairesAcces.push(...(commentairesCR.acces||[]));
   commentairesIncident.length = 0; commentairesIncident.push(...(commentairesCR.incidents||[]));
   commentairesChantier.length = 0; commentairesChantier.push(...(commentairesCR.chantier||[]));
   commentairesLocalisation.length = 0; commentairesLocalisation.push(...(commentairesCR.localisation||[]));
+  commentairesZoning.length = 0; commentairesZoning.push(...(commentairesCR.zoning||[]));
   chargerPhasesAvancement(ip.avancementPhase, photos.phases, ip.phasesCodeCouleur, commentairesCR.phases);
   rendreVignettes("#vignAcces", photosAcces, 'acces');
   rendreVignettes("#vignIncident", photosIncident, 'incident');
   rendreVignettes("#vignLocalisation", photosLocalisation, 'localisation');
+  rendreVignettes("#vignZoning", photosZoning, 'zoning');
 
   if(cr.signature){
     signatureData = cr.signature;
@@ -2053,12 +2091,12 @@ function viderFormulaire(){
   $("#crAdresseChantier").value = ""; $("#crEmprises").value = "";
   $("#crDebutTravaux").value = ""; $("#crFinTravaux").value = "";
   $("#crRemiseVoie").value = ""; $("#crRemiseCirculation").value = "";
-  photosAcces.length = 0; photosIncident.length = 0; photosChantier.length = 0; photosLocalisation.length = 0;
-  commentairesAcces.length = 0; commentairesIncident.length = 0; commentairesChantier.length = 0; commentairesLocalisation.length = 0;
-  geoAcces = null; geoIncident = null; geoChantier = null; geoLocalisation = null;
+  photosAcces.length = 0; photosIncident.length = 0; photosChantier.length = 0; photosLocalisation.length = 0; photosZoning.length = 0;
+  commentairesAcces.length = 0; commentairesIncident.length = 0; commentairesChantier.length = 0; commentairesLocalisation.length = 0; commentairesZoning.length = 0;
+  geoAcces = null; geoIncident = null; geoChantier = null; geoLocalisation = null; geoZoning = null;
   rendreVignettes("#vignAcces",photosAcces,'acces'); rendreVignettes("#vignIncident",photosIncident,'incident');
-  rendreVignettes("#vignLocalisation",photosLocalisation,'localisation');
-  $("#geoInfoAcces").style.display = "none"; $("#geoInfoIncident").style.display = "none"; $("#geoInfoLocalisation").style.display = "none";
+  rendreVignettes("#vignLocalisation",photosLocalisation,'localisation'); rendreVignettes("#vignZoning",photosZoning,'zoning');
+  $("#geoInfoAcces").style.display = "none"; $("#geoInfoIncident").style.display = "none"; $("#geoInfoLocalisation").style.display = "none"; $("#geoInfoZoning").style.display = "none";
   padSignature.clear(); padSigMoe.clear(); padSigChef.clear();
   $("#signaturePreview").style.display = "none";
   $("#crTypeTravaux").value = "";
@@ -2184,12 +2222,13 @@ $("#btnEnregistrerCR").addEventListener("click", async ()=>{
     for(let i=0; i<photosAcces.length; i++) if(photosAcces[i].startsWith('data:')) await uploadPhoto(crId, 'acces', photosAcces[i], i);
     for(let i=0; i<photosIncident.length; i++) if(photosIncident[i].startsWith('data:')) await uploadPhoto(crId, 'incident', photosIncident[i], i);
     for(let i=0; i<photosLocalisation.length; i++) if(photosLocalisation[i].startsWith('data:')) await uploadPhoto(crId, 'localisation', photosLocalisation[i], i);
+    for(let i=0; i<photosZoning.length; i++) if(photosZoning[i].startsWith('data:')) await uploadPhoto(crId, 'zoning', photosZoning[i], i);
     for(let p=0; p<phasesAvancement.length; p++){
       const photosPhase = phasesAvancement[p].photos;
       for(let i=0; i<photosPhase.length; i++) if(photosPhase[i].startsWith('data:')) await uploadPhoto(crId, 'phase'+p, photosPhase[i], i);
     }
   } else {
-    lsEcrire("gta1914e_photos_"+crId, {acces:[...photosAcces], incidents:[...photosIncident], chantier:[...photosChantier], localisation:[...photosLocalisation], phases: phasesAvancement.map(p=>[...p.photos])});
+    lsEcrire("gta1914e_photos_"+crId, {acces:[...photosAcces], incidents:[...photosIncident], chantier:[...photosChantier], localisation:[...photosLocalisation], zoning:[...photosZoning], phases: phasesAvancement.map(p=>[...p.photos])});
   }
   sauverCommentairesCR(crId);
 
@@ -2403,6 +2442,13 @@ async function exporterPDF(cr, retournerBlob){
     y += 9;
     doc.setTextColor(26,26,26); doc.setFont("helvetica","normal");
   };
+
+  if(cr.type !== 'minutes' && photos.zoning && photos.zoning.length){
+    y = pdfSautPage(doc, y, 9);
+    bandeauNum("ZONING GALERIE");
+    y = pdfAjouterPhotos(doc, y, photos.zoning, commentaires.zoning);
+    y += 4;
+  }
 
   if(cr.type !== 'minutes'){
     const infos = [
@@ -2830,7 +2876,16 @@ async function envoyerViaOutlook(cr, sujet, corps){
   // fenetre de partage du telephone, PDF deja joint — c'est ce que le client demande.
   const resultat = await partagerFichierNatif(cr, sujet, corps);
   if(resultat === 'shared'){
-    await modalAlert("Le PDF a ete partage. Si le corps du message n'est pas deja rempli dans Outlook (cela depend de l'appareil), le texte a ete copie automatiquement : faites Coller dans le corps du mail.");
+    // Le partage natif ne permet pas de pre-remplir le champ "A" du destinataire (limite
+    // du systeme, pas du site) : on copie donc l'adresse dans le presse-papiers pour que
+    // l'utilisateur n'ait qu'a faire Coller dans ce champ.
+    const destinataire = cr.type !== 'minutes' ? CONTACT_DESTINATAIRE.email : "";
+    if(destinataire){
+      try{ await navigator.clipboard.writeText(destinataire); }catch(e){}
+      await modalAlert("Le PDF a ete partage vers Outlook. Le champ \"A\" ne se remplit pas automatiquement (limite du telephone) : l'adresse " + destinataire + " a ete copiee, faites Coller dans ce champ.");
+    } else {
+      await modalAlert("Le PDF a ete partage. Si le corps du message n'est pas deja rempli dans Outlook (cela depend de l'appareil), le texte a ete copie automatiquement : faites Coller dans le corps du mail.");
+    }
     return;
   }
   if(resultat === 'aborted') return; // l'utilisateur a annule le partage, on ne fait rien de plus
@@ -2901,6 +2956,12 @@ async function imprimerCR(cr){
           <tr><th>Remise a la circulation</th><td colspan="3">${ip.remiseCirculation?frDate(ip.remiseCirculation):"—"}</td></tr>
         </table>` : ''}
       </div>`;
+
+  const sectionZoning = (!estMinutes && photos.zoning && photos.zoning.length) ? `
+      <div class="section-print">
+        ${bandeauSection(n++, "Zoning galerie")}
+        <div class="section-body">${galeriePhotosImprimee(photos.zoning, commentaires.zoning, true)}</div>
+      </div>` : '';
 
   // Section "Maitrise d'oeuvre — GTA Energies" retiree du document imprime/PDF a la demande du client
   // (le contact MOE reste gere dans l'onglet Equipe de l'app, mais n'apparait plus dans le rapport).
@@ -3016,6 +3077,7 @@ async function imprimerCR(cr){
     </div>
     <div class="content-print">
       ${sectionInfoProjet}
+      ${sectionZoning}
       ${sectionMoe}
       ${sectionClient}
       ${sectionPrescriptions}
